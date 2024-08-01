@@ -2,49 +2,65 @@ return {
   "nvim-tree/nvim-tree.lua",
   version = "*",
   lazy = false,
-  dependencies = {
-    "nvim-tree/nvim-web-devicons",
-  },
+  dependencies = "nvim-tree/nvim-web-devicons",
   config = function()
+    local nvimtree = require("nvim-tree")
 
-    local function my_on_attach(bufnr)
-      local api = require("nvim-tree.api")
+    vim.g.loaded_netrw = 1
+    vim.g.loaded_netrwPlugin = 1
 
-      -- apparaently I need to define opts function
-      -- otherwise, it complains about attempt global
-      -- opts (a nil value) error
-      local function opts(desc)
-        return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
-      end
-
-      local function edit_or_open()
-        local node = api.tree.get_node_under_cursor()
-
-        if node.nodes ~= nil then
-          -- expand or collapse folder
-          api.node.open.edit()
-        else
-          -- open file
-          api.node.open.edit()
-          -- Close the tree if file was opened
-          api.tree.close()
-        end
-      end
-
-      vim.keymap.set("n", "l", edit_or_open,          opts("Edit Or Open"))
-      vim.keymap.set("n", "h", api.tree.collapse_all, opts("Collapse All"))
-      vim.keymap.set("n", "t", api.tree.close,        opts("Close"))
-    end
-
-    require("nvim-tree").setup {
+    nvimtree.setup({
       disable_netrw = true,
       hijack_netrw = true,
+      view = {
+        width = 35,
+      },
+      renderer = {
+        indent_markers = {
+          enable = true,
+        },
+        icons = {
+          glyphs = {
+            folder = {
+              arrow_closed = "", -- arrow when folder is closed
+              arrow_open = "", -- arrow when folder is open
+            },
+          },
+        },
+      },
+      actions = {
+        open_file = {
+          window_picker = {
+            enable = false,
+          },
+        },
+      },
+      filters = {
+        custom = { ".DS_Store" },
+      },
+      git = {
+        ignore = false,
+      },
       diagnostics = {
         enable = true,
         show_on_dirs = true,
       },
-      vim.api.nvim_set_keymap("n", "<C-t>", ":NvimTreeToggle<CR>", {silent = true, noremap = true}),
-      on_attach = my_on_attach,
-    }
+    })
+
+    local opts = { silent = true, noremap = true }
+    local keymap = vim.keymap
+
+    opts.desc = "Toggle file explorer"
+    keymap.set("n", "<leader>ee", "<cmd>NvimTreeToggle<CR>", opts)
+
+    opts.desc = "Toggle file explorer on current file"
+    keymap.set("n", "<leader>ef", "<cmd>NvimTreeFindFileToggle<CR>", opts)
+
+    opts.desc = "Collapse file explorer"
+    keymap.set("n", "<leader>ec", "<cmd>NvimTreeCollapse<CR>", opts)
+
+    opts.desc = "Refresh file explorer"
+    keymap.set("n", "<leader>er", "<cmd>NvimTreeRefresh<CR>", opts)
+
   end,
 }
