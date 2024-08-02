@@ -25,3 +25,8 @@ opt.splitright = true
 opt.grepprg = "rg --vimgrep"
 
 opt.backspace = "indent,eol,start"
+
+opt.foldcolumn = "1"
+opt.foldlevel = 99
+opt.foldlevelstart = 99
+opt.foldenable = true
