@@ -80,4 +80,15 @@ return {
 			end, { desc = "Peek Folds" })
 		end,
 	},
+
+	-- automatic session save and restore
+	{
+		"rmagatti/auto-session",
+		lazy = false,
+		config = function()
+			require("auto-session").setup({
+				auto_session_suppress_dirs = { "~/", "~/Desktop", "~/Downloads", "~/Documents" },
+			})
+		end,
+	},
 }
