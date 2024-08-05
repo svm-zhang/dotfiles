@@ -28,7 +28,7 @@ return {
 				options = {
 					diagnostics = "nvim_lsp",
 					mode = "tabs",
-					numbers = "buffer_id",
+					numbers = "ordinal",
 					separator_style = "padded_slope",
 				},
 			})
@@ -88,6 +88,17 @@ return {
 		config = function()
 			require("auto-session").setup({
 				auto_session_suppress_dirs = { "~/", "~/Desktop", "~/Downloads", "~/Documents" },
+			})
+		end,
+	},
+
+	-- status line
+	{
+		"nvim-lualine/lualine.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			require("lualine").setup({
+				options = { theme = "dracula" },
 			})
 		end,
 	},
