@@ -5,6 +5,15 @@ return {
 		dependencies = {
 			"hrsh7th/cmp-nvim-lsp",
 			{ "antosha417/nvim-lsp-file-operations", config = true },
+			{
+				"folke/lazydev.nvim",
+				ft = "lua",
+				opts = {
+					library = {
+						{ path = "luvit-meta/library", words = { "vim%.uv" } },
+					},
+				},
+			},
 		},
 		config = function()
 			local lspconfig = require("lspconfig")
@@ -12,49 +21,51 @@ return {
 			local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
 			local keymap = vim.keymap
-			local opts = { noremap = true, silent = true }
-			local on_attach = function(client, bufnr)
-				opts.buffer = bufnr
+			vim.api.nvim_create_autocmd("LspAttach", {
+				group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+				callback = function(ev)
+					local opts = { buffer = ev.buf, silent = true }
 
-				opts.desc = "Show LSP reference"
-				keymap.set("n", "gR", "<cmd>Telescope lsp_references<CR>", opts)
+					opts.desc = "Show LSP reference"
+					keymap.set("n", "gR", "<cmd>Telescope lsp_references<CR>", opts)
 
-				opts.desc = "Show LSP definition"
-				keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts)
+					opts.desc = "Show LSP definition"
+					keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts)
 
-				opts.desc = "Show LSP type definition"
-				keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", opts)
+					opts.desc = "Show LSP type definition"
+					keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", opts)
 
-				opts.desc = "Show LSP implementation"
-				keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts)
+					opts.desc = "Show LSP implementation"
+					keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts)
 
-				opts.desc = "Go to declaration"
-				keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+					opts.desc = "Go to declaration"
+					keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
 
-				opts.desc = "See avaialable code actions"
-				keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts)
+					opts.desc = "See avaialable code actions"
+					keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts)
 
-				opts.desc = "Smart rename"
-				keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+					opts.desc = "Smart rename"
+					keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
 
-				opts.desc = "Show buffer diagnostics"
-				keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts)
+					opts.desc = "Show buffer diagnostics"
+					keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts)
 
-				opts.desc = "Show line diagnostics"
-				keymap.set("n", "<leader>d", vim.diagnostics.open_float, opts)
+					opts.desc = "Show line diagnostics"
+					keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
 
-				opts.desc = "Go to previous diagnostics"
-				keymap.set("n", "[d", vim.diagnostics.goto_prev, opts)
+					opts.desc = "Go to previous diagnostics"
+					keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
 
-				opts.desc = "Go to next diagnostics"
-				keymap.set("n", "]d", vim.diagnostics.goto_next, opts)
+					opts.desc = "Go to next diagnostics"
+					keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
 
-				opts.desc = "Show documentation for what is under cursor"
-				keymap.set("n", "K", vim.lsp.buf.hover, opts)
+					opts.desc = "Show documentation for what is under cursor"
+					keymap.set("n", "K", vim.lsp.buf.hover, opts)
 
-				opts.desc = "Restart LSP"
-				keymap.set("n", "<leader>rs", "<cmd>LspRestart<CR>", opts)
-			end
+					opts.desc = "Restart LSP"
+					keymap.set("n", "<leader>rs", "<cmd>LspRestart<CR>", opts)
+				end,
+			})
 
 			local capabilities = cmp_nvim_lsp.default_capabilities()
 
@@ -65,6 +76,7 @@ return {
 			end
 
 			lspconfig.lua_ls.setup({
+				capabilities = capabilities,
 				settings = {
 					Lua = {
 						runtime = { version = "LuaJIT" },
@@ -74,21 +86,22 @@ return {
 								vim.env.VIMRUNTIME,
 							},
 						},
-						diagnostics = { globals = { "vim" } },
+						diagnostics = {
+							globals = { "vim" },
+						},
+						completion = {
+							callSnippet = "Replace",
+						},
 					},
 				},
-				capabilities = capabilities,
-				on_attach = on_attach,
 			})
 
 			lspconfig.bashls.setup({
 				capabilities = capabilities,
-				on_attach = on_attach,
 			})
 
 			lspconfig.pyright.setup({
 				capabilities = capabilities,
-				on_attach = on_attach,
 			})
 		end,
 	},
