@@ -25,6 +25,8 @@ config.hide_tab_bar_if_only_one_tab = true
 
 config.scrollback_lines = 10000
 
+config.audible_bell = "Disabled"
+
 -- tabbar customization
 -- https://github.com/nekowinston/wezterm-bar/tree/main
 wezterm.plugin.require("https://github.com/nekowinston/wezterm-bar").apply_to_config(config, {
