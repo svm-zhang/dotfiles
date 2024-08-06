@@ -38,6 +38,7 @@ return {
 					"prettier",
 					"stylua",
 					"shfmt",
+					"shellcheck",
 					"ruff",
 					"mypy",
 				},
