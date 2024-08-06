@@ -99,7 +99,13 @@ return {
 					json = { "prettier" },
 					lua = { "stylua" },
 					markdown = { "prettier" },
-					python = { "ruff_organize_imports", "ruff_format" },
+					python = function(bufnr)
+						if conform.get_formatter_info("ruff_format", bufnr).available then
+							return { "ruff_organize_imports", "ruff_format" }
+						else
+							return { "isort", "black" }
+						end
+					end,
 					yaml = { "prettier" },
 				},
 				format_on_save = {
@@ -110,7 +116,7 @@ return {
 			})
 
 			local keymap = vim.keymap
-			keymap.set({ "n", "v" }, "<leader>mp", function()
+			keymap.set({ "n", "v" }, "<leader>fm", function()
 				conform.format({
 					lsp_fallback = true,
 					async = false,
