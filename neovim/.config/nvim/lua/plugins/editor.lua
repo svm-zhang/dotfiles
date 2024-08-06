@@ -149,4 +149,59 @@ return {
 			{ "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
 		},
 	},
+
+	{
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+			"rcarriga/nvim-notify",
+		},
+		config = function()
+			local noice = require("noice")
+
+			noice.setup({
+				views = {
+					cmdline_popup = {
+						position = {
+							row = 15,
+							col = "50%",
+						},
+						size = {
+							width = 60,
+							height = "auto",
+						},
+					},
+				},
+				lsp = {
+					-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+					override = {
+						["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+						["vim.lsp.util.stylize_markdown"] = true,
+						["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
+					},
+				},
+				presets = {
+					command_palette = true,
+					long_message_to_split = true,
+				},
+				routes = {
+					filter = {
+						event = "msg_show",
+						kind = "",
+						any = {
+							{ find = "%d+L, %d+B" },
+							{ find = "; after #%d+" },
+							{ find = "; before #%d+" },
+							{ find = "%d fewer lines" },
+							{ find = "%d more lines" },
+							{ find = "written" },
+							{ find = "Reloading" },
+						},
+					},
+					opts = { skip = true },
+				},
+			})
+		end,
+	},
 }
