@@ -28,3 +28,6 @@ keymap.set(
 	"<cmd>MarkdownPreviewToggle<CR>",
 	{ desc = "Toggle markdown live preview in web browser" }
 )
+
+-- noice keymaps
+vim.keymap.set("n", "<leader>nn", "<cmd>Noice dismiss<CR>", { noremap = true, desc = "Dismiss all messages" })
