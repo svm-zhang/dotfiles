@@ -102,6 +102,18 @@ return {
 
 			lspconfig.pyright.setup({
 				capabilities = capabilities,
+				-- per recommendation of ruff doc
+				-- https://docs.astral.sh/ruff/editors/setup/#neovim
+				settings = {
+					pyright = {
+						disableOrganizeImports = true,
+					},
+					python = {
+						analysis = {
+							ignore = { "*" },
+						},
+					},
+				},
 			})
 		end,
 	},
