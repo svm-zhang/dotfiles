@@ -36,4 +36,8 @@ require("lazy").setup({
 		enabled = true,
 		notify = false,
 	},
+	-- this disables notification msg everytime config updated
+	change_detection = {
+		notify = false,
+	},
 })
