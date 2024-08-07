@@ -21,6 +21,15 @@ keymap.set("n", "<leader>tn", "<cmd>tabn<CR>", { desc = "Go to next tab" }) --  
 keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" }) --  go to previous tab
 keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" }) --  move current buffer to new tab
 
+-- todo comment
+-- particularly look for TODO, WARN, WARNING, and FIXME
+keymap.set("n", "]t", function()
+	require("todo-comments").jump_next({ keywords = { "TODO", "WARNING", "WARN", "FIXME" } })
+end, { desc = "Jump to next Todo comment" })
+keymap.set("n", "[t", function()
+	require("todo-comments").jump_prev({ keywords = { "TODO", "WARNING", "WARN", "FIXME" } })
+end, { desc = "Jump to previous Todo comment" })
+
 -- markdown live preview
 keymap.set(
 	"n",
