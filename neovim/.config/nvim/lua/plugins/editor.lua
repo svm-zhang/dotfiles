@@ -194,6 +194,7 @@ return {
 					long_message_to_split = true,
 				},
 				routes = {
+					-- this still bugged
 					filter = {
 						event = "msg_show",
 						kind = "",
@@ -203,8 +204,6 @@ return {
 							{ find = "; before #%d+" },
 							{ find = "%d fewer line" },
 							{ find = "%d more line" },
-							{ find = "written" },
-							{ find = "Reloading" },
 						},
 					},
 					opts = { skip = true },
