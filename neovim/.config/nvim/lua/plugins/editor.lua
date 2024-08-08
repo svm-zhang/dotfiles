@@ -63,7 +63,11 @@ return {
 						scrollD = "<C-j>",
 					},
 				},
-				provider_selector = function(bufnr, filetype, buftype)
+				-- explicitly set default value to avoid lua_ls complaints
+				open_fold_hl_timeout = 400,
+				close_fold_kinds_for_ft = {},
+				enable_get_fold_virt_text = false,
+				provider_selector = function()
 					return { "lsp", "indent" }
 				end,
 			})
