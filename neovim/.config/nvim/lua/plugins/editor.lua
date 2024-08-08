@@ -221,14 +221,30 @@ return {
 		},
 		opts = {
 			focus = true,
+			modes = {
+				my_lsp = {
+					mode = { "diagnostics", "lsp_references", "lsp_definitions" },
+					filter = { buf = 0 },
+				},
+			},
 		},
 		cmd = "Trouble",
 		keys = {
 			{ "<leader>xw", "<cmd>Trouble diagnostics toggle<CR>", desc = "Open trouble workspace diagnostics" },
 			{
+				"<leader>xr",
+				"<cmd>Trouble lsp_references toggle<CR>",
+				desc = "Open trouble lsp references",
+			},
+			{
 				"<leader>xd",
-				"<cmd>Trouble diagnostics toggle filter.buf=0<CR>",
-				desc = "Open trouble document diagnostics",
+				"<cmd>Trouble lsp_definitions toggle<CR>",
+				desc = "Open trouble lsp definition",
+			},
+			{
+				"<leader>xs",
+				"<cmd>Trouble lsp_document_symbols toggle pinned=true win.relative=win win.size.width=50 win.position=right<CR>",
+				desc = "Open trouble lsp document symbols",
 			},
 			{ "<leader>xq", "<cmd>Trouble quickfix toggle<CR>", desc = "Open trouble quickfix list" },
 			{ "<leader>xl", "<cmd>Trouble loclist toggle<CR>", desc = "Open trouble location list" },
