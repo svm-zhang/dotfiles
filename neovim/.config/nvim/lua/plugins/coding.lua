@@ -151,16 +151,4 @@ return {
 			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
 		end,
 	},
-
-	--treesitter context
-	{
-		"nvim-treesitter/nvim-treesitter-context",
-		event = "VeryLazy",
-		config = function()
-			local tsc = require("treesitter-context")
-			tsc.setup({
-				enable = true,
-			})
-		end,
-	},
 }
