@@ -255,4 +255,30 @@ return {
 			{ "<leader>xt", "<cmd>Trouble todo toggle<CR>", desc = "Open todos in trouble" },
 		},
 	},
+
+	{
+		"nvim-neo-tree/neo-tree.nvim",
+		branch = "v3.x",
+		cmd = { "Neotree" },
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-tree/nvim-web-devicons",
+			"MunifTanjim/nui.nvim",
+		},
+		config = function()
+			require("neo-tree").setup({
+				close_if_last_window = true,
+				filesystem = {
+					filtered_items = {
+						hide_dotfiles = false,
+					},
+					follow_current_file = {
+						enabled = true,
+						leave_dirs_open = true,
+					},
+				},
+				vim.keymap.set("n", "<leader>ee", "<cmd>Neotree toggle<CR>", { desc = "Toggle neo-tree" }),
+			})
+		end,
+	},
 }
