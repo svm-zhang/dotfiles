@@ -1,4 +1,23 @@
 return {
+
+	-- transparent nvim
+	{
+		"xiyaowong/nvim-transparent",
+		config = function()
+			local transparent = require("transparent")
+
+			transparent.setup({
+				extra_groups = {
+					"NeoTreeNormal",
+					"NeoTreeFloatBorder",
+					"NeoTreeNormalNC",
+				},
+			})
+
+			transparent.clear_prefix("BufferLine")
+		end,
+	},
+
 	-- indentation highlight
 	{
 		"lukas-reineke/indent-blankline.nvim",
