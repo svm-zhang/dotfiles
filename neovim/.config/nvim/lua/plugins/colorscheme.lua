@@ -4,17 +4,17 @@ return {
 		lazy = false,
 		name = "catppuccin",
 		priority = 1000,
-    config = function ()
-      require("catppuccin").setup({
-        integrations = {
-          cmp = true,
-          gitsigns = true,
-          telescope = true,
-          treesitter = true,
-        }
-      })
+		config = function()
+			require("catppuccin").setup({
+				integrations = {
+					cmp = true,
+					gitsigns = true,
+					telescope = true,
+					treesitter = true,
+				},
+			})
 
-      vim.cmd.colorscheme "catppuccin"
-    end,
-	}
+			vim.cmd.colorscheme("catppuccin")
+		end,
+	},
 }
