@@ -276,6 +276,30 @@ return {
 	},
 
 	{
+		"rmagatti/goto-preview",
+		event = "BufEnter",
+		config = function()
+			local goto_preview = require("goto-preview")
+			local keymap = vim.keymap
+
+			keymap.set(
+				"n",
+				"gp",
+				"<cmd>lua require('goto-preview').goto_preview_definition()<CR>",
+				{ desc = "Preview definition in float window" }
+			)
+			keymap.set(
+				"n",
+				"gr",
+				"<cmd>lua require('goto-preview').goto_preview_references()<CR>",
+				{ desc = "Preview references in float window" }
+			)
+
+			goto_preview.setup()
+		end,
+	},
+
+	{
 		"nvim-neo-tree/neo-tree.nvim",
 		branch = "v3.x",
 		cmd = { "Neotree" },
