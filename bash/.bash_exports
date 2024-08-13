@@ -1,0 +1,5 @@
+# Define bash exports.
+# Invoked by .bash_profile file.
+
+export PATH="$OPT/bin:$PATH"
+export PATH="/usr/local/texlive/2024basic/bin/universal-darwin/:$PATH"
