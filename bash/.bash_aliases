@@ -10,10 +10,18 @@ alias lt='eza --color=always --long --tree --almost-all --icons=always --no-time
 
 alias rm="rm -i"
 
-alias grep="ggrep"
-alias split="gsplit"
-alias du="gdu"
-alias cut="gcut"
+# use GNU version when on MACOS
+case "$OSTYPE" in
+darwin*) # MACOS
+  alias grep="ggrep"
+  alias split="gsplit"
+  alias du="gdu"
+  alias cut="gcut"
+  ;;
+*)
+  return
+  ;;
+esac
 
 # Git
 alias gc="git commit -m"
