@@ -10,6 +10,9 @@ alias lt='eza --color=always --long --tree --almost-all --icons=always --no-time
 
 alias rm="rm -i"
 
+# bat
+alias bat="bat --theme Dracula"
+
 # use GNU version when on MACOS
 case "$OSTYPE" in
 darwin*) # MACOS
