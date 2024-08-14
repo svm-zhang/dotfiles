@@ -33,14 +33,3 @@ alias gdiff="git diff"
 alias glog="git log --graph --topo-order --pretty=\"%w(100,0,6)%C(yellow)%h%C(bold)%C(black)%d %C(cyan)%ar %C(green)%an%n%C(bold)%C(white)%s %N\" --abbrev-commit"
 
 alias r="radian"
-
-# yazi file manager
-function yy() {
-  local tmp=
-  tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-  yazi "$@" --cwd-file="$tmp"
-  if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-    builtin cd -- "$cwd" || exit
-  fi
-  rm -f -- "$tmp"
-}
