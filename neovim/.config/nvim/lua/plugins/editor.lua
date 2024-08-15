@@ -203,6 +203,24 @@ return {
 							height = "auto",
 						},
 					},
+					-- need to set cmdline_popupmenu
+					-- rather than popupmenu
+					-- https://github.com/folke/noice.nvim/issues/507
+					cmdline_popupmenu = {
+						relative = "editor",
+						position = {
+							row = 17,
+							col = "50%",
+						},
+						size = {
+							width = 60,
+							height = 10,
+						},
+						border = {
+							style = "rounded",
+							pading = { 0, 1 },
+						},
+					},
 				},
 				lsp = {
 					-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
