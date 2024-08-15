@@ -2,10 +2,15 @@ return {
 	-- autocompletion
 	{
 		"hrsh7th/nvim-cmp",
-		event = "InsertEnter",
+		event = {
+			"BufReadPre",
+			"BufNewFile",
+			"InsertEnter",
+		},
 		dependencies = {
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
+			"hrsh7th/cmp-cmdline",
 			"L3MON4D3/LuaSnip",
 			"saadparwaiz1/cmp_luasnip",
 			"rafamadriz/friendly-snippets",
@@ -42,6 +47,7 @@ return {
 					{ name = "luasnip" },
 					{ name = "buffer" }, -- text within current buffer
 					{ name = "path" },
+					{ name = "cmdline" },
 				}),
 			})
 		end,
