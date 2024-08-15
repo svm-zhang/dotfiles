@@ -36,3 +36,9 @@ alias gdiff="git diff"
 alias glog="git log --graph --topo-order --pretty=\"%w(100,0,6)%C(yellow)%h%C(bold)%C(black)%d %C(cyan)%ar %C(green)%an%n%C(bold)%C(white)%s %N\" --abbrev-commit"
 
 alias r="radian"
+
+# duf
+alias duf="duf --sort size"
+
+# dust
+alias dust="dust --reverse -v '\.venv' -v 'cache' -v 'DS_Store' -v '\.git' -v 'docs'"
