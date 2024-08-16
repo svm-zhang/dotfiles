@@ -3,3 +3,6 @@
 
 export PATH="$OPT/bin:$PATH"
 export PATH="/usr/local/texlive/2024basic/bin/universal-darwin/:$PATH"
+
+# set BAT theme
+export BAT_THEME=catppuccin_macchiato
