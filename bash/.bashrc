@@ -3,6 +3,9 @@
 # load aliases setup
 [ -f "$HOME/.bash_aliases" ] && . "$HOME/.bash_aliases"
 
+# load fzfrc
+[ -f "$HOME/.fzfrc" ] && . "$HOME/.fzfrc"
+
 # to make sure brew can be called
 [ -d "$HOMEBREW" ] && eval "$("$HOMEBREW/bin/brew" shellenv)"
 # load oad functions from bash-completion
