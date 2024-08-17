@@ -19,6 +19,9 @@
 # load Rye command line autocompletion
 [ -d "$COMPLETION" ] && . "$COMPLETION/completions/rye.bash"
 
+# fzf bash integration
+eval "$(fzf --bash)"
+
 # oh-my-posh command prompt theme: tokyonight_storm
 eval "$(oh-my-posh init bash --config "$DOTFILE/oh_my_posh/themes/catppuccin_macchiato.customized.omp.json")"
 
