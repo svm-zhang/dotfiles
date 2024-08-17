@@ -18,7 +18,8 @@ export FZF_DEFAULT_OPTS=" \
 "
 
 # use fd as backend search engine
-export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude '.git' --exclude '*cache*' --exclude '.venv'"
+fd_excludes="--exclude '.git' --exclude '*cache*' --exclude '.venv'"
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix $fd_excludes"
 
 # setup ctrl-t command for navigate file with preview
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
