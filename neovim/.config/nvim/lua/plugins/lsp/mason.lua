@@ -27,6 +27,7 @@ return {
 					"bashls",
 					"lua_ls",
 					"pyright",
+					"r_language_server",
 				},
 				automatic_installation = true,
 			})
