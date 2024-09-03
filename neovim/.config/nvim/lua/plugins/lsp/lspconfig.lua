@@ -115,6 +115,15 @@ return {
 					},
 				},
 			})
+
+			lspconfig.r_language_server.setup({
+				filetypes = {
+					"r",
+					"R",
+					"rmd",
+					"Rmd",
+				},
+			})
 		end,
 	},
 }
