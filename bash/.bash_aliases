@@ -9,6 +9,7 @@ alias l='eza --color=always --long --almost-all --icons=always --no-time --no-us
 alias lt='eza --color=always --long --tree --almost-all --icons=always --no-time --no-user'
 
 alias rm="rm -i"
+alias cl="clear"
 
 # use GNU version when on MACOS
 case "$OSTYPE" in
@@ -17,6 +18,10 @@ darwin*) # MACOS
   alias split="gsplit"
   alias du="gdu"
   alias cut="gcut"
+  # folders
+  alias dc="cd \$HOME/Documents"
+  alias de="cd \$HOME/Desktop"
+  alias dw="cd \$HOME/Downloads"
   ;;
 *)
   return
@@ -39,3 +44,6 @@ alias duf="duf --sort size"
 
 # dust
 alias dust="dust --reverse -v '\.venv' -v 'cache' -v 'DS_Store' -v '\.git' -v 'docs'"
+
+# jqp
+alias jqp="jqp --theme catppuccin-macchiato"
