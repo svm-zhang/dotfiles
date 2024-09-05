@@ -1,5 +1,8 @@
 # .bashrc file executed by non-login shells
 
+# enable vi-mode on command line
+set -o vi
+
 # load aliases setup
 [ -f "$HOME/.bash_aliases" ] && . "$HOME/.bash_aliases"
 
