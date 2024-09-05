@@ -32,5 +32,8 @@ opt.foldlevel = 99
 opt.foldlevelstart = 99
 opt.foldenable = true
 
+opt.spelllang = "en_us"
+opt.spell = true
+
 -- enable nvim transparent
 vim.g.transparent_enabled = true
