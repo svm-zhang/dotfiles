@@ -35,6 +35,15 @@ return {
 		end,
 	},
 
+	-- colorcolumn
+	{
+		"lukas-reineke/virt-column.nvim",
+		opts = {
+			char = "┊",
+			virtcolumn = "79",
+		},
+	},
+
 	-- buffer tabs
 	{
 		"akinsho/bufferline.nvim",
