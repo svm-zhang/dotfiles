@@ -43,9 +43,6 @@ return {
 				"<cmd>Telescope grep_string<CR>",
 				{ desc = "Find string under cursor in cwd" }
 			)
-			--keymap.set("n", "<leader>ft", function()
-			--	vim.api.nvim_command("TodoTelescope cwd=" .. vim.fn.expand("%:p:h"))
-			--end, { desc = "Find TODO comments" })
 		end,
 	},
 
