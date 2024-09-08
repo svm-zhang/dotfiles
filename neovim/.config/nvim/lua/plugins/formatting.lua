@@ -24,6 +24,11 @@ return {
 					r = { "styler" },
 					yaml = { "prettier" },
 				},
+				formatters = {
+					stylua = {
+						prepend_args = { "--column-width", "79" },
+					},
+				},
 				format_on_save = {
 					lsp_fallback = true,
 					async = false,
