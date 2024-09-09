@@ -15,7 +15,9 @@ return {
 					lua = { "stylua" },
 					markdown = { "prettier" },
 					python = function(bufnr)
-						if conform.get_formatter_info("ruff_format", bufnr).available then
+						if
+							conform.get_formatter_info("ruff_format", bufnr).available
+						then
 							return { "ruff_organize_imports", "ruff_format" }
 						else
 							return { "isort", "black" }
@@ -27,6 +29,17 @@ return {
 				formatters = {
 					stylua = {
 						prepend_args = { "--column-width", "79" },
+					},
+					styler = {
+						command = "R",
+						args = {
+							"-s",
+							"-e",
+							"styler::style_file(commandArgs(TRUE)[1])",
+							"--args",
+							"$FILENAME",
+						},
+						stdin = false,
 					},
 				},
 				format_on_save = {
