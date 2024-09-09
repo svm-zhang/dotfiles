@@ -1,5 +1,39 @@
 return {
 
+	-- which_key show avilable key bindings
+	{
+		"folke/which-key.nvim",
+		event = "VeryLazy",
+		opts = {
+			-- your configuration comes here
+			-- or leave it empty to use the default settings
+			-- refer to the configuration section below
+			defaults = {
+				preset = "modern",
+			},
+			spec = {
+				mode = { "n", "v" },
+				{ "<leader>c", group = "code" },
+				{ "<leader>f", group = "file/find" },
+				{ "<leader>g", group = "git" },
+				{ "<leader>h", group = "hunks" },
+				{ "<leader>n", group = "notif" },
+				{ "<leader>t", group = "tabs" },
+				{ "<leader>x", group = "diagnostics" },
+				{ "z", group = "fold" },
+			},
+		},
+		keys = {
+			{
+				"<leader>?",
+				function()
+					require("which-key").show({ global = false })
+				end,
+				desc = "Buffer Local Keymaps (which-key)",
+			},
+		},
+	},
+
 	-- transparent nvim
 	{
 		"xiyaowong/nvim-transparent",
@@ -76,7 +110,8 @@ return {
 				dynamicRegistration = false,
 				lineFoldingOnly = true,
 			}
-			local language_servers = require("lspconfig").util.available_servers() -- or list servers manually like {'gopls', 'clangd'}
+			local language_servers =
+				require("lspconfig").util.available_servers() -- or list servers manually like {'gopls', 'clangd'}
 			for _, ls in ipairs(language_servers) do
 				require("lspconfig")[ls].setup({
 					capabilities = capabilities,
@@ -99,17 +134,6 @@ return {
 					return { "lsp", "indent" }
 				end,
 			})
-
-			local keymap = vim.keymap
-
-			keymap.set("n", "zR", ufo.openAllFolds, { desc = "Open all folds" })
-			keymap.set("n", "zM", ufo.closeAllFolds, { desc = "Close all folds" })
-			keymap.set("n", "zK", function()
-				local winid = ufo.peekFoldedLinesUnderCursor()
-				if not winid then
-					vim.lsp.buf.hover()
-				end
-			end, { desc = "Peek Folds" })
 		end,
 	},
 
@@ -119,7 +143,12 @@ return {
 		lazy = false,
 		config = function()
 			require("auto-session").setup({
-				auto_session_suppress_dirs = { "~/", "~/Desktop", "~/Downloads", "~/Documents" },
+				auto_session_suppress_dirs = {
+					"~/",
+					"~/Desktop",
+					"~/Downloads",
+					"~/Documents",
+				},
 			})
 		end,
 	},
@@ -138,12 +167,20 @@ return {
 	-- markdown live preview
 	{
 		"iamcco/markdown-preview.nvim",
-		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+		cmd = {
+			"MarkdownPreviewToggle",
+			"MarkdownPreview",
+			"MarkdownPreviewStop",
+		},
 		ft = { "markdown" },
 		-- https://github.com/iamcco/markdown-preview.nvim/issues/690
 		build = function(plugin)
 			if vim.fn.executable("npx") then
-				vim.cmd("!cd " .. plugin.dir .. " && cd app && npx --yes yarn install")
+				vim.cmd(
+					"!cd "
+						.. plugin.dir
+						.. " && cd app && npx --yes yarn install"
+				)
 			else
 				vim.cmd([[Lazy load markdown-preview.nvim]])
 				vim.fn["mkdp#util#install"]()
@@ -273,33 +310,16 @@ return {
 			focus = true,
 			modes = {
 				my_lsp = {
-					mode = { "diagnostics", "lsp_references", "lsp_definitions" },
+					mode = {
+						"diagnostics",
+						"lsp_references",
+						"lsp_definitions",
+					},
 					filter = { buf = 0 },
 				},
 			},
 		},
 		cmd = "Trouble",
-		keys = {
-			{ "<leader>xw", "<cmd>Trouble diagnostics toggle<CR>", desc = "Open trouble workspace diagnostics" },
-			{
-				"<leader>xr",
-				"<cmd>Trouble lsp_references toggle<CR>",
-				desc = "Open trouble lsp references",
-			},
-			{
-				"<leader>xd",
-				"<cmd>Trouble lsp_definitions toggle<CR>",
-				desc = "Open trouble lsp definition",
-			},
-			{
-				"<leader>xs",
-				"<cmd>Trouble lsp_document_symbols toggle pinned=true win.relative=win win.size.width=50 win.position=right<CR>",
-				desc = "Open trouble lsp document symbols",
-			},
-			{ "<leader>xq", "<cmd>Trouble quickfix toggle<CR>", desc = "Open trouble quickfix list" },
-			{ "<leader>xl", "<cmd>Trouble loclist toggle<CR>", desc = "Open trouble location list" },
-			{ "<leader>xt", "<cmd>Trouble todo toggle<CR>", desc = "Open todos in trouble" },
-		},
 	},
 
 	{
@@ -320,6 +340,12 @@ return {
 				"gr",
 				"<cmd>lua require('goto-preview').goto_preview_references()<CR>",
 				{ desc = "Preview references in float window" }
+			)
+			keymap.set(
+				"n",
+				"gd",
+				"<cmd>lua require('goto-preview').close_all_win()<CR>",
+				{ desc = "Preview definition in float window" }
 			)
 
 			goto_preview.setup()
@@ -347,7 +373,6 @@ return {
 						leave_dirs_open = true,
 					},
 				},
-				vim.keymap.set("n", "<leader>ee", "<cmd>Neotree toggle<CR>", { desc = "Toggle neo-tree" }),
 			})
 		end,
 	},
@@ -371,7 +396,11 @@ return {
 			local trim_spaces = true
 			local keymap = vim.keymap
 			keymap.set("v", "<leader>s", function()
-				toggleterm.send_lines_to_terminal("visual_lines", trim_spaces, { args = vim.v.count })
+				toggleterm.send_lines_to_terminal(
+					"visual_lines",
+					trim_spaces,
+					{ args = vim.v.count }
+				)
 			end, { desc = "Send visual selected lines to terminal" })
 
 			function _G.set_terminal_keymaps()
@@ -384,7 +413,9 @@ return {
 				vim.keymap.set("t", "<C-l>", [[<Cmd>wincmd l<CR>]], opts)
 				vim.keymap.set("t", "<C-w>", [[<C-\><C-n><C-w>]], opts)
 			end
-			vim.cmd("autocmd! TermOpen term://*toggleterm#* lua set_terminal_keymaps()")
+			vim.cmd(
+				"autocmd! TermOpen term://*toggleterm#* lua set_terminal_keymaps()"
+			)
 		end,
 	},
 }
