@@ -21,14 +21,13 @@ return {
 					)
 				end,
 			},
-			auto_start = "on startup",
+			auto_quit = true,
 			bracketed_paste = true,
 			min_editor_width = 79,
-			objbr_auto_start = true,
+			external_term = "tmux split-window -h -l 43%",
 			objbr_place = "console,below",
 			openpdf = true,
 			pdfviewer = "",
-			rconsole_width = 200,
 			csv_app = "terminal:/opt/homebrew/bin/vd",
 		},
 		config = function(_, opts)
