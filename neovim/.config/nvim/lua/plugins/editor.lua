@@ -1,6 +1,6 @@
 return {
 
-	-- which_key show avilable key bindings
+	-- which_key show available key bindings
 	{
 		"folke/which-key.nvim",
 		event = "VeryLazy",
@@ -14,10 +14,17 @@ return {
 			spec = {
 				mode = { "n", "v" },
 				{ "<leader>c", group = "code" },
+				{ "<leader>e", group = "edit" },
 				{ "<leader>f", group = "file/find" },
 				{ "<leader>g", group = "git" },
 				{ "<leader>h", group = "hunks" },
+				{
+					"<leader>m",
+					group = "markdown",
+					icon = { icon = "" },
+				},
 				{ "<leader>n", group = "notif" },
+				{ "<leader>p", group = "preview", icon = { icon = " " } },
 				{ "<leader>q", group = "quit/session" },
 				{ "<leader>s", group = "search" },
 				{ "<leader>t", group = "tabs" },
@@ -35,6 +42,17 @@ return {
 				desc = "Buffer Local Keymaps (which-key)",
 			},
 		},
+	},
+
+	-- vim-pencil
+	{
+		"preservim/vim-pencil",
+		ft = { "markdown", "Rmd", "text" },
+		init = function()
+			vim.g["pencil#textwidth"] = 79
+			vim.g["pencil#wrapModeDefault"] = "hard"
+			vim.g["pencil$autoformat"] = 1
+		end,
 	},
 
 	-- indentation highlight
@@ -206,35 +224,6 @@ return {
 		end,
 	},
 
-	-- markdown live preview
-	{
-		"iamcco/markdown-preview.nvim",
-		cmd = {
-			"MarkdownPreviewToggle",
-			"MarkdownPreview",
-			"MarkdownPreviewStop",
-		},
-		ft = { "markdown" },
-		-- https://github.com/iamcco/markdown-preview.nvim/issues/690
-		build = function(plugin)
-			if vim.fn.executable("npx") then
-				vim.cmd(
-					"!cd "
-						.. plugin.dir
-						.. " && cd app && npx --yes yarn install"
-				)
-			else
-				vim.cmd([[Lazy load markdown-preview.nvim]])
-				vim.fn["mkdp#util#install"]()
-			end
-		end,
-		init = function()
-			if vim.fn.executable("npx") then
-				vim.g.mkdp_filetypes = { "markdown" }
-			end
-		end,
-	},
-
 	-- comment
 	{
 		"numToStr/Comment.nvim",
@@ -369,26 +358,6 @@ return {
 		event = "BufEnter",
 		config = function()
 			local goto_preview = require("goto-preview")
-			local keymap = vim.keymap
-
-			keymap.set(
-				"n",
-				"gp",
-				"<cmd>lua require('goto-preview').goto_preview_definition()<CR>",
-				{ desc = "Preview definition in float window" }
-			)
-			keymap.set(
-				"n",
-				"gr",
-				"<cmd>lua require('goto-preview').goto_preview_references()<CR>",
-				{ desc = "Preview references in float window" }
-			)
-			keymap.set(
-				"n",
-				"gd",
-				"<cmd>lua require('goto-preview').close_all_win()<CR>",
-				{ desc = "Preview definition in float window" }
-			)
 
 			goto_preview.setup()
 		end,
