@@ -47,3 +47,6 @@ alias dust="dust --reverse -v '\.venv' -v 'cache' -v 'DS_Store' -v '\.git' -v 'd
 
 # jqp
 alias jqp="jqp --theme catppuccin-macchiato"
+
+# glow for renderring md from CLI
+alias glow="glow -l"
