@@ -6,3 +6,9 @@ export PATH="/usr/local/texlive/2024basic/bin/universal-darwin/:$PATH"
 
 # set BAT theme
 export BAT_THEME=catppuccin_macchiato
+
+# set up for glow
+# set EDITOR to nvim for glow config
+export EDITOR="nvim"
+# set XDG_CONFIG_HOME for glow to find its config
+export XDG_CONFIG_HOME="$HOME/.config"
