@@ -192,7 +192,7 @@ vim.keymap.set(
 	"n",
 	"<leader>pd",
 	"<cmd>lua require('goto-preview').close_all_win()<CR>",
-	{ desc = "Preview definition in float window" }
+	{ desc = "Close all floating preview window" }
 )
 keymap.set(
 	"n",
