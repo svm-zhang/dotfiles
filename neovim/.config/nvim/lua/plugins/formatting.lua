@@ -22,7 +22,10 @@ return {
 						if
 							conform.get_formatter_info("ruff_format", bufnr).available
 						then
-							return { "ruff_organize_imports", "ruff_format" }
+							return {
+								"ruff_organize_imports",
+								"ruff_format",
+							}
 						else
 							return { "isort", "black" }
 						end
@@ -31,6 +34,12 @@ return {
 					yaml = { "prettier" },
 				},
 				formatters = {
+					ruff_format = {
+						append_args = {
+							"--line-length",
+							"79",
+						},
+					},
 					stylua = {
 						prepend_args = { "--column-width", "79" },
 					},
