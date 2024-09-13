@@ -70,6 +70,16 @@ return {
 		end,
 	},
 
+	-- snipe to quickly switch between buffers
+	{
+		"leath-dub/snipe.nvim",
+		opts = {
+			ui = {
+				position = "bottomleft",
+			},
+		},
+	},
+
 	-- status line
 	{
 		"nvim-lualine/lualine.nvim",
