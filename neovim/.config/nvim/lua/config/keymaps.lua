@@ -99,6 +99,12 @@ vim.keymap.set(
 	"<cmd>Pencil<CR>",
 	{ desc = "Toggle Pencil on" }
 )
+vim.keymap.set(
+	"n",
+	"<leader>eu",
+	"<cmd>URLOpenUnderCursor<CR>",
+	{ desc = "Open URL under the cursor" }
+)
 
 -- folding
 vim.keymap.set("n", "zR", function()
