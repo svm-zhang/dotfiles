@@ -24,6 +24,7 @@ return {
 					icon = { icon = "" },
 				},
 				{ "<leader>n", group = "notif" },
+				{ "<leader>o", group = "obsidian", icon = { icon = "󱞁 " } },
 				{ "<leader>p", group = "preview", icon = { icon = " " } },
 				{ "<leader>q", group = "quit/session" },
 				{ "<leader>s", group = "search" },
