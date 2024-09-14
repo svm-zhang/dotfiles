@@ -40,6 +40,8 @@ return {
 			end
 		end,
 		init = function()
+			-- below uses Zen browser to open markdown preview
+			vim.g.mkdp_browser = "Zen Browser"
 			if vim.fn.executable("npx") then
 				vim.g.mkdp_filetypes = { "markdown" }
 			end
