@@ -175,6 +175,68 @@ keymap.set(
 	{ desc = "Toggle to render markdown" }
 )
 
+-- obsidian
+vim.keymap.set("n", "<leader>oc", function()
+	require("obsidian").util.toggle_checkbox()
+end, { desc = "Toggle obsidian checkbox" })
+vim.keymap.set(
+	"n",
+	"<leader>od",
+	"<cmd>ObsidianToday<CR>",
+	{ desc = "Create a today note" }
+)
+vim.keymap.set("n", "<leader>of", function()
+	require("obsidian").util.gf_passthrough()
+end, { desc = "Goto obsidian note within the vault" })
+vim.keymap.set(
+	"n",
+	"<leader>ol",
+	"<cmd>ObsidianLinks<CR>",
+	{ desc = "Show obsidian links" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>oL",
+	"<cmd>ObsidianBackLinks<CR>",
+	{ desc = "Show obsidian backlinks" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>on",
+	"<cmd>ObsidianNew<CR>",
+	{ desc = "Create new obsidian note" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>oN",
+	"<cmd>ObsidianNewFromTemplate<CR>",
+	{ desc = "Create new obsidian note from a template" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>oo",
+	"<cmd>ObsidianOpen<CR>",
+	{ desc = "Create new obsidian note from a template" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>oq",
+	"<cmd>ObsidianQuickSwitch<CR>",
+	{ desc = "Switch to another note in the vault" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>os",
+	"<cmd>ObsidianSearch<CR>",
+	{ desc = "Search obsidian note in the vault" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>ot",
+	"<cmd>ObsidianTemplate<CR>",
+	{ desc = "Insert obsidian template" }
+)
+
 -- preview LSP
 vim.keymap.set(
 	"n",
@@ -291,6 +353,10 @@ keymap.set(
 	"<C-w>T",
 	{ desc = "Open current window at new tab" }
 )
+
+vim.keymap.set("n", "<leader>b", function()
+	require("snipe").open_buffer_menu()
+end, { desc = "Open Snipe buffer menu" })
 
 -- noice keymaps
 vim.keymap.set(
