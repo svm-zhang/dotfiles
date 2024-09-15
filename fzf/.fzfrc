@@ -1,18 +1,16 @@
 # setup fzf color theme
 # set the keybinding for navigate fzf ui
-fzf_navigate="j:down,k:up,ctrl-j:preview-down,ctrl-k:preview-up,ctrl-b:preview-page-up,ctrl-f:preview-page-down"
+fzf_navigate="ctrl-f:down,ctrl-b:up,ctrl-j:preview-down,ctrl-k:preview-up"
 # directory to skip
 walker_skip=".git,.venv,dist,docs,__pycache__,.mypy_cache,.ruff_cache"
 export FZF_DEFAULT_OPTS=" \
---color=bg+:#363a4f,bg:#24273a,spinner:#f4dbd6,hl:#ed8796 \
+--color=bg+:-1,bg:-1,spinner:#f4dbd6,hl:#ed8796 \
 --color=fg:#cad3f5,header:#ed8796,info:#c6a0f6,pointer:#f4dbd6 \
 --color=marker:#b7bdf8,fg+:#cad3f5,prompt:#c6a0f6,hl+:#ed8796 \
 --color=selected-bg:#494d64 \
 --no-height \
 --multi \
 --layout reverse \
---info inline \
---border top
 --walker-skip '$walker_skip'
 --bind '$fzf_navigate'
 "
