@@ -6,6 +6,9 @@ set -o vi
 # load aliases setup
 [ -f "$HOME/.bash_aliases" ] && . "$HOME/.bash_aliases"
 
+# load my personal aliases setup
+[ -f "$HOME/.my_aliases" ] && . "$HOME/.my_aliases"
+
 # load fzfrc
 [ -f "$HOME/.fzfrc" ] && . "$HOME/.fzfrc"
 
