@@ -72,6 +72,24 @@ vim.keymap.set(
 	"<cmd>LspRestart<CR>",
 	{ silent = true, desc = "Restart LSP" }
 )
+vim.keymap.set(
+	"x",
+	"<leader>csc",
+	"<cmd>CodeSnap<CR>",
+	{ desc = "Save selected code snapshot into clipboard" }
+)
+vim.keymap.set(
+	"x",
+	"<leader>css",
+	"<cmd>CodeSnapSave<CR>",
+	{ desc = "Save selected code snapshot into clipboard" }
+)
+vim.keymap.set(
+	"x",
+	"<leader>csa",
+	"<cmd>CodeSnapASCII<CR>",
+	{ desc = "Save selected code snapshot into clipboard" }
+)
 
 -- find/files
 vim.keymap.set(
