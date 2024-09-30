@@ -135,4 +135,23 @@ return {
 			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
 		end,
 	},
+
+	{
+		"mistricky/codesnap.nvim",
+		build = "make build_generator",
+		config = function()
+			local codesnap = require("codesnap")
+
+			codesnap.setup({
+				mac_window_bar = false,
+				code_font_family = "IosevkaTerm Nerd Font",
+				watermark = "",
+				bg_theme = "grape",
+				has_breadcrumbs = false,
+				has_line_number = false,
+				show_workspace = false,
+				save_path = os.getenv("HOME") .. "/Pictures",
+			})
+		end,
+	},
 }
