@@ -28,6 +28,7 @@ return {
 					"lua_ls",
 					"pyright",
 					"r_language_server",
+					"rust-analyzer",
 				},
 				automatic_installation = true,
 			})
