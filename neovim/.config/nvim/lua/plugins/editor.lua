@@ -27,6 +27,7 @@ return {
 				{ "<leader>o", group = "obsidian", icon = { icon = "󱞁 " } },
 				{ "<leader>p", group = "preview", icon = { icon = " " } },
 				{ "<leader>q", group = "quit/session" },
+				{ "<leader>r", group = "rust", icon = { icon = "" } },
 				{ "<leader>s", group = "search" },
 				{ "<leader>t", group = "tabs" },
 				{ "<leader>w", group = "window" },
