@@ -50,6 +50,7 @@ return {
 					{ name = "path" },
 					{ name = "cmdline" },
 					{ name = "cmp_r" },
+					{ name = "crates" },
 				}),
 			})
 		end,
