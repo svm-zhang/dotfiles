@@ -2,7 +2,6 @@ local opt = vim.opt
 
 opt.cursorline = true
 opt.number = true
-opt.relativenumber = true
 
 opt.tabstop = 2
 opt.expandtab = true
@@ -36,6 +35,8 @@ opt.spelllang = "en_us"
 opt.spell = true
 
 opt.conceallevel = 2
+
+opt.clipboard:append("unnamedplus")
 
 -- enable nvim transparent
 vim.g.transparent_enabled = true
