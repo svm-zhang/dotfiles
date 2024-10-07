@@ -50,3 +50,7 @@ alias jqp="jqp --theme catppuccin-macchiato"
 
 # glow for renderring md from CLI
 alias glow="glow -l"
+
+# bat
+alias bath="bat --language=help --style=plain"
+alias batp="bat --plain"
