@@ -9,7 +9,44 @@
   },
   "blocks": [
     {
+      "type": "prompt",
       "alignment": "left",
+      "segments": [
+        {
+          "foreground": "p:pink",
+          "properties": {
+            "folder_icon": "..\ue5fe..",
+            "home_icon": "~",
+            "style": "agnoster_full"
+          },
+          "style": "plain",
+          "template": "󰉋 {{ .Path }} ",
+          "type": "path"
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "foreground": "p:lavender",
+          "template": "   {{ .Name }} ",
+          "type": "shell"
+        },
+        {
+          "foreground": "p:blue",
+          "properties": {
+            "home_enabled": true
+          },
+          "display_mode": "files",
+          "type": "python"
+        }
+      ]
+    },
+    {
+      "alignment": "left",
+      "newline": true,
       "segments": [
         {
           "foreground": "p:os",
@@ -22,17 +59,6 @@
           "style": "plain",
           "template": "{{ .UserName }} ",
           "type": "session"
-        },
-        {
-          "foreground": "p:pink",
-          "properties": {
-            "folder_icon": "..\ue5fe..",
-            "home_icon": "~",
-            "style": "agnoster_short"
-          },
-          "style": "plain",
-          "template": "{{ .Path }} ",
-          "type": "path"
         },
         {
           "foreground": "p:lavender",
@@ -62,6 +88,7 @@
       "type": "prompt"
     }
   ],
+  "enable_cursor_positioning": true,
   "final_space": true,
   "version": 2
 }
