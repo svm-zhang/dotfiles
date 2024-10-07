@@ -13,3 +13,11 @@ function yy() {
   rm -f -- "$tmp"
 }
 
+
+function h() {
+  "$@" --help 2>&1 | bath
+}
+
+batdiff() {
+    git diff --name-only --relative --diff-filter=d | xargs bat --diff
+}
