@@ -14,6 +14,12 @@ return {
 				markdown = { "markdownlint-cli2" },
 			}
 
+			local mypy = lint.linters.mypy
+			mypy.args = {
+				"--exclude",
+				"/tests",
+			}
+
 			local lint_augroup =
 				vim.api.nvim_create_augroup("lint", { clear = true })
 
