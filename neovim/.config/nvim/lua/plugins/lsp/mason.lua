@@ -28,7 +28,7 @@ return {
 					"lua_ls",
 					"pyright",
 					"r_language_server",
-					"rust-analyzer",
+					"yamlls",
 				},
 				automatic_installation = true,
 			})
@@ -37,6 +37,7 @@ return {
 				ensure_installed = {
 					"black",
 					"isort",
+					"htmlbeautifier",
 					"prettier",
 					"stylua",
 					"shfmt",
