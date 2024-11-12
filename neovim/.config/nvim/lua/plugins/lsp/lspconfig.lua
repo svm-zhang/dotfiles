@@ -90,6 +90,8 @@ return {
 					"Rmd",
 				},
 			})
+
+			lspconfig.yamlls.setup({})
 		end,
 	},
 }
