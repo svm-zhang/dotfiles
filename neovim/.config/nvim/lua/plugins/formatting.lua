@@ -10,11 +10,10 @@ return {
 				formatters_by_ft = {
 					bash = { "shfmt" },
 					css = { "prettier" },
-					html = { "prettier" },
+					html = { "htmlbeautifier" },
 					json = { "prettier" },
 					lua = { "stylua" },
 					markdown = {
-						"prettier",
 						"markdownlint-cli2",
 						"markdown-toc",
 					},
