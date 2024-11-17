@@ -66,21 +66,7 @@ return {
 				capabilities = capabilities,
 			})
 
-			lspconfig.pyright.setup({
-				capabilities = capabilities,
-				-- per recommendation of ruff doc
-				-- https://docs.astral.sh/ruff/editors/setup/#neovim
-				settings = {
-					pyright = {
-						disableOrganizeImports = true,
-					},
-					python = {
-						analysis = {
-							ignore = { "*" },
-						},
-					},
-				},
-			})
+			lspconfig.ruff.setup({})
 
 			lspconfig.r_language_server.setup({
 				filetypes = {
@@ -91,7 +77,15 @@ return {
 				},
 			})
 
+			lspconfig.tailwindcss.setup({})
+
 			lspconfig.yamlls.setup({})
+
+			-- enable snippet support
+			capabilities = vim.lsp.protocol.make_client_capabilities()
+			capabilities.textDocument.completion.completionItem.snippetSupport =
+				true
+			lspconfig.cssls.setup({})
 		end,
 	},
 }
