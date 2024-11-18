@@ -11,6 +11,9 @@ return {
 				custom_highlights = function(colors)
 					local u = require("catppuccin.utils.colors")
 					return {
+						DiffAdd = { bg = "" },
+						DiffChange = { bg = "" },
+						DiffDelete = { bg = "" },
 						Visual = {
 							bg = u.blend(colors.overlay0, colors.base, 0.7),
 						},
