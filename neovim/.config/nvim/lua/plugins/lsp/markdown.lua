@@ -6,10 +6,10 @@ return {
 			"nvim-treesitter/nvim-treesitter",
 			"nvim-tree/nvim-web-devicons",
 		}, -- if you prefer nvim-web-devicons
-		-- Disable hl color for code block background globally
-		vim.api.nvim_set_hl(0, "RenderMarkdownCode", { bg = "" }),
 		config = function()
 			require("render-markdown").setup({
+				-- Disable hl color for code block background globally
+				vim.api.nvim_set_hl(0, "RenderMarkdownCode", { bg = "" }),
 				file_types = { "markdown", "rmd", "Rmd" },
 				bullet = {
 					left_pad = 2,
@@ -28,6 +28,14 @@ return {
 					below = "",
 					sign = false,
 					-- Disable hl color for all headings
+					icons = {
+						"󰎤 ",
+						"󰎧 ",
+						"󰎪 ",
+						"󰎭 ",
+						"󰎱 ",
+						"󰎳 ",
+					},
 					backgrounds = {
 						"",
 						"",
