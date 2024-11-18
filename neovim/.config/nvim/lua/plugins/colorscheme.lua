@@ -8,6 +8,17 @@ return {
 			require("catppuccin").setup({
 				flavour = "macchiato",
 				transparent_background = true,
+				custom_highlights = function(colors)
+					local u = require("catppuccin.utils.colors")
+					return {
+						Visual = {
+							bg = u.blend(colors.overlay0, colors.base, 0.7),
+						},
+						CursorLine = {
+							bg = u.blend(colors.overlay0, colors.base, 0.7),
+						},
+					}
+				end,
 				term_colors = true,
 				integrations = {
 					bufferline = true,
