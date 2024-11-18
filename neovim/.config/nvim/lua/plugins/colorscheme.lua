@@ -20,6 +20,8 @@ return {
 						CursorLine = {
 							bg = u.blend(colors.overlay0, colors.base, 0.7),
 						},
+						-- colors.mantle under Latte theme
+						LineNr = { fg = "#e6e9ef" },
 					}
 				end,
 				term_colors = true,
