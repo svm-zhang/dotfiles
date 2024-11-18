@@ -22,6 +22,7 @@ return {
 						},
 						-- colors.mantle under Latte theme
 						LineNr = { fg = "#e6e9ef" },
+						Comment = { fg = colors.flamingo },
 					}
 				end,
 				term_colors = true,
