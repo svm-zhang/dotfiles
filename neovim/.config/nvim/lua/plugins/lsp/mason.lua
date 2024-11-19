@@ -27,6 +27,7 @@ return {
 					"bashls",
 					"cssls",
 					"lua_ls",
+					"pyright",
 					"r_language_server",
 					"yamlls",
 					"tailwindcss",
