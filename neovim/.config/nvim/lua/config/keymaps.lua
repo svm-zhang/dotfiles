@@ -414,3 +414,18 @@ vim.keymap.set(
 	end,
 	{ desc = "Show popup menu for the crate under the cursor", silent = true }
 )
+
+vim.keymap.set(
+	"t",
+	"<esc><esc>",
+	"<C-\\><C-n>",
+	{ desc = "Toggle normal mode in terimal" }
+)
+vim.keymap.set(
+	{ "n", "t" },
+	"<leader>ct",
+	function()
+		require("custom.floaterminal").toggle_float_terminal()
+	end,
+	{ desc = "Open floating windown within neovim" }
+)
