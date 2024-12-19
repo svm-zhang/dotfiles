@@ -26,7 +26,7 @@ local function create_float_terminal(opts)
 	end
 
 	local win_opts = {
-		relative = "win",
+		relative = "editor",
 		row = row,
 		col = col,
 		width = width,
