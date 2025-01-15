@@ -421,11 +421,32 @@ vim.keymap.set(
 	"<C-\\><C-n>",
 	{ desc = "Toggle normal mode in terimal" }
 )
+vim.keymap.set({ "n", "t" }, "<leader>ct", function()
+	require("custom.floaterminal").toggle_float_terminal()
+end, { desc = "Open floating windown within neovim" })
+
+-- keymap for jupynium
 vim.keymap.set(
-	{ "n", "t" },
-	"<leader>ct",
-	function()
-		require("custom.floaterminal").toggle_float_terminal()
-	end,
-	{ desc = "Open floating windown within neovim" }
+	"n",
+	"<leader>ja",
+	"<cmd>JupyniumStartAndAttachToServer<CR>",
+	{ desc = "Start and attach to Jupynium server" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>je",
+	"<cmd>JupyniumStartSync<CR>",
+	{ desc = "Sync nvim buffer with notebook server" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>jkr",
+	"<cmd>JupyniumKernelRestart<CR>",
+	{ desc = "Sync nvim buffer with notebook server" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>jkc",
+	"<cmd>JupyniumKernelInterrupt<CR>",
+	{ desc = "Sync nvim buffer with notebook server" }
 )
