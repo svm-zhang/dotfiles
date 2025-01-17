@@ -9,14 +9,14 @@ window-padding-y = 10,10
 
 scrollback-limit = 10000
 
-keybind = ctrl+a>c=new_tab
-keybind = ctrl+a>h=previous_tab
-keybind = ctrl+a>l=next_tab
+# keybind = ctrl+a>c=new_tab
+# keybind = ctrl+a>h=previous_tab
+# keybind = ctrl+a>l=next_tab
 
 keybind = ctrl+a>v=new_split:right
 keybind = ctrl+a>j=new_split:up
-keybind = ctrl+h=goto_split:left
-keybind = ctrl+l=goto_split:right
-keybind = ctrl+j=goto_split:top
-keybind = ctrl+k=goto_split:bottom
-keybind = ctrl+a>e=equalize_splits
+# keybind = ctrl+h=goto_split:left
+# keybind = ctrl+l=goto_split:right
+# keybind = ctrl+j=goto_split:top
+# keybind = ctrl+k=goto_split:bottom
+# keybind = ctrl+a>e=equalize_splits
