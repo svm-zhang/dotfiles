@@ -90,8 +90,6 @@ return {
 				},
 			})
 
-			lspconfig.tailwindcss.setup({})
-
 			lspconfig.yamlls.setup({})
 
 			-- enable snippet support
