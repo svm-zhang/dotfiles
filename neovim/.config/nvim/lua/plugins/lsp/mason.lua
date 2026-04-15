@@ -30,7 +30,6 @@ return {
 					"pyright",
 					"r_language_server",
 					"yamlls",
-					"tailwindcss",
 				},
 				automatic_installation = true,
 			})
