@@ -46,8 +46,6 @@ return {
 					"shellcheck",
 					"ruff",
 					"mypy",
-					"markdownlint-cli2",
-					"markdown-toc",
 				},
 			})
 		end,
