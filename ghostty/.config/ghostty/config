@@ -1,13 +1,9 @@
-theme = catppuccin-macchiato
-background-opacity = 0.9
-
-font-family = Iosevka Term
-font-size = 19
+background-opacity = 1.0
 
 window-padding-x = 10,10
 window-padding-y = 10,10
 
-scrollback-limit = 10000
+scrollback-limit = 100000
 
 # keybind = ctrl+a>c=new_tab
 # keybind = ctrl+a>h=previous_tab
@@ -20,3 +16,7 @@ keybind = ctrl+a>j=new_split:up
 # keybind = ctrl+j=goto_split:top
 # keybind = ctrl+k=goto_split:bottom
 # keybind = ctrl+a>e=equalize_splits
+
+# Local overrides for frequently changed appearance settings.
+config-file = ?local/theme.conf
+config-file = ?local/fonts.conf
