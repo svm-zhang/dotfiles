@@ -16,8 +16,6 @@ return {
 			},
 		},
 		config = function()
-			local lspconfig = require("lspconfig")
-
 			local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
 			vim.api.nvim_create_autocmd("LspAttach", {
@@ -41,7 +39,7 @@ return {
 				)
 			end
 
-			lspconfig.lua_ls.setup({
+			vim.lsp.config("lua_ls", {
 				capabilities = capabilities,
 				settings = {
 					Lua = {
@@ -62,11 +60,12 @@ return {
 				},
 			})
 
-			lspconfig.bashls.setup({
+			vim.lsp.config("bashls", {
 				capabilities = capabilities,
 			})
 
-			lspconfig.pyright.setup({
+			vim.lsp.config("pyright", {
+				capabilities = capabilities,
 				settings = {
 					pyright = {
 						-- Using Ruff's import organizer
@@ -81,7 +80,8 @@ return {
 				},
 			})
 
-			lspconfig.r_language_server.setup({
+			vim.lsp.config("r_language_server", {
+				capabilities = capabilities,
 				filetypes = {
 					"r",
 					"R",
@@ -90,13 +90,13 @@ return {
 				},
 			})
 
-			lspconfig.yamlls.setup({})
+			vim.lsp.config("yamlls", {
+				capabilities = capabilities,
+			})
 
-			-- enable snippet support
-			capabilities = vim.lsp.protocol.make_client_capabilities()
-			capabilities.textDocument.completion.completionItem.snippetSupport =
-				true
-			lspconfig.cssls.setup({})
+			vim.lsp.config("cssls", {
+				capabilities = capabilities,
+			})
 		end,
 	},
 }
