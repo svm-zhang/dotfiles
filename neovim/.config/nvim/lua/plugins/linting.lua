@@ -11,7 +11,6 @@ return {
 
 			lint.linters_by_ft = {
 				python = { "ruff", "mypy" },
-				markdown = { "markdownlint-cli2" },
 			}
 
 			local mypy = lint.linters.mypy
