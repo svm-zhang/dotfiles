@@ -24,6 +24,12 @@ return {
 			})
 
 			local capabilities = cmp_nvim_lsp.default_capabilities()
+			capabilities.textDocument.completion.completionItem.snippetSupport =
+				true
+			capabilities.textDocument.foldingRange = {
+				dynamicRegistration = false,
+				lineFoldingOnly = true,
+			}
 
 			local signs = {
 				Error = " ",

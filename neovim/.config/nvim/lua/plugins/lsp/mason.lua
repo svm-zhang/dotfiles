@@ -31,6 +31,13 @@ return {
 					"r_language_server",
 					"yamlls",
 				},
+				automatic_enable = {
+					-- Explicitly exclude stylua from being enabled as LSP
+					-- This fixes the stylua command warning about no `--lsp` option.
+					exclude = {
+						"stylua",
+					},
+				},
 				automatic_installation = true,
 			})
 
