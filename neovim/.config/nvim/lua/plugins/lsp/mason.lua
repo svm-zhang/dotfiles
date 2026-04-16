@@ -27,6 +27,7 @@ return {
 					"bashls",
 					"cssls",
 					"lua_ls",
+					"marksman",
 					"pyright",
 					"r_language_server",
 					"yamlls",

@@ -70,6 +70,10 @@ return {
 				capabilities = capabilities,
 			})
 
+			vim.lsp.config("marksman", {
+				capabilities = capabilities,
+			})
+
 			vim.lsp.config("pyright", {
 				capabilities = capabilities,
 				settings = {
