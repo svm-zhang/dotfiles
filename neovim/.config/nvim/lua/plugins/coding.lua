@@ -11,7 +11,6 @@ return {
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
 			"hrsh7th/cmp-cmdline",
-			"R-nvim/cmp-r",
 			"L3MON4D3/LuaSnip",
 			"saadparwaiz1/cmp_luasnip",
 			"rafamadriz/friendly-snippets",
@@ -49,7 +48,6 @@ return {
 					{ name = "buffer" }, -- text within current buffer
 					{ name = "path" },
 					{ name = "cmdline" },
-					{ name = "cmp_r" },
 					{ name = "crates" },
 				}),
 			})

@@ -36,8 +36,4 @@ return {
 			require("r.pdf.generic").open = vim.ui.open
 		end,
 	},
-
-	{
-		"R-nvim/cmp-r",
-	},
 }
