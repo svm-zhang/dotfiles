@@ -51,31 +51,18 @@ return {
 
 	-- markdown live preview
 	{
-		"iamcco/markdown-preview.nvim",
-		cmd = {
-			"MarkdownPreviewToggle",
-			"MarkdownPreview",
-			"MarkdownPreviewStop",
-		},
-		ft = { "markdown" },
-		-- https://github.com/iamcco/markdown-preview.nvim/issues/690
-		build = function(plugin)
-			if vim.fn.executable("npx") then
-				vim.cmd(
-					"!cd "
-						.. plugin.dir
-						.. " && cd app && npx --yes yarn install"
-				)
-			else
-				vim.cmd([[Lazy load markdown-preview.nvim]])
-				vim.fn["mkdp#util#install"]()
-			end
-		end,
-		init = function()
-			vim.g.mkdp_browser = ""
-			if vim.fn.executable("npx") then
-				vim.g.mkdp_filetypes = { "markdown" }
-			end
+		"selimacerbas/markdown-preview.nvim",
+		dependencies = { "selimacerbas/live-server.nvim" },
+		config = function()
+			require("markdown_preview").setup({
+				-- all optional; sane defaults shown
+				instance_mode = "takeover", -- "takeover" (one tab) or "multi" (tab per instance)
+				port = 0, -- 0 = auto (8421 for takeover, OS-assigned for multi)
+				open_browser = true,
+				debounce_ms = 300,
+				-- mermaid rust renderer
+				mermaid_renderer = "rust", -- default is js
+			})
 		end,
 	},
 }

@@ -189,7 +189,7 @@ vim.keymap.set(
 keymap.set(
 	"n",
 	"<leader>mp",
-	"<cmd>MarkdownPreviewToggle<CR>",
+	"<cmd>MarkdownPreview<CR>",
 	{ desc = "Toggle markdown live preview in web browser" }
 )
 keymap.set(
