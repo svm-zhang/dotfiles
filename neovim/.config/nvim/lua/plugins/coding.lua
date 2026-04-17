@@ -58,7 +58,7 @@ return {
 	{
 		"kylechui/nvim-surround",
 		event = { "BufReadPre", "BufNewFile" },
-		version = "*", -- Use for stability; omit to use `main` branch for the latest features
+		version = "^4.0.0", -- Use for stability; omit to use `main` branch for the latest features
 		config = true,
 	},
 
@@ -112,6 +112,11 @@ return {
 				ts_config = {
 					lua = { "string" },
 					javascript = { "template_string" },
+				},
+				-- Add fastwrap rule, triggered with Alt+e
+				fast_wrap = {
+					map = "<A-e>",
+					cursor_pos_before = false,
 				},
 			})
 
