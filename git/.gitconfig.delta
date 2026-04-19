@@ -1,0 +1,25 @@
+[delta]
+  syntax-theme = catppuccin_macchiato
+  dark = true
+  tabs = 4
+
+  file-style = omit
+  file-decoration-style = none
+
+  line-numbers-left-format = "{nm:>4} "
+  line-numbers-right-format = "│ {np:>4} "
+  line-numbers-left-style = white dim
+  line-numbers-right-style = "#1f2335" dim
+  line-numbers-zero-style = white dim
+  line-numbers-plus-style = white dim 
+  line-numbers-minus-style = white dim
+  line-numbers-zero-style = white dim
+
+  wrap-left-symbol = " "
+  wrap-right-symbol = " "
+  wrap-right-prefix-symbol = " "
+
+  plus-style = syntax "#0e250e"
+  plus-emph-style = syntax "#103610"
+  minus-style = syntax "#402a26"
+  minus-emph-style = syntax "#45221c"

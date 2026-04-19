@@ -1,0 +1,34 @@
+[branch]
+  sort = -committerdate
+
+[fetch]
+  prune = true
+
+[pager]
+  diff = diffnav
+  log = delta
+  reflog = delta
+  show = diffnav
+
+[core]
+  editor = nvim
+
+[alias]
+	ci = commit
+	st = status
+	br = branch
+	co = checkout
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+[include]
+  path = ~/.gitconfig.local
+
+[include]
+  path = ~/.gitconfig.delta
+
+
