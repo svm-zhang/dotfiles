@@ -44,7 +44,6 @@ return {
 
 			local source_names = {
 				nvim_lsp = "[LSP]",
-				nvim_lsp_signature_help = "[Sig]",
 				luasnip = "[LuaSnip]",
 				buffer = "[Buffer]",
 				path = "[Path]",
@@ -53,6 +52,23 @@ return {
 
 			local fields = { "icon", "abbr", "kind", "menu" }
 
+			local function canonical_path(path)
+				local realpath = (vim.uv or vim.loop).fs_realpath(path)
+				return vim.fs.normalize(realpath or path)
+			end
+
+			local custom_snippet_root =
+				canonical_path(vim.fn.stdpath("config") .. "/lua/snippets")
+			local friendly_snippet_root = canonical_path(
+				vim.fn.stdpath("data") .. "/lazy/friendly-snippets"
+			)
+
+			local function path_in_root(path, root)
+				local normalized_path = canonical_path(path)
+				return normalized_path == root
+					or normalized_path:sub(1, #root + 1) == root .. "/"
+			end
+
 			local function lsp_client_name(entry)
 				if entry.source.name ~= "nvim_lsp" then
 					return nil
@@ -60,6 +76,41 @@ return {
 
 				local debug_name = entry.source:get_debug_name()
 				return debug_name:match("^nvim_lsp:(.+)$")
+			end
+
+			local function luasnip_source_name(entry)
+				if entry.source.name ~= "luasnip" then
+					return nil
+				end
+
+				local data = entry.completion_item.data
+				if not data or not data.snip_id then
+					return source_names.luasnip
+				end
+
+				local ok_snip, snip =
+					pcall(luasnip.get_id_snippet, data.snip_id)
+				if not ok_snip or not snip then
+					return source_names.luasnip
+				end
+
+				local ok_source, source = pcall(
+					require("luasnip.session.snippet_collection.source").get,
+					snip
+				)
+				if not ok_source or not source or not source.file then
+					return source_names.luasnip
+				end
+
+				if path_in_root(source.file, friendly_snippet_root) then
+					return "[Friendly]"
+				end
+
+				if path_in_root(source.file, custom_snippet_root) then
+					return "[Custom]"
+				end
+
+				return source_names.luasnip
 			end
 
 			local function current_buffer_source(keyword_length)
@@ -80,13 +131,21 @@ return {
 				if client_name then
 					return "[" .. client_name .. "]"
 				end
-				return source_names[entry.source.name] or string.format("[%s]", entry.source.name)
+
+				local snippet_source = luasnip_source_name(entry)
+				if snippet_source then
+					return snippet_source
+				end
+
+				return source_names[entry.source.name]
+					or string.format("[%s]", entry.source.name)
 			end
 
 			local function format_completion_item(entry, vim_item)
 				local kind = vim_item.kind
+				local icon = kind_icons[kind] or ""
 
-				vim_item.icon = kind_icons[kind] or ""
+				vim_item.icon = icon .. " "
 				vim_item.kind = kind
 				vim_item.menu = source_label(entry)
 				vim_item.icon_hl_group = "CmpItemKind" .. kind .. "Icon"
@@ -97,7 +156,7 @@ return {
 
 			local function format_cmdline_item(entry, vim_item)
 				if entry.source.name == "cmdline" then
-					vim_item.icon = ""
+					vim_item.icon = " "
 					vim_item.kind = "CMD"
 					vim_item.menu = ""
 					vim_item.icon_hl_group = "CmpItemKindKeywordIcon"
@@ -131,7 +190,7 @@ return {
 						border = "rounded",
 						winhighlight = "Normal:Pmenu,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
 						col_offset = -3,
-						side_padding = 0,
+						side_padding = 1,
 					}),
 					documentation = cmp.config.window.bordered({
 						border = "rounded",

@@ -11,6 +11,7 @@ return {
 				update_events = { "TextChanged", "TextChangedI" },
 				delete_check_events = "TextChanged",
 				enable_autosnippets = false,
+				loaders_store_source = true,
 			})
 
 			luasnip.filetype_extend("python", { "pydoc" })
