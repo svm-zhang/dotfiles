@@ -424,3 +424,93 @@ vim.keymap.set(
 vim.keymap.set({ "n", "t" }, "<leader>ct", function()
 	require("custom.floaterminal").toggle_float_terminal()
 end, { desc = "Open floating windown within neovim" })
+
+vim.keymap.set("n", "<leader>fc", function()
+	local pickers = require("telescope.pickers")
+	local finders = require("telescope.finders")
+	local conf = require("telescope.config").values
+	local actions = require("telescope.actions")
+	local action_state = require("telescope.actions.state")
+
+	local colors = {
+		"catppuccin",
+		"catppuccin-macchiato",
+		"catppuccin-mocha",
+		"tokyonight",
+		"tokyonight-night",
+		"tokyonight-storm",
+		"tokyonight-moon",
+		"tokyonight-day",
+		"nightfox",
+		"dayfox",
+		"dawnfox",
+		"duskfox",
+		"nordfox",
+		"carbonfox",
+		"terafox",
+	}
+
+	local original_colorscheme = vim.g.colors_name
+	local original_background = vim.o.background
+	local previewed = false
+	local keep_colorscheme = false
+
+	local function apply_colorscheme(name)
+		local ok, err = pcall(vim.cmd.colorscheme, name)
+		if not ok then
+			vim.notify(err, vim.log.levels.ERROR, {
+				title = "Colorscheme",
+			})
+		end
+		return ok
+	end
+
+	local function selected_colorscheme()
+		local selection = action_state.get_selected_entry()
+		return selection and selection.value
+	end
+
+	local function preview_colorscheme()
+		local name = selected_colorscheme()
+		if name and apply_colorscheme(name) then
+			previewed = true
+		end
+	end
+
+	pickers
+		.new({}, {
+			prompt_title = "Switch Colorscheme",
+			finder = finders.new_table({
+				results = colors,
+			}),
+			sorter = conf.generic_sorter({}),
+			attach_mappings = function(prompt_bufnr, map)
+				actions.select_default:replace(function()
+					local name = selected_colorscheme()
+					keep_colorscheme = true
+					actions.close(prompt_bufnr)
+
+					if name then
+						apply_colorscheme(name)
+					end
+				end)
+
+				map({ "i", "n" }, "<C-p>", preview_colorscheme)
+				actions.close:enhance({
+					post = function()
+						if
+							previewed
+							and not keep_colorscheme
+							and original_colorscheme
+						then
+							vim.o.background = original_background
+							apply_colorscheme(original_colorscheme)
+						end
+					end,
+				})
+
+				return true
+			end,
+		})
+		:find()
+end, { desc = "Switch colorscheme" })

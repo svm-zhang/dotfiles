@@ -7,7 +7,12 @@ return {
 		config = function()
 			require("catppuccin").setup({
 				flavour = "macchiato",
+				auto_integrations = true,
 				transparent_background = true,
+				float = {
+					transparent = true,
+					solid = true,
+				},
 				custom_highlights = function(colors)
 					local u = require("catppuccin.utils.colors")
 					return {
@@ -26,39 +31,31 @@ return {
 					}
 				end,
 				term_colors = true,
+				lsp_styles = {
+					underlines = {
+						errors = { "undercurl" },
+						hints = { "underline" },
+						warnings = { "undercurl" },
+						information = { "underline" },
+						ok = { "underline" },
+					},
+				},
 				integrations = {
-					bufferline = true,
-					cmp = true,
-					diffview = true,
-					gitsigns = true,
 					indent_blankline = {
 						enabled = true,
 						scope_color = "lavender",
 					},
-					lsp_trouble = true,
-					mason = true,
-					native_lsp = {
-						enabled = true,
-						underlines = {
-							errors = { "undercurl" },
-							hints = { "undercurl" },
-							warnings = { "undercurl" },
-							information = { "undercurl" },
-						},
-					},
-					neogit = true,
-					neotree = true,
-					noice = true,
-					notify = true,
-					nvim_surround = true,
-					telescope = true,
-					treesitter = true,
-					ufo = true,
-					which_key = true,
 				},
 			})
 
 			vim.cmd.colorscheme("catppuccin")
 		end,
 	},
+
+	{
+		"folke/tokyonight.nvim",
+		lazy = true,
+	},
+
+	{ "EdenEast/nightfox.nvim", lazy = true },
 }
