@@ -9,11 +9,9 @@ return {
 			"hrsh7th/cmp-cmdline",
 			"L3MON4D3/LuaSnip",
 			"saadparwaiz1/cmp_luasnip",
-			"rafamadriz/friendly-snippets",
 		},
 		config = function()
 			local cmp = require("cmp")
-
 			local luasnip = require("luasnip")
 
 			local kind_icons = {
@@ -82,8 +80,7 @@ return {
 				if client_name then
 					return "[" .. client_name .. "]"
 				end
-				return source_names[entry.source.name]
-					or string.format("[%s]", entry.source.name)
+				return source_names[entry.source.name] or string.format("[%s]", entry.source.name)
 			end
 
 			local function format_completion_item(entry, vim_item)
@@ -192,8 +189,6 @@ return {
 					{ name = "cmdline" },
 				}),
 			})
-
-			require("luasnip.loaders.from_vscode").lazy_load()
 		end,
 	},
 
