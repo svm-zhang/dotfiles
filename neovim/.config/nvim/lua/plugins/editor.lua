@@ -1,3 +1,50 @@
+local trouble_symbol_kinds = {
+	Class = true,
+	Constructor = true,
+	Enum = true,
+	Function = true,
+	Interface = true,
+	Method = true,
+	Struct = true,
+	Trait = true,
+}
+
+local function trouble_symbol_filter(items)
+	return vim.tbl_filter(function(item)
+		if item.ft == "help" or item.ft == "markdown" then
+			return true
+		end
+
+		if not trouble_symbol_kinds[item.kind] then
+			return false
+		end
+
+		local text = item.text or ""
+		return not (
+			text:match("^%s*import%s+")
+			or text:match("^%s*from%s+")
+			or text:match("%simport%s+")
+			or text:match("%sfrom%s+")
+		)
+	end, items)
+end
+
+local trouble_lsp_location_keys = {
+	["<cr>"] = "jump_vsplit_close",
+	o = "jump_vsplit_close",
+}
+
+local trouble_lsp_preview = {
+	type = "float",
+	relative = "editor",
+	border = "rounded",
+	title = "Preview",
+	title_pos = "center",
+	position = { 0.5, -4 },
+	size = { width = 0.45, height = 0.45 },
+	zindex = 200,
+}
+
 return {
 
 	-- which_key show available key bindings
@@ -110,6 +157,42 @@ return {
 		opts = {
 			focus = true,
 			modes = {
+				symbols = {
+					mode = "lsp_document_symbols",
+					pinned = true,
+					filter = trouble_symbol_filter,
+					format = "{kind_icon} {symbol.name} {pos}",
+					win = {
+						relative = "win",
+						position = "right",
+						size = { width = 50 },
+					},
+				},
+				lsp_definitions = {
+					auto_jump = false,
+					keys = trouble_lsp_location_keys,
+					preview = trouble_lsp_preview,
+				},
+				lsp_references = {
+					auto_jump = false,
+					keys = trouble_lsp_location_keys,
+					preview = trouble_lsp_preview,
+				},
+				lsp_implementations = {
+					auto_jump = false,
+					keys = trouble_lsp_location_keys,
+					preview = trouble_lsp_preview,
+				},
+				lsp_type_definitions = {
+					auto_jump = false,
+					keys = trouble_lsp_location_keys,
+					preview = trouble_lsp_preview,
+				},
+				lsp_declarations = {
+					auto_jump = false,
+					keys = trouble_lsp_location_keys,
+					preview = trouble_lsp_preview,
+				},
 				my_lsp = {
 					mode = {
 						"diagnostics",
@@ -121,16 +204,6 @@ return {
 			},
 		},
 		cmd = "Trouble",
-	},
-
-	{
-		"rmagatti/goto-preview",
-		event = "BufEnter",
-		config = function()
-			local goto_preview = require("goto-preview")
-
-			goto_preview.setup()
-		end,
 	},
 
 	-- url-open.nvim
