@@ -61,6 +61,15 @@ return {
 		opts = {
 			char = "┊",
 			virtcolumn = "79",
+			exclude = {
+				filetypes = {
+					"markdown",
+					"text",
+					"gitcommit",
+					"rmd",
+					"Rmd",
+				},
+			},
 		},
 	},
 
