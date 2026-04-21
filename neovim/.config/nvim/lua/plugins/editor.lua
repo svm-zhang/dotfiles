@@ -93,17 +93,6 @@ return {
 		},
 	},
 
-	-- vim-pencil
-	{
-		"preservim/vim-pencil",
-		ft = { "markdown", "Rmd", "text" },
-		init = function()
-			vim.g["pencil#textwidth"] = 79
-			vim.g["pencil#wrapModeDefault"] = "hard"
-			vim.g["pencil$autoformat"] = 1
-		end,
-	},
-
 	-- automatic session save and restore
 	{
 		"rmagatti/auto-session",

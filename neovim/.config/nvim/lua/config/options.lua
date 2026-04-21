@@ -12,6 +12,17 @@ opt.autoindent = true
 
 opt.wrap = false
 
+vim.api.nvim_create_autocmd("FileType", {
+	group = vim.api.nvim_create_augroup("prose_soft_wrap", { clear = true }),
+	pattern = { "markdown", "rmd", "Rmd", "text", "gitcommit" },
+	callback = function()
+		vim.opt_local.wrap = true
+		vim.opt_local.linebreak = true
+		vim.opt_local.breakindent = true
+		vim.opt_local.textwidth = 0
+	end,
+})
+
 opt.ignorecase = true
 opt.smartcase = true
 
