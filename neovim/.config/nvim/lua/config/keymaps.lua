@@ -134,7 +134,7 @@ end, { desc = "Close all folds" })
 vim.keymap.set("n", "zK", function()
 	local winid = require("ufo").peekFoldedLinesUnderCursor()
 	if not winid then
-		vim.lsp.buf.hover()
+		vim.lsp.buf.hover({ border = "rounded" })
 	end
 end, { desc = "Peek Folds" })
 
@@ -168,7 +168,7 @@ vim.keymap.set(
 vim.keymap.set(
 	"n",
 	"<leader>xs",
-	"<cmd>Trouble lsp_document_symbols toggle pinned=true win.relative=win win.size.width=50 win.position=right<CR>",
+	"<cmd>Trouble symbols toggle<CR>",
 	{ desc = "Open trouble lsp document symbols" }
 )
 vim.keymap.set(
@@ -262,28 +262,12 @@ vim.keymap.set(
 )
 
 -- preview LSP
-vim.keymap.set(
-	"n",
-	"<leader>pp",
-	"<cmd>lua require('goto-preview').goto_preview_definition()<CR>",
-	{ desc = "Preview definition in float window" }
-)
-vim.keymap.set(
-	"n",
-	"<leader>pr",
-	"<cmd>lua require('goto-preview').goto_preview_references()<CR>",
-	{ desc = "Preview references in float window" }
-)
-vim.keymap.set(
-	"n",
-	"<leader>pd",
-	"<cmd>lua require('goto-preview').close_all_win()<CR>",
-	{ desc = "Close all floating preview window" }
-)
 keymap.set(
 	"n",
 	"<leader>pk",
-	vim.lsp.buf.hover,
+	function()
+		vim.lsp.buf.hover({ border = "rounded" })
+	end,
 	{ silent = true, desc = "Show documentation for what is under cursor" }
 )
 
@@ -304,6 +288,7 @@ vim.keymap.set("n", "<leader>sw", function()
 		word_match = "-w",
 	})
 end, { desc = "Find string under cursor in CWD" })
+vim.keymap.set("n", "<leader>sp", "<cmd>Telescope spell_suggest<CR>", { desc = "Suggest spelling" })
 vim.keymap.set(
 	"n",
 	"<leader>sc",
