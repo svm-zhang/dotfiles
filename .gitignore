@@ -1,4 +1,7 @@
 .DS_Store
 
+# vocabulary
+en.utf-8.add.spl
+
 # personal command shortcut
 .my_aliases

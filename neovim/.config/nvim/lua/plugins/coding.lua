@@ -7,6 +7,7 @@ return {
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
 			"hrsh7th/cmp-cmdline",
+			"f3fora/cmp-spell",
 			"L3MON4D3/LuaSnip",
 			"saadparwaiz1/cmp_luasnip",
 		},
@@ -48,6 +49,7 @@ return {
 				buffer = "[Buffer]",
 				path = "[Path]",
 				crates = "[Crates]",
+				spell = "[Spell]",
 			}
 
 			local fields = { "icon", "abbr", "kind", "menu" }
@@ -120,6 +122,20 @@ return {
 					option = {
 						get_bufnrs = function()
 							return { vim.api.nvim_get_current_buf() }
+						end,
+					},
+				}
+			end
+
+			local function spell_source(keyword_length)
+				return {
+					name = "spell",
+					keyword_length = keyword_length,
+					option = {
+						keep_all_entries = false,
+						preselect_correct_word = false,
+						enable_in_context = function()
+							return require("cmp.config.context").in_treesitter_capture("spell")
 						end,
 					},
 				}
@@ -222,8 +238,19 @@ return {
 					{ name = "nvim_lsp" },
 					{ name = "luasnip" },
 					{ name = "path" },
+					spell_source(4),
 				}, {
 					current_buffer_source(4),
+				}),
+			})
+
+			cmp.setup.filetype({ "python", "rust", "sh", "bash", "cpp", "c", "lua" }, {
+				sources = cmp.config.sources({
+					{ name = "nvim_lsp" },
+					{ name = "luasnip" },
+					{ name = "path" },
+					{ name = "crates" },
+					spell_source(4),
 				}),
 			})
 
