@@ -294,9 +294,54 @@ return {
 		},
 		config = function()
 			local ufo = require("ufo")
+			local fold_suffix_icon = "󰁂"
+
+			local function fold_virt_text_handler(virt_text, lnum, end_lnum, width, truncate)
+				local new_virt_text = {}
+				local suffix = (" %s %d "):format(fold_suffix_icon, end_lnum - lnum)
+				local suffix_width = vim.fn.strdisplaywidth(suffix)
+				local target_width = width - suffix_width
+				local current_width = 0
+
+				if target_width <= 0 then
+					return { { suffix, "MoreMsg" } }
+				end
+
+				for _, chunk in ipairs(virt_text) do
+					local chunk_text = chunk[1]
+					local chunk_width = vim.fn.strdisplaywidth(chunk_text)
+
+					if current_width + chunk_width < target_width then
+						table.insert(new_virt_text, chunk)
+						current_width = current_width + chunk_width
+					else
+						local truncated = truncate(chunk_text, target_width - current_width)
+						local truncated_width = vim.fn.strdisplaywidth(truncated)
+
+						if truncated_width > 0 then
+							table.insert(new_virt_text, { truncated, chunk[2] })
+							current_width = current_width + truncated_width
+						end
+
+						break
+					end
+				end
+
+				if current_width < target_width then
+					suffix = suffix .. (" "):rep(target_width - current_width)
+				end
+
+				table.insert(new_virt_text, { suffix, "MoreMsg" })
+				return new_virt_text
+			end
 
 			ufo.setup({
 				preview = {
+					win_config = {
+						border = "rounded",
+						winblend = 0,
+						winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,EndOfBuffer:NormalFloat",
+					},
 					mappings = {
 						scrollU = "<C-k>",
 						scrollD = "<C-j>",
@@ -306,6 +351,7 @@ return {
 				open_fold_hl_timeout = 400,
 				close_fold_kinds_for_ft = {},
 				enable_get_fold_virt_text = false,
+				fold_virt_text_handler = fold_virt_text_handler,
 				provider_selector = function()
 					return { "lsp", "indent" }
 				end,
