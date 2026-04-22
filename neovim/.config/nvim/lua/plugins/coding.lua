@@ -13,7 +13,9 @@ return {
 		},
 		config = function()
 			local cmp = require("cmp")
+			local float_theme = require("custom.float_theme")
 			local luasnip = require("luasnip")
+			float_theme.setup()
 
 			local kind_icons = {
 				Text = "󰉿",
@@ -135,7 +137,9 @@ return {
 						keep_all_entries = false,
 						preselect_correct_word = false,
 						enable_in_context = function()
-							return require("cmp.config.context").in_treesitter_capture("spell")
+							return require("cmp.config.context").in_treesitter_capture(
+								"spell"
+							)
 						end,
 					},
 				}
@@ -204,7 +208,7 @@ return {
 				window = {
 					completion = cmp.config.window.bordered({
 						border = "rounded",
-						winhighlight = "Normal:Pmenu,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+						winhighlight = float_theme.menu_winhighlight(),
 						col_offset = -3,
 						side_padding = 1,
 					}),
@@ -212,7 +216,7 @@ return {
 						border = "rounded",
 						max_width = 88,
 						max_height = 20,
-						winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,Search:None",
+						winhighlight = float_theme.doc_winhighlight(),
 					}),
 				},
 
@@ -244,19 +248,30 @@ return {
 				}),
 			})
 
-			cmp.setup.filetype({ "python", "rust", "sh", "bash", "cpp", "c", "lua" }, {
-				sources = cmp.config.sources({
-					{ name = "nvim_lsp" },
-					{ name = "luasnip" },
-					{ name = "path" },
-					{ name = "crates" },
-					spell_source(4),
-				}),
-			})
+			cmp.setup.filetype(
+				{ "python", "rust", "sh", "bash", "cpp", "c", "lua" },
+				{
+					sources = cmp.config.sources({
+						{ name = "nvim_lsp" },
+						{ name = "luasnip" },
+						{ name = "path" },
+						{ name = "crates" },
+						spell_source(4),
+					}),
+				}
+			)
 
 			-- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
 			cmp.setup.cmdline({ "/", "?" }, {
 				mapping = cmp.mapping.preset.cmdline(),
+				window = {
+					completion = cmp.config.window.bordered({
+						border = "rounded",
+						winhighlight = float_theme.menu_winhighlight(),
+						col_offset = -3,
+						side_padding = 1,
+					}),
+				},
 				sources = {
 					current_buffer_source(3),
 				},
@@ -265,6 +280,14 @@ return {
 			-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 			cmp.setup.cmdline(":", {
 				mapping = cmp.mapping.preset.cmdline(),
+				window = {
+					completion = cmp.config.window.bordered({
+						border = "rounded",
+						winhighlight = float_theme.menu_winhighlight(),
+						col_offset = -3,
+						side_padding = 1,
+					}),
+				},
 				formatting = {
 					fields = fields,
 					format = format_cmdline_item,

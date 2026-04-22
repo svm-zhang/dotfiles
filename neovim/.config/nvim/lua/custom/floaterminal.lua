@@ -1,5 +1,8 @@
 local M = {}
 
+local float_theme = require("custom.float_theme")
+float_theme.setup()
+
 local state = {
 	floating = {
 		buf = -1,
@@ -35,6 +38,7 @@ local function create_float_terminal(opts)
 		style = "minimal",
 	}
 	local win = vim.api.nvim_open_win(buf, true, win_opts)
+	vim.wo[win].winhighlight = float_theme.float_winhighlight()
 	return { buf = buf, win = win }
 end
 

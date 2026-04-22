@@ -53,11 +53,14 @@ return {
 			"nvim-telescope/telescope-ui-select.nvim",
 		},
 		config = function()
+			require("custom.float_theme").setup()
+
 			local telescope = require("telescope")
 			local actions = require("telescope.actions")
 			local telescope_config = require("telescope.config")
 			local telescope_themes = require("telescope.themes")
-			local vimgrep_arguments = { unpack(telescope_config.values.vimgrep_arguments) }
+			local vimgrep_arguments =
+				{ unpack(telescope_config.values.vimgrep_arguments) }
 
 			table.insert(vimgrep_arguments, "--hidden")
 			table.insert(vimgrep_arguments, "--glob")
@@ -71,7 +74,8 @@ return {
 						i = {
 							["<C-k>"] = actions.move_selection_previous,
 							["<C-j>"] = actions.move_selection_next,
-							["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
+							["<C-q>"] = actions.send_selected_to_qflist
+								+ actions.open_qflist,
 						},
 					},
 				},
