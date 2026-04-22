@@ -256,13 +256,47 @@ vim.keymap.set(
 )
 
 -- preview LSP
+require("custom.float_preview").setup()
+
 keymap.set(
 	"n",
 	"<leader>pk",
 	function()
-		vim.lsp.buf.hover({ border = "rounded" })
+		vim.lsp.buf.hover()
 	end,
 	{ silent = true, desc = "Show documentation for what is under cursor" }
+)
+keymap.set(
+	"n",
+	"<leader>pd",
+	function()
+		vim.diagnostic.open_float(nil, {
+			scope = "cursor",
+			source = "if_many",
+			focusable = false,
+		})
+	end,
+	{ silent = true, desc = "Show diagnostic under cursor" }
+)
+keymap.set(
+	"n",
+	"<leader>pD",
+	function()
+		vim.diagnostic.open_float(nil, {
+			scope = "line",
+			source = "if_many",
+			focusable = false,
+		})
+	end,
+	{ silent = true, desc = "Show diagnostics on current line" }
+)
+keymap.set(
+	"n",
+	"<leader>ps",
+	function()
+		vim.lsp.buf.signature_help()
+	end,
+	{ silent = true, desc = "Show signature help" }
 )
 
 -- quit
