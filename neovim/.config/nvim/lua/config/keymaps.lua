@@ -126,17 +126,11 @@ vim.keymap.set(
 
 -- folding
 vim.keymap.set("n", "zR", function()
-	require("ufo").openAllFolds()
+	vim.cmd("normal! zR")
 end, { desc = "Open all folds" })
 vim.keymap.set("n", "zM", function()
-	require("ufo").closeAllFolds()
+	vim.cmd("normal! zM")
 end, { desc = "Close all folds" })
-vim.keymap.set("n", "zK", function()
-	local winid = require("ufo").peekFoldedLinesUnderCursor()
-	if not winid then
-		vim.lsp.buf.hover({ border = "rounded" })
-	end
-end, { desc = "Peek Folds" })
 
 -- diagnostics
 vim.keymap.set(
