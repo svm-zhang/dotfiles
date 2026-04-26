@@ -30,7 +30,6 @@ local function trouble_symbol_filter(items)
 end
 
 local trouble_lsp_location_keys = {
-	["<cr>"] = "jump_vsplit_close",
 	o = "jump_vsplit_close",
 }
 
@@ -193,22 +192,5 @@ return {
 			},
 		},
 		cmd = "Trouble",
-	},
-
-	-- url-open.nvim
-	{
-		"sontungexpt/url-open",
-		event = "VeryLazy",
-		cmd = "URLOpenUnderCursor",
-		config = function()
-			local status_ok, url_open = pcall(require, "url-open")
-			if not status_ok then
-				return
-			end
-			url_open.setup({
-				open_app = "default",
-				open_only_when_cursor_on_url = true,
-			})
-		end,
 	},
 }
