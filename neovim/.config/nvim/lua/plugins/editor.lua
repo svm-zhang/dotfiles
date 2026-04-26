@@ -92,22 +92,6 @@ return {
 		},
 	},
 
-	-- automatic session save and restore
-	{
-		"rmagatti/auto-session",
-		lazy = false,
-		config = function()
-			require("auto-session").setup({
-				auto_session_suppress_dirs = {
-					"~/",
-					"~/Desktop",
-					"~/Downloads",
-					"~/Documents",
-				},
-			})
-		end,
-	},
-
 	-- todo comment
 	{
 		"folke/todo-comments.nvim",
