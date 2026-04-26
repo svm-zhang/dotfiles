@@ -110,20 +110,6 @@ vim.keymap.set("n", "<leader>fr", function()
 	})
 end, { desc = "Fuzzy find recent files in CWD" })
 
--- edit using vim-pencil
-vim.keymap.set(
-	"n",
-	"<leader>ep",
-	"<cmd>Pencil<CR>",
-	{ desc = "Toggle Pencil on" }
-)
-vim.keymap.set(
-	"n",
-	"<leader>eu",
-	"<cmd>URLOpenUnderCursor<CR>",
-	{ desc = "Open URL under the cursor" }
-)
-
 -- folding
 vim.keymap.set("n", "zR", function()
 	vim.cmd("normal! zR")
@@ -258,46 +244,26 @@ vim.keymap.set(
 -- preview LSP
 require("custom.float_preview").setup()
 
-keymap.set(
-	"n",
-	"<leader>pk",
-	function()
-		vim.lsp.buf.hover()
-	end,
-	{ silent = true, desc = "Show documentation for what is under cursor" }
-)
-keymap.set(
-	"n",
-	"<leader>pd",
-	function()
-		vim.diagnostic.open_float(nil, {
-			scope = "cursor",
-			source = "if_many",
-			focusable = false,
-		})
-	end,
-	{ silent = true, desc = "Show diagnostic under cursor" }
-)
-keymap.set(
-	"n",
-	"<leader>pD",
-	function()
-		vim.diagnostic.open_float(nil, {
-			scope = "line",
-			source = "if_many",
-			focusable = false,
-		})
-	end,
-	{ silent = true, desc = "Show diagnostics on current line" }
-)
-keymap.set(
-	"n",
-	"<leader>ps",
-	function()
-		vim.lsp.buf.signature_help()
-	end,
-	{ silent = true, desc = "Show signature help" }
-)
+keymap.set("n", "<leader>pk", function()
+	vim.lsp.buf.hover()
+end, { silent = true, desc = "Show documentation for what is under cursor" })
+keymap.set("n", "<leader>pd", function()
+	vim.diagnostic.open_float(nil, {
+		scope = "cursor",
+		source = "if_many",
+		focusable = false,
+	})
+end, { silent = true, desc = "Show diagnostic under cursor" })
+keymap.set("n", "<leader>pD", function()
+	vim.diagnostic.open_float(nil, {
+		scope = "line",
+		source = "if_many",
+		focusable = false,
+	})
+end, { silent = true, desc = "Show diagnostics on current line" })
+keymap.set("n", "<leader>ps", function()
+	vim.lsp.buf.signature_help()
+end, { silent = true, desc = "Show signature help" })
 
 -- quit
 keymap.set("n", "<leader>qa", "<cmd>qa<CR>", { desc = "Quit all" })
@@ -316,7 +282,12 @@ vim.keymap.set("n", "<leader>sw", function()
 		word_match = "-w",
 	})
 end, { desc = "Find string under cursor in CWD" })
-vim.keymap.set("n", "<leader>sp", "<cmd>Telescope spell_suggest<CR>", { desc = "Suggest spelling" })
+vim.keymap.set(
+	"n",
+	"<leader>sp",
+	"<cmd>Telescope spell_suggest<CR>",
+	{ desc = "Suggest spelling" }
+)
 vim.keymap.set(
 	"n",
 	"<leader>sc",
