@@ -57,7 +57,7 @@ return {
 			local fields = { "icon", "abbr", "kind", "menu" }
 
 			local function canonical_path(path)
-				local realpath = (vim.uv or vim.loop).fs_realpath(path)
+				local realpath = vim.uv.fs_realpath(path)
 				return vim.fs.normalize(realpath or path)
 			end
 
