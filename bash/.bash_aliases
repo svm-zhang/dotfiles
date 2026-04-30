@@ -13,10 +13,6 @@ alias cl="clear"
 # use GNU version when on MACOS
 case "$OSTYPE" in
 darwin*) # MACOS
-  alias grep="ggrep"
-  alias split="gsplit"
-  alias du="gdu"
-  alias cut="gcut"
   # folders
   alias dc="cd \$HOME/Documents"
   alias de="cd \$HOME/Desktop"
