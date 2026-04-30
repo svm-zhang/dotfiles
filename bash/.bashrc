@@ -33,6 +33,3 @@ eval "$(oh-my-posh init bash --config "$DOTFILE/oh_my_posh/themes/catppuccin_mac
 
 # init zoxide
 eval "$(zoxide init --cmd cd bash)"
-
-# You can use whatever you want as an alias, like for Mondays:
-eval "$(thefuck --alias fuck)"
