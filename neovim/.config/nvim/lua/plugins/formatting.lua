@@ -25,7 +25,6 @@ return {
 							return { "isort", "black" }
 						end
 					end,
-					r = { "styler" },
 					yaml = { "prettier" },
 				},
 				formatters = {
@@ -37,17 +36,6 @@ return {
 					},
 					stylua = {
 						prepend_args = { "--column-width", "79" },
-					},
-					styler = {
-						command = "R",
-						args = {
-							"-s",
-							"-e",
-							"styler::style_file(commandArgs(TRUE)[1])",
-							"--args",
-							"$FILENAME",
-						},
-						stdin = false,
 					},
 				},
 				format_on_save = {

@@ -29,7 +29,6 @@ return {
 					"lua_ls",
 					"marksman",
 					"pyright",
-					"r_language_server",
 					"yamlls",
 				},
 				automatic_enable = {

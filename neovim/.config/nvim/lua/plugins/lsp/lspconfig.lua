@@ -85,16 +85,6 @@ return {
 				},
 			})
 
-			vim.lsp.config("r_language_server", {
-				capabilities = capabilities,
-				filetypes = {
-					"r",
-					"R",
-					"rmd",
-					"Rmd",
-				},
-			})
-
 			vim.lsp.config("yamlls", {
 				capabilities = capabilities,
 			})
