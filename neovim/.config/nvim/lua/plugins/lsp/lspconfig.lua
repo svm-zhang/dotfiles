@@ -88,10 +88,6 @@ return {
 			vim.lsp.config("yamlls", {
 				capabilities = capabilities,
 			})
-
-			vim.lsp.config("cssls", {
-				capabilities = capabilities,
-			})
 		end,
 	},
 }

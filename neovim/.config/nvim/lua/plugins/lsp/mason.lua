@@ -25,7 +25,6 @@ return {
 			mason_lspconfig.setup({
 				ensure_installed = {
 					"bashls",
-					"cssls",
 					"lua_ls",
 					"marksman",
 					"pyright",
