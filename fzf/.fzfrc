@@ -50,7 +50,6 @@ _fzf_comprun() {
     kill) fzf "$@" ;;
     nvim) fd --type f --hidden --strip-cwd-prefix --exclude '.git' \
       | fzf --preview '[ -f {} ] && bat --color=always {}' --bind 'enter:execute(nvim {})' "$@" ;;
-    ssh) fzf --preview 'dig {}' "$@" ;;
     *) fzf --preview '$preview_file_dir' "$@" ;;
   esac
 }
