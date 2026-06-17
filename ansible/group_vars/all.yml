@@ -1,0 +1,8 @@
+---
+dotfiles_project_state: skeleton
+dotfiles_target_profiles: []
+dotfiles_manage_dotfiles: false
+dotfiles_manage_packages: false
+dotfiles_manage_secrets: false
+dotfiles_enable_nvidia_gpu: false
+

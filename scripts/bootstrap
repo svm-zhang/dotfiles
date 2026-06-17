@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'USAGE'
+Usage:
+  scripts/bootstrap --help
+
+Bootstrap implementation is not available yet.
+
+This placeholder exists so the repository has a stable entry point before
+OS-specific bootstrap behavior is implemented.
+USAGE
+}
+
+case "${1:---help}" in
+  -h|--help)
+    usage
+    ;;
+  *)
+    usage >&2
+    exit 2
+    ;;
+esac
+

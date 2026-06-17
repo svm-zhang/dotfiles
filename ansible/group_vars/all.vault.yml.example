@@ -1,0 +1,11 @@
+---
+# Example only. Do not put real secrets in this file.
+# When real vault vars are introduced, create all.vault.yml and encrypt it
+# with ansible-vault before committing.
+
+vault_git_user_name: "Example User"
+vault_git_user_email: "user@example.invalid"
+vault_private_shell_exports: {}
+vault_private_aliases: {}
+vault_ai_api_keys: {}
+

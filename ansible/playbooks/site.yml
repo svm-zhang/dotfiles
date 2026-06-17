@@ -1,0 +1,10 @@
+---
+- name: Dotfiles foundation
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Show skeleton status
+      ansible.builtin.debug:
+        msg: "Ansible skeleton is present; component roles are not enabled yet."
+
