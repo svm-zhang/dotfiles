@@ -1,3 +1,21 @@
 ---
-# Placeholder. Shell dotfile rendering will be implemented in a later step.
+- name: Create shell render directory
+  ansible.builtin.file:
+    path: "{{ shell_render_root }}"
+    state: directory
+    mode: "0700"
 
+- name: Render shell files
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ shell_render_root }}/{{ item.dest }}"
+    mode: "0644"
+  loop:
+    - src: bashrc.j2
+      dest: .bashrc
+    - src: bash_aliases.j2
+      dest: .bash_aliases
+    - src: bash_exports.j2
+      dest: .bash_exports
+    - src: functionsrc.j2
+      dest: .functionsrc

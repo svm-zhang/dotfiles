@@ -1,0 +1,38 @@
+# .bashrc file executed by non-login shells
+
+# enable vi-mode on command line
+set -o vi
+
+# load aliases setup
+[ -f "$HOME/.bash_aliases" ] && . "$HOME/.bash_aliases"
+
+# load my personal aliases setup
+[ -f "$HOME/.my_aliases" ] && . "$HOME/.my_aliases"
+
+# load fzfrc
+[ -f "$HOME/.fzfrc" ] && . "$HOME/.fzfrc"
+
+# load Rust cargo env
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+# to make sure brew can be called
+if [ -x "{{ shell_macos_homebrew_dir }}/bin/brew" ]; then
+  eval "$("{{ shell_macos_homebrew_dir }}/bin/brew" shellenv)"
+elif [ -x "{{ shell_linuxbrew_dir }}/bin/brew" ]; then
+  eval "$("{{ shell_linuxbrew_dir }}/bin/brew" shellenv)"
+fi
+
+if [ -f "{{ shell_macos_homebrew_dir }}/etc/profile.d/bash_completion.sh" ]; then
+  . "{{ shell_macos_homebrew_dir }}/etc/profile.d/bash_completion.sh"
+elif [ -f "{{ shell_linuxbrew_dir }}/etc/profile.d/bash_completion.sh" ]; then
+  . "{{ shell_linuxbrew_dir }}/etc/profile.d/bash_completion.sh"
+fi
+
+command -v fzf >/dev/null 2>&1 && eval "$(fzf --bash)"
+
+theme_file="{{ shell_oh_my_posh_theme_file }}"
+if command -v oh-my-posh >/dev/null 2>&1 && [ -f "$theme_file" ]; then
+  eval "$(oh-my-posh init bash --config "$theme_file")"
+fi
+
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init --cmd cd bash)"

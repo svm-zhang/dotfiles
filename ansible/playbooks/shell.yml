@@ -1,0 +1,7 @@
+---
+- name: Render shell dotfiles
+  hosts: localhost
+  gather_facts: true
+
+  roles:
+    - shell
