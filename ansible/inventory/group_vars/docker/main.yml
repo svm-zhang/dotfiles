@@ -1,0 +1,4 @@
+---
+dotfiles_test_environment: docker
+dotfiles_allow_home_deploy: false
+dotfiles_enable_nvidia_gpu: false
