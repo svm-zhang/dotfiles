@@ -1,3 +1,30 @@
 ---
-# Placeholder. Git config rendering will be implemented in a later step.
+- name: Validate Git deploy mode
+  ansible.builtin.assert:
+    that:
+      - git_deploy_mode in ["test", "home"]
+    fail_msg: "git_deploy_mode must be one of: test, home"
 
+- name: Create Git render directory
+  ansible.builtin.file:
+    path: "{{ git_target_root }}"
+    state: directory
+    mode: "0700"
+
+- name: Render public Git config files
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ git_target_root }}/{{ item.dest }}"
+    mode: "0644"
+  loop:
+    - src: gitconfig.j2
+      dest: .gitconfig
+    - src: gitconfig.delta.j2
+      dest: .gitconfig.delta
+
+- name: Render private Git config
+  ansible.builtin.template:
+    src: gitconfig.local.j2
+    dest: "{{ git_target_root }}/.gitconfig.local"
+    mode: "0600"
+  no_log: true

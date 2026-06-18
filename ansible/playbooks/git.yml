@@ -1,0 +1,7 @@
+---
+- name: Render Git dotfiles
+  hosts: localhost
+  gather_facts: true
+
+  roles:
+    - git

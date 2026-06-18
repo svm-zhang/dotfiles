@@ -1,0 +1,33 @@
+[branch]
+  sort = -committerdate
+
+[fetch]
+  prune = true
+
+[pager]
+  diff = {{ git_pager_diff }}
+  log = {{ git_pager_log }}
+  reflog = {{ git_pager_reflog }}
+  show = {{ git_pager_show }}
+
+[core]
+  editor = {{ git_editor }}
+
+[alias]
+  ci = commit
+  st = status
+  br = branch
+  co = checkout
+
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+
+[include]
+  path = {{ git_include_local_path }}
+
+[include]
+  path = {{ git_include_delta_path }}
+
