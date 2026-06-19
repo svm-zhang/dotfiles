@@ -1,3 +1,12 @@
 ---
-# Placeholder. Foundation CLI tool installation will be implemented in a later step.
+- name: Include Ubuntu tools tasks
+  ansible.builtin.include_tasks: ubuntu.yml
+  when:
+    - dotfiles_manage_packages | default(false) | bool
+    - dotfiles_os_family == "ubuntu"
 
+- name: Include macOS tools tasks
+  ansible.builtin.include_tasks: macos.yml
+  when:
+    - dotfiles_manage_packages | bool
+    - dotfiles_os_family == "macos"

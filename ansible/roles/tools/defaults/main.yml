@@ -1,0 +1,47 @@
+---
+#tools_manage_packages: "{{ dotfiles_manage_packages | default(false) }}"
+
+tools_linuxbrew_default_prefix: "/home/linuxbrew/.linuxbrew"
+tools_linuxbrew_default_brew: "{{ tools_linuxbrew_default_prefix }}/bin/brew"
+tools_brew_bin: ""
+
+common_tools_formulae:
+  - git
+  - git-delta
+  - diffnav
+  - fzf
+  - eza
+  - bat
+  - zoxide
+  - oh-my-posh
+  - yazi
+  - glow
+  - jqp
+  - jq
+  - yq
+  - xh
+  - fd
+  - ripgrep
+
+macos_only_tools_formulae:
+  - bash
+  - bash-completion
+  - git-lfs
+
+ubuntu_apt_packages:
+  - bash-completion
+  - git-lfs
+  - build-essential
+  - procps
+  - file
+  - curl
+  - ca-certificates
+
+ubuntu_only_tools_formulae: []
+
+macos_tools_formulae: "{{ common_tools_formulae + macos_only_tools_formulae }}"
+ubuntu_tools_formulae: "{{ common_tools_formulae + ubuntu_only_tools_formulae }}"
+
+tools_formula_command_overrides:
+  git-delta: delta
+  ripgrep: rg

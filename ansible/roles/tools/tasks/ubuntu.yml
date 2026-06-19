@@ -1,0 +1,56 @@
+---
+- name: Install Ubuntu apt-owned tool packages
+  ansible.builtin.apt:
+    name: "{{ ubuntu_apt_packages }}"
+    state: present
+    update_cache: true
+  become: true
+
+- name: Check Linuxbrew default brew path
+  ansible.builtin.stat:
+    path: "{{ tools_linuxbrew_default_brew }}"
+  register: tools_linuxbrew_default_brew_stat
+
+- name: Install Linuxbrew
+  ansible.builtin.shell:
+    cmd: |
+      set -eu
+      NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    executable: /bin/bash
+  when: not tools_linuxbrew_default_brew_stat.stat.exists
+
+- name: Check Linuxbrew after install
+  ansible.builtin.stat:
+    path: "{{ tools_linuxbrew_default_brew }}"
+  register: tools_linuxbrew_brew_after_install_stat
+
+- name: Set Linuxbrew command path
+  ansible.builtin.set_fact:
+    tools_brew_bin: "{{ tools_linuxbrew_default_brew }}"
+  when: tools_linuxbrew_brew_after_install_stat.stat.exists
+
+- name: Validate Linuxbrew command path
+  ansible.builtin.assert:
+    that:
+      - tools_brew_bin | length > 0
+    fail_msg: "Linuxbrew brew command was not found after installation."
+
+- name: Debug linuxbrew bin location
+  ansible.builtin.debug:
+    msg: "{{ tools_brew_bin }}"
+
+- name: Install Ubuntu Linuxbrew formulae
+  ansible.builtin.command:
+    cmd: "{{ tools_brew_bin }} install {{ item }}"
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+    HOMEBREW_NO_INSTALL_CLEANUP: "1"
+  loop: "{{ ubuntu_tools_formulae }}"
+  register: tools_linuxbrew_install
+  changed_when: "'already installed' not in ((tools_linuxbrew_install.stdout | default('')) ~ (tools_linuxbrew_install.stderr | default('')))"
+
+- name: Verify Ubuntu Linuxbrew formulae are installed
+  ansible.builtin.command:
+    cmd: "{{ tools_brew_bin }} list --formula {{ item }}"
+  loop: "{{ ubuntu_tools_formulae }}"
+  changed_when: false

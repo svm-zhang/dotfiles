@@ -1,0 +1,4 @@
+---
+- name: macOS tool installation is not enabled in step 08
+  ansible.builtin.fail:
+    msg: "macOS package installation is intentionally not enabled in step 08."

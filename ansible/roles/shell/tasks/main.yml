@@ -1,21 +1,27 @@
 ---
-- name: Create shell render directory
+- name: Validate shell deploy mode
+  ansible.builtin.assert:
+    that:
+      - shell_deploy_mode in ["test", "home"]
+    fail_msg: "shell_deploy_mode must be one of: test, home"
+
+- name: Create shell target directory
   ansible.builtin.file:
-    path: "{{ shell_render_root }}"
+    path: "{{ shell_target_root }}"
     state: directory
     mode: "0700"
 
 - name: Render shell files
   ansible.builtin.template:
     src: "{{ item.src }}"
-    dest: "{{ shell_render_root }}/{{ item.dest }}"
+    dest: "{{ shell_target_root }}/{{ item.dest }}"
     mode: "0644"
   loop:
     - src: bashrc.j2
-      dest: .bashrc
+      dest: "{{ shell_bashrc_file }}"
     - src: bash_aliases.j2
-      dest: .bash_aliases
+      dest: "{{ shell_aliases_file }}"
     - src: bash_exports.j2
-      dest: .bash_exports
+      dest: "{{ shell_exports_file }}"
     - src: functionsrc.j2
-      dest: .functionsrc
+      dest: "{{ shell_functions_file }}"
