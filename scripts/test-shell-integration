@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+shell_root="${1:-$HOME}"
+echo "$shell_root"
+
+source "$shell_root/.bashrc"
+source "$shell_root/.functionsrc"
+shopt -s expand_aliases
+
+command -v eza
+command -v bat
+command -v yazi
+alias l
+alias ..
+alias gst
+type yy
+type h
+
+eza --version >/dev/null
+bat --version >/dev/null
+yazi --version >/dev/null
+
