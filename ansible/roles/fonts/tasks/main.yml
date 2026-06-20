@@ -1,3 +1,12 @@
 ---
-# Placeholder. Font installation will be implemented in a later step.
+- name: Include macOS font tasks
+  ansible.builtin.include_tasks: macos.yml
+  when:
+    - dotfiles_manage_fonts | default(true) | bool
+    - ansible_facts['os_family'] == 'Darwin'
 
+- name: Include Ubuntu font tasks
+  ansible.builtin.include_tasks: ubuntu.yml
+  when:
+    - dotfiles_manage_fonts | default(true) | bool
+    - ansible_facts['distribution'] == 'Ubuntu'

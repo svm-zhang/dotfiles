@@ -1,0 +1,7 @@
+---
+- name: Manage user fonts
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - fonts

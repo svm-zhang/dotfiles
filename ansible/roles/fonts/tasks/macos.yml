@@ -1,0 +1,37 @@
+---
+- name: Create macOS user font directory
+  ansible.builtin.file:
+    path: "{{ fonts_macos_user_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Reset macOS missing font source list
+  ansible.builtin.set_fact:
+    fonts_missing_sources: []
+
+- name: Detect macOS installed font families
+  ansible.builtin.command:
+    cmd: system_profiler SPFontsDataType
+  register: fonts_macos_system_profiler
+  changed_when: false
+
+- name: Build macOS missing font source list
+  ansible.builtin.set_fact:
+    fonts_missing_sources: "{{ fonts_missing_sources + ([item] if (item.family_names | select('in', fonts_macos_system_profiler.stdout) | list | length == 0) else []) }}"
+  loop: "{{ fonts_managed_sources }}"
+
+- name: Install missing macOS fonts
+  ansible.builtin.include_tasks: install_archives.yml
+
+- name: Detect macOS installed font families after install
+  ansible.builtin.command:
+    cmd: system_profiler SPFontsDataType
+  register: fonts_macos_system_profiler_after
+  changed_when: false
+
+- name: Verify macOS managed fonts are visible
+  ansible.builtin.assert:
+    that:
+      - item.family_names | select('in', fonts_macos_system_profiler_after.stdout) | list | length > 0
+    fail_msg: "Managed font family is not visible on macOS: {{ item.family }}"
+  loop: "{{ fonts_managed_sources }}"

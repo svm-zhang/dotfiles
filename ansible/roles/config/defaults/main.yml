@@ -37,6 +37,7 @@ config_ghostty_profiles_dir: "{{ config_ghostty_config_dir }}/profiles"
 config_ghostty_local_dir: "{{ config_ghostty_config_dir }}/local"
 
 config_ghostty_profile_files:
+  - font-anthrosevka-mono.conf
   - font-liga-paper-mono.conf
   - font-iosevka-term.conf
   - theme-catppuccin-mocha.conf
