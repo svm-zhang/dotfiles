@@ -1,6 +1,6 @@
 # .functionsrc file
 # defines functions for bash
-# loaded by .bash_profile 
+# loaded by .bashrc
 
 # yazi file manager
 function yy() {
@@ -34,3 +34,11 @@ function h() {
   fi
 }
 
+function batcache() {
+  if ! command -v bat >/dev/null 2>&1; then
+    printf 'batcache: bat is not installed or not on PATH\n' >&2
+    return 127
+  fi
+
+  bat cache --build
+}

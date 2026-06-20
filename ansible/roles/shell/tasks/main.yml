@@ -15,12 +15,17 @@
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ shell_target_root }}/{{ item.dest }}"
-    mode: "0644"
+    mode: "{{ item.mode | default('0644') }}"
   loop:
     - src: bashrc.j2
       dest: "{{ shell_bashrc_file }}"
+    - src: bash_profile.j2
+      dest: "{{ shell_bash_profile_file }}"
     - src: bash_aliases.j2
       dest: "{{ shell_aliases_file }}"
+    - src: bash_aliases_local.j2
+      dest: "{{ shell_local_aliases_file }}"
+      mode: "0600"
     - src: bash_exports.j2
       dest: "{{ shell_exports_file }}"
     - src: functionsrc.j2

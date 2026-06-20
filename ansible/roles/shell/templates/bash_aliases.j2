@@ -25,7 +25,7 @@ alias gdiff="git diff"
 alias glog="git log --graph --topo-order --pretty=\"%w(100,0,6)%C(yellow)%h%C(bold)%C(black)%d %C(cyan)%ar %C(green)%an%n%C(bold)%C(white)%s %N\" --abbrev-commit"
 
 # jqp
-alias jqp="jqp --theme {{ shell_jqp_theme }}"
+alias jqp="jqp --theme {{ dot_jqp_theme_name | default('catppuccin-macchiato') }}"
 
 # glow for renderring md from CLI
 alias glow="glow -l"

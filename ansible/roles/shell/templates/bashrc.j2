@@ -3,11 +3,17 @@
 # enable vi-mode on command line
 set -o vi
 
+# load exports first so later shell setup can see XDG_CONFIG_HOME and theme variables
+[ -f "$HOME/.bash_exports" ] && . "$HOME/.bash_exports"
+
 # load aliases setup
 [ -f "$HOME/.bash_aliases" ] && . "$HOME/.bash_aliases"
 
-# load my personal aliases setup
-[ -f "$HOME/.my_aliases" ] && . "$HOME/.my_aliases"
+# load functions setup
+[ -f "$HOME/.functionsrc" ] && . "$HOME/.functionsrc"
+
+# load private/local aliases rendered from vault-backed variables
+[ -f "$HOME/.bash_aliases.local" ] && . "$HOME/.bash_aliases.local"
 
 # load fzfrc
 [ -f "$HOME/.fzfrc" ] && . "$HOME/.fzfrc"
@@ -30,7 +36,7 @@ fi
 
 command -v fzf >/dev/null 2>&1 && eval "$(fzf --bash)"
 
-theme_file="{{ shell_oh_my_posh_theme_file }}"
+theme_file="{{ shell_xdg_config_home }}/oh-my-posh/themes/{{ dot_omp_theme_file | default('macchiato.omp.json') }}"
 if command -v oh-my-posh >/dev/null 2>&1 && [ -f "$theme_file" ]; then
   eval "$(oh-my-posh init bash --config "$theme_file")"
 fi

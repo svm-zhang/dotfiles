@@ -1,5 +1,5 @@
 # Define bash exports.
-# Invoked by .bash_profile file.
+# Invoked by .bashrc and login-shell startup files.
 
 [ -d "{{ shell_local_dir }}/bin" ] && export PATH="{{ shell_local_dir }}/bin:$PATH"
 [ -d "{{ shell_opt_dir }}/bin" ] && export PATH="{{ shell_opt_dir }}/bin:$PATH"
@@ -8,8 +8,6 @@
 [ -d "{{ shell_texbin_dir }}" ] && export PATH="{{ shell_texbin_dir }}:$PATH"
 {% endif %}
 
-# set BAT theme
-export BAT_THEME="{{ shell_bat_theme }}"
 # set up for glow
 # set EDITOR to nvim for glow config
 export EDITOR="{{ shell_editor }}"

@@ -1,0 +1,41 @@
+---
+- name: Validate config deploy mode
+  ansible.builtin.assert:
+    that:
+      - config_deploy_mode in ["test", "home"]
+    fail_msg: "config_deploy_mode must be one of: test, home"
+
+- name: Create config directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0700"
+  loop: "{{ config_directories }}"
+
+- name: Render config templates
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode | default('0644') }}"
+  loop: "{{ config_template_files }}"
+
+- name: Deploy bat theme assets
+  ansible.builtin.copy:
+    src: "bat/themes/{{ item.value }}"
+    dest: "{{ config_xdg_config_home }}/bat/themes/{{ item.value }}"
+    mode: "0644"
+  loop: "{{ dot_theme_assets.bat | dict2items }}"
+
+- name: Deploy Glow style assets
+  ansible.builtin.copy:
+    src: "glow/styles/{{ item.value }}"
+    dest: "{{ config_xdg_config_home }}/glow/styles/{{ item.value }}"
+    mode: "0644"
+  loop: "{{ dot_theme_assets.glow | dict2items }}"
+
+- name: Deploy oh-my-posh theme assets
+  ansible.builtin.copy:
+    src: "oh-my-posh/themes/{{ item.value }}"
+    dest: "{{ config_xdg_config_home }}/oh-my-posh/themes/{{ item.value }}"
+    mode: "0644"
+  loop: "{{ dot_theme_assets.omp | dict2items }}"

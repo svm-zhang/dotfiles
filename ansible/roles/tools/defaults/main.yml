@@ -15,6 +15,7 @@ common_tools_formulae:
   - zoxide
   - oh-my-posh
   - yazi
+  - btop
   - glow
   - jqp
   - jq
@@ -27,6 +28,7 @@ macos_only_tools_formulae:
   - bash
   - bash-completion
   - git-lfs
+  - tree
 
 ubuntu_apt_packages:
   - bash-completion
@@ -36,6 +38,8 @@ ubuntu_apt_packages:
   - file
   - curl
   - ca-certificates
+  - less
+  - tree
 
 ubuntu_only_tools_formulae: []
 
