@@ -59,10 +59,14 @@
       ansible.builtin.file:
         path: "{{ fonts_download_dir['path'] }}"
         state: absent
-      when: fonts_download_dir is defined
+      when:
+        - fonts_download_dir is defined
+        - "'path' in fonts_download_dir"
 
     - name: Remove font extract temp directory
       ansible.builtin.file:
         path: "{{ fonts_extract_dir['path'] }}"
         state: absent
-      when: fonts_extract_dir is defined
+      when:
+        - fonts_extract_dir is defined
+        - "'path' in fonts_extract_dir"
