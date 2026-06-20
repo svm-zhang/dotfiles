@@ -7,41 +7,59 @@ dotfiles_manage_secrets: false
 dotfiles_enable_nvidia_gpu: false
 
 dot_xdg_config_dir: ".config"
-dot_theme: "macchiato"
+dot_theme: "mocha"
 
 dot_theme_assets:
   bat:
+    mocha: "catppuccin_mocha.tmTheme"
     macchiato: "catppuccin_macchiato.tmTheme"
     tokyonight: "tokyonight.tmTheme"
     dracula: "dracula.tmTheme"
   glow:
+    mocha: "mocha.glow.json"
     macchiato: "macchiato.glow.json"
     tokyonight: "tokyonight.glow.json"
     dracula: "dracula.glow.json"
   omp:
+    mocha: "mocha.omp.json"
     macchiato: "macchiato.omp.json"
     tokyonight: "tokyonight.omp.json"
     dracula: "dracula.omp.json"
+  ghostty:
+    mocha: "theme-catppuccin-mocha.conf"
+    macchiato: "theme-catppuccin-macchiato.conf"
+    tokyonight: "theme-tokyonight.conf"
+    dracula: "theme-dracula.conf"
 
 dot_theme_catalog:
+  mocha:
+    bat_theme_name: "catppuccin_mocha"
+    bat_theme_file: "{{ dot_theme_assets.bat.mocha }}"
+    glow_style_file: "{{ dot_theme_assets.glow.mocha }}"
+    jqp_theme_name: "catppuccin-mocha"
+    omp_theme_file: "{{ dot_theme_assets.omp.mocha }}"
+    ghostty_theme_file: "{{ dot_theme_assets.ghostty.mocha }}"
   macchiato:
     bat_theme_name: "catppuccin_macchiato"
     bat_theme_file: "{{ dot_theme_assets.bat.macchiato }}"
     glow_style_file: "{{ dot_theme_assets.glow.macchiato }}"
     jqp_theme_name: "catppuccin-macchiato"
     omp_theme_file: "{{ dot_theme_assets.omp.macchiato }}"
+    ghostty_theme_file: "{{ dot_theme_assets.ghostty.macchiato }}"
   tokyonight:
     bat_theme_name: "tokyonight"
     bat_theme_file: "{{ dot_theme_assets.bat.tokyonight }}"
     glow_style_file: "{{ dot_theme_assets.glow.tokyonight }}"
     jqp_theme_name: "tokyonight"
     omp_theme_file: "{{ dot_theme_assets.omp.tokyonight }}"
+    ghostty_theme_file: "{{ dot_theme_assets.ghostty.tokyonight }}"
   dracula:
     bat_theme_name: "dracula"
     bat_theme_file: "{{ dot_theme_assets.bat.dracula }}"
     glow_style_file: "{{ dot_theme_assets.glow.dracula }}"
     jqp_theme_name: "dracula"
     omp_theme_file: "{{ dot_theme_assets.omp.dracula }}"
+    ghostty_theme_file: "{{ dot_theme_assets.ghostty.dracula }}"
 
 dot_active_theme: "{{ dot_theme_catalog[dot_theme] }}"
 dot_bat_theme_name: "{{ dot_active_theme.bat_theme_name }}"
@@ -49,3 +67,12 @@ dot_bat_theme_file: "{{ dot_active_theme.bat_theme_file }}"
 dot_glow_style_file: "{{ dot_active_theme.glow_style_file }}"
 dot_jqp_theme_name: "{{ dot_active_theme.jqp_theme_name }}"
 dot_omp_theme_file: "{{ dot_active_theme.omp_theme_file }}"
+dot_ghostty_theme_file: "{{ dot_active_theme.ghostty_theme_file }}"
+
+dot_terminal_font: "liga_paper_mono"
+
+dot_terminal_font_assets:
+  liga_paper_mono: "font-liga-paper-mono.conf"
+  iosevka_term: "font-iosevka-term.conf"
+
+dot_terminal_font_file: "{{ dot_terminal_font_assets[dot_terminal_font] }}"

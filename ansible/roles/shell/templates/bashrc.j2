@@ -36,7 +36,7 @@ fi
 
 command -v fzf >/dev/null 2>&1 && eval "$(fzf --bash)"
 
-theme_file="{{ shell_xdg_config_home }}/oh-my-posh/themes/{{ dot_omp_theme_file | default('macchiato.omp.json') }}"
+theme_file="{{ shell_xdg_config_home }}/oh-my-posh/themes/{{ dot_omp_theme_file | default('mocha.omp.json') }}"
 if command -v oh-my-posh >/dev/null 2>&1 && [ -f "$theme_file" ]; then
   eval "$(oh-my-posh init bash --config "$theme_file")"
 fi

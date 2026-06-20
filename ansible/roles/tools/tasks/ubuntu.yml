@@ -6,6 +6,49 @@
     update_cache: true
   become: true
 
+- name: Install PPA support for Ghostty
+  ansible.builtin.apt:
+    name: software-properties-common
+    state: present
+    update_cache: true
+  become: true
+  when:
+    - tools_manage_ghostty | bool
+    - ubuntu_ghostty_install_method == "ppa"
+
+- name: Add Ghostty Ubuntu PPA
+  ansible.builtin.apt_repository:
+    repo: "{{ ubuntu_ghostty_ppa }}"
+    state: present
+    update_cache: true
+  become: true
+  when:
+    - tools_manage_ghostty | bool
+    - ubuntu_ghostty_install_method == "ppa"
+
+- name: Install Ghostty from apt/PPA
+  ansible.builtin.apt:
+    name: ghostty
+    state: present
+    update_cache: true
+  become: true
+  when:
+    - tools_manage_ghostty | bool
+    - ubuntu_ghostty_install_method == "ppa"
+
+- name: Verify Ubuntu Ghostty CLI actions
+  ansible.builtin.command:
+    argv:
+      - ghostty
+      - "{{ item }}"
+  loop:
+    - +version
+    - +help
+  changed_when: false
+  when:
+    - tools_manage_ghostty | bool
+    - ubuntu_ghostty_install_method == "ppa"
+
 - name: Check Linuxbrew default brew path
   ansible.builtin.stat:
     path: "{{ tools_linuxbrew_default_brew }}"

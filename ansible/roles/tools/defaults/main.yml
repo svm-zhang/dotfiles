@@ -4,6 +4,7 @@
 tools_linuxbrew_default_prefix: "/home/linuxbrew/.linuxbrew"
 tools_linuxbrew_default_brew: "{{ tools_linuxbrew_default_prefix }}/bin/brew"
 tools_brew_bin: ""
+tools_manage_ghostty: true
 
 common_tools_formulae:
   - git
@@ -30,6 +31,9 @@ macos_only_tools_formulae:
   - git-lfs
   - tree
 
+macos_tools_casks:
+  - ghostty
+
 ubuntu_apt_packages:
   - bash-completion
   - git-lfs
@@ -42,6 +46,9 @@ ubuntu_apt_packages:
   - tree
 
 ubuntu_only_tools_formulae: []
+
+ubuntu_ghostty_install_method: "ppa"
+ubuntu_ghostty_ppa: "ppa:mkasberg/ghostty-ubuntu"
 
 macos_tools_formulae: "{{ common_tools_formulae + macos_only_tools_formulae }}"
 ubuntu_tools_formulae: "{{ common_tools_formulae + ubuntu_only_tools_formulae }}"

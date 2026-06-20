@@ -1,4 +1,29 @@
 ---
-- name: macOS tool installation is not enabled in step 08
-  ansible.builtin.fail:
-    msg: "macOS package installation is intentionally not enabled in step 08."
+- name: Install macOS Ghostty cask
+  ansible.builtin.command:
+    cmd: "brew install --cask {{ item }}"
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+    HOMEBREW_NO_INSTALL_CLEANUP: "1"
+  loop: "{{ macos_tools_casks }}"
+  register: tools_macos_cask_install
+  changed_when: "'already installed' not in ((tools_macos_cask_install.stdout | default('')) ~ (tools_macos_cask_install.stderr | default('')))"
+  when: tools_manage_ghostty | bool
+
+- name: Verify macOS Ghostty cask is installed
+  ansible.builtin.command:
+    cmd: "brew list --cask {{ item }}"
+  loop: "{{ macos_tools_casks }}"
+  changed_when: false
+  when: tools_manage_ghostty | bool
+
+- name: Verify macOS Ghostty CLI actions
+  ansible.builtin.command:
+    argv:
+      - ghostty
+      - "{{ item }}"
+  loop:
+    - +version
+    - +help
+  changed_when: false
+  when: tools_manage_ghostty | bool
