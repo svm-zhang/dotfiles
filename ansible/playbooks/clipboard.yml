@@ -1,0 +1,7 @@
+---
+- name: Manage clipboard helpers
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - clipboard

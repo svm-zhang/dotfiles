@@ -49,6 +49,8 @@ ubuntu_apt_packages:
   - sysstat
   - lm-sensors
   - tree
+  - wl-clipboard
+  - xclip
 
 ubuntu_only_tools_formulae: []
 

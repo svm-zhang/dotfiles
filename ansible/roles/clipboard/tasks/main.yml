@@ -1,3 +1,13 @@
 ---
-# Placeholder. clipcopy/clippaste helpers will be implemented in a later step.
+- name: Create clipboard helper directory
+  ansible.builtin.file:
+    path: "{{ clipboard_bin_dir }}"
+    state: directory
+    mode: "0755"
 
+- name: Render clipboard helper scripts
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "0755"
+  loop: "{{ clipboard_helper_files }}"

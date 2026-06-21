@@ -36,7 +36,7 @@ export FZF_ALT_C_OPTS="
 # setup ctrl-r command for history
 # ctrl-y for yanking and ctrl-p for pasting
 export FZF_CTRL_R_OPTS="
-  --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'  
+  --bind 'ctrl-y:execute-silent(echo -n {2..} | clipcopy)+abort'
 "
 
 # setup $command **<TAB>
