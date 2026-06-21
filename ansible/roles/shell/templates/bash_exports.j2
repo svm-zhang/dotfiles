@@ -3,6 +3,19 @@
 
 [ -d "{{ shell_local_dir }}/bin" ] && export PATH="{{ shell_local_dir }}/bin:$PATH"
 [ -d "{{ shell_opt_dir }}/bin" ] && export PATH="{{ shell_opt_dir }}/bin:$PATH"
+[ -d "{{ dot_user_home }}/.cargo/bin" ] && export PATH="{{ dot_user_home }}/.cargo/bin:$PATH"
+
+if [ -d "{{ shell_macos_homebrew_dir }}/opt/node@24/bin" ]; then
+  export PATH="{{ shell_macos_homebrew_dir }}/opt/node@24/bin:$PATH"
+elif [ -d "{{ shell_linuxbrew_dir }}/opt/node@24/bin" ]; then
+  export PATH="{{ shell_linuxbrew_dir }}/opt/node@24/bin:$PATH"
+fi
+
+if [ -d "{{ shell_macos_homebrew_dir }}/opt/rustup/bin" ]; then
+  export PATH="{{ shell_macos_homebrew_dir }}/opt/rustup/bin:$PATH"
+elif [ -d "{{ shell_linuxbrew_dir }}/opt/rustup/bin" ]; then
+  export PATH="{{ shell_linuxbrew_dir }}/opt/rustup/bin:$PATH"
+fi
 
 {% if ansible_facts["system"] == "Darwin" %}
 [ -d "{{ shell_texbin_dir }}" ] && export PATH="{{ shell_texbin_dir }}:$PATH"

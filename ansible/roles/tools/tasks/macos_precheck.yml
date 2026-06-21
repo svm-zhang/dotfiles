@@ -1,0 +1,38 @@
+---
+- name: Check macOS Homebrew formulae before install
+  ansible.builtin.command:
+    cmd: "brew list --versions {{ item }}"
+  loop: "{{ macos_tools_formulae }}"
+  register: tools_macos_formula_precheck
+  changed_when: false
+  failed_when: false
+
+- name: Set missing macOS Homebrew formulae
+  ansible.builtin.set_fact:
+    tools_macos_missing_formulae: >-
+      {{
+        tools_macos_formula_precheck.results
+        | selectattr('rc', 'ne', 0)
+        | map(attribute='item')
+        | list
+      }}
+
+- name: Check macOS Homebrew casks before install
+  ansible.builtin.command:
+    cmd: "brew list --cask --versions {{ item }}"
+  loop: "{{ macos_tools_casks }}"
+  register: tools_macos_cask_precheck
+  changed_when: false
+  failed_when: false
+  when: tools_manage_ghostty | bool
+
+- name: Set missing macOS Homebrew casks
+  ansible.builtin.set_fact:
+    tools_macos_missing_casks: >-
+      {{
+        tools_macos_cask_precheck.results
+        | selectattr('rc', 'ne', 0)
+        | map(attribute='item')
+        | list
+      }}
+  when: tools_manage_ghostty | bool

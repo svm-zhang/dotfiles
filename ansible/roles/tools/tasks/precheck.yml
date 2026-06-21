@@ -1,0 +1,8 @@
+---
+- name: Include macOS tools precheck
+  ansible.builtin.include_tasks: macos_precheck.yml
+  when: dotfiles_os_family == "macos"
+
+- name: Include Ubuntu tools precheck
+  ansible.builtin.include_tasks: ubuntu_precheck.yml
+  when: dotfiles_os_family == "ubuntu"

@@ -3,7 +3,14 @@
 # enable vi-mode on command line
 set -o vi
 
-# load exports first so later shell setup can see XDG_CONFIG_HOME and theme variables
+# to make sure brew can be called
+if [ -x "{{ shell_macos_homebrew_dir }}/bin/brew" ]; then
+  eval "$("{{ shell_macos_homebrew_dir }}/bin/brew" shellenv)"
+elif [ -x "{{ shell_linuxbrew_dir }}/bin/brew" ]; then
+  eval "$("{{ shell_linuxbrew_dir }}/bin/brew" shellenv)"
+fi
+
+# load exports after brew shellenv so dotfile-managed PATH entries take precedence
 [ -f "$HOME/.bash_exports" ] && . "$HOME/.bash_exports"
 
 # load aliases setup
@@ -20,13 +27,6 @@ set -o vi
 
 # load Rust cargo env
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
-
-# to make sure brew can be called
-if [ -x "{{ shell_macos_homebrew_dir }}/bin/brew" ]; then
-  eval "$("{{ shell_macos_homebrew_dir }}/bin/brew" shellenv)"
-elif [ -x "{{ shell_linuxbrew_dir }}/bin/brew" ]; then
-  eval "$("{{ shell_linuxbrew_dir }}/bin/brew" shellenv)"
-fi
 
 if [ -f "{{ shell_macos_homebrew_dir }}/etc/profile.d/bash_completion.sh" ]; then
   . "{{ shell_macos_homebrew_dir }}/etc/profile.d/bash_completion.sh"

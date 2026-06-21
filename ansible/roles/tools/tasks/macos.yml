@@ -5,14 +5,40 @@
   environment:
     HOMEBREW_NO_AUTO_UPDATE: "1"
     HOMEBREW_NO_INSTALL_CLEANUP: "1"
-  loop: "{{ macos_tools_formulae }}"
+  loop: "{{ tools_macos_missing_formulae | default(macos_tools_formulae) }}"
   register: tools_macos_formula_install
-  changed_when: "'already installed' not in ((tools_macos_formula_install.stdout | default('')) ~ (tools_macos_formula_install.stderr | default('')))"
+  changed_when: true
+  when: (tools_macos_missing_formulae | default(macos_tools_formulae)) | length > 0
 
 - name: Verify macOS Homebrew formulae are installed
   ansible.builtin.command:
-    cmd: "brew list --formula {{ item }}"
+    cmd: "brew list --versions {{ item }}"
   loop: "{{ macos_tools_formulae }}"
+  changed_when: false
+
+- name: Get macOS rustup Homebrew prefix
+  ansible.builtin.command:
+    cmd: "brew --prefix rustup"
+  register: tools_macos_rustup_prefix
+  changed_when: false
+
+- name: Install macOS Rust stable toolchain
+  ansible.builtin.command:
+    argv:
+      - "{{ tools_macos_rustup_prefix.stdout }}/bin/rustup"
+      - default
+      - stable
+  register: tools_macos_rustup_default
+  changed_when: "'unchanged' not in ((tools_macos_rustup_default.stdout | default('')) ~ (tools_macos_rustup_default.stderr | default('')))"
+
+- name: Verify macOS Rust tools are available through rustup
+  ansible.builtin.command:
+    argv:
+      - "{{ tools_macos_rustup_prefix.stdout }}/bin/{{ item }}"
+      - --version
+  loop:
+    - cargo
+    - rustc
   changed_when: false
 
 - name: Install macOS Ghostty cask
@@ -21,14 +47,16 @@
   environment:
     HOMEBREW_NO_AUTO_UPDATE: "1"
     HOMEBREW_NO_INSTALL_CLEANUP: "1"
-  loop: "{{ macos_tools_casks }}"
+  loop: "{{ tools_macos_missing_casks | default(macos_tools_casks) }}"
   register: tools_macos_cask_install
-  changed_when: "'already installed' not in ((tools_macos_cask_install.stdout | default('')) ~ (tools_macos_cask_install.stderr | default('')))"
-  when: tools_manage_ghostty | bool
+  changed_when: true
+  when:
+    - tools_manage_ghostty | bool
+    - (tools_macos_missing_casks | default(macos_tools_casks)) | length > 0
 
 - name: Verify macOS Ghostty cask is installed
   ansible.builtin.command:
-    cmd: "brew list --cask {{ item }}"
+    cmd: "brew list --cask --versions {{ item }}"
   loop: "{{ macos_tools_casks }}"
   changed_when: false
   when: tools_manage_ghostty | bool

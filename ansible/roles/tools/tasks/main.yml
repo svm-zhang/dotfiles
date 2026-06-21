@@ -1,4 +1,8 @@
 ---
+- name: Include tools precheck
+  ansible.builtin.include_tasks: precheck.yml
+  when: dotfiles_manage_packages | default(false) | bool
+
 - name: Include Ubuntu tools tasks
   ansible.builtin.include_tasks: ubuntu.yml
   when:
