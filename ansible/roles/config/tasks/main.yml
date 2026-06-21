@@ -5,6 +5,13 @@
       - config_deploy_mode in ["test", "home"]
     fail_msg: "config_deploy_mode must be one of: test, home"
 
+- name: Create config test render root
+  ansible.builtin.file:
+    path: "{{ config_target_user_home }}"
+    state: directory
+    mode: "0700"
+  when: config_deploy_mode == "test"
+
 - name: Create config directories
   ansible.builtin.file:
     path: "{{ item }}"

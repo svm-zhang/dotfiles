@@ -1,4 +1,20 @@
 ---
+- name: Install macOS Homebrew formulae
+  ansible.builtin.command:
+    cmd: "brew install {{ item }}"
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+    HOMEBREW_NO_INSTALL_CLEANUP: "1"
+  loop: "{{ macos_tools_formulae }}"
+  register: tools_macos_formula_install
+  changed_when: "'already installed' not in ((tools_macos_formula_install.stdout | default('')) ~ (tools_macos_formula_install.stderr | default('')))"
+
+- name: Verify macOS Homebrew formulae are installed
+  ansible.builtin.command:
+    cmd: "brew list --formula {{ item }}"
+  loop: "{{ macos_tools_formulae }}"
+  changed_when: false
+
 - name: Install macOS Ghostty cask
   ansible.builtin.command:
     cmd: "brew install --cask {{ item }}"

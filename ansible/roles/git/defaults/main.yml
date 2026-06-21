@@ -1,8 +1,8 @@
 ---
 git_deploy_mode: "test"
 git_render_root: "{{ playbook_dir }}/../../.ansible-test-output/git"
-git_home: "{{ ansible_facts['env']['HOME'] | default(lookup('env', 'HOME')) }}"
-git_deploy_root: "{{ git_home }}"
+git_home: "{{ dot_user_home }}/.git"
+git_deploy_root: "{{ dot_user_home }}"
 git_target_root: "{{ git_render_root if git_deploy_mode == 'test' else git_deploy_root }}"
 
 git_editor: "nvim"

@@ -1,6 +1,6 @@
 ---
-fonts_macos_user_dir: "{{ ansible_facts['env']['HOME'] }}/Library/Fonts"
-fonts_linux_user_dir: "{{ ansible_facts['env']['HOME'] }}/.local/share/fonts"
+fonts_macos_user_dir: "{{ dot_user_home }}/Library/Fonts"
+fonts_linux_user_dir: "{{ dot_user_home }}/.local/share/fonts"
 fonts_target_dir: "{{ fonts_macos_user_dir if ansible_facts['os_family'] == 'Darwin' else fonts_linux_user_dir }}"
 
 fonts_anthrosevka_version: "v0.3.0"

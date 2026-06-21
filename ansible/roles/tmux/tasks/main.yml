@@ -1,3 +1,69 @@
 ---
-# Placeholder. tmux config and TPM setup will be implemented in a later step.
+- name: Validate tmux deploy mode
+  ansible.builtin.assert:
+    that:
+      - tmux_deploy_mode in ["test", "home"]
+    fail_msg: "tmux_deploy_mode must be one of: test, home"
 
+- name: Create tmux test render root
+  ansible.builtin.file:
+    path: "{{ tmux_target_root }}"
+    state: directory
+    mode: "0700"
+  when: tmux_deploy_mode == "test"
+
+- name: Render tmux config
+  ansible.builtin.template:
+    src: tmux.conf.j2
+    dest: "{{ tmux_config_path }}"
+    mode: "0644"
+
+- name: Create tmux plugin directory
+  ansible.builtin.file:
+    path: "{{ tmux_plugin_dir }}"
+    state: directory
+    mode: "0755"
+  when: tmux_deploy_mode == "home"
+
+- name: Check TPM clone
+  ansible.builtin.stat:
+    path: "{{ tmux_tpm_dir }}/.git"
+  register: tmux_tpm_git_dir
+  when: tmux_deploy_mode == "home"
+
+- name: Clone TPM
+  ansible.builtin.command:
+    argv:
+      - git
+      - clone
+      - --branch
+      - "{{ tmux_tpm_version }}"
+      - "{{ tmux_tpm_repo }}"
+      - "{{ tmux_tpm_dir }}"
+  when:
+    - tmux_deploy_mode == "home"
+    - not tmux_tpm_git_dir.stat.exists
+
+- name: Update TPM
+  ansible.builtin.command:
+    argv:
+      - git
+      - -C
+      - "{{ tmux_tpm_dir }}"
+      - pull
+      - --ff-only
+  register: tmux_tpm_update
+  changed_when: "'Already up to date.' not in tmux_tpm_update.stdout"
+  when:
+    - tmux_deploy_mode == "home"
+    - tmux_tpm_git_dir.stat.exists
+
+- name: Install TPM plugins
+  ansible.builtin.command:
+    cmd: "{{ tmux_tpm_install_plugins_command }}"
+  environment:
+    TMUX_PLUGIN_MANAGER_PATH: "{{ tmux_plugin_dir }}"
+  changed_when: true
+  when:
+    - tmux_deploy_mode == "home"
+    - tmux_install_plugins | bool

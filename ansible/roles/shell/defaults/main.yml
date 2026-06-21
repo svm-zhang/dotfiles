@@ -1,8 +1,7 @@
 ---
 shell_deploy_mode: "test"
 shell_render_root: "{{ playbook_dir }}/../../.ansible-test-output/shell"
-shell_home: "{{ ansible_facts['env']['HOME'] | default(lookup('env', 'HOME')) }}"
-shell_deploy_root: "{{ shell_home }}"
+shell_deploy_root: "{{ dot_user_home }}"
 shell_target_root: "{{ shell_render_root if shell_deploy_mode == 'test' else shell_deploy_root }}"
 
 shell_bashrc_file: ".bashrc"
@@ -14,10 +13,10 @@ shell_functions_file: ".functionsrc"
 shell_local_aliases: []
 
 shell_dotfiles_root: "{{ playbook_dir }}/../.."
-shell_local_dir: "{{ shell_home }}/.local"
-shell_opt_dir: "{{ shell_home }}/.local/opt"
+shell_local_dir: "{{ dot_user_home }}/.local"
+shell_opt_dir: "{{ dot_user_home }}/.local/opt"
 shell_macos_homebrew_dir: "/opt/homebrew"
 shell_linuxbrew_dir: "/home/linuxbrew/.linuxbrew"
 shell_texbin_dir: "/Library/TeX/texbin"
 shell_editor: "nvim"
-shell_xdg_config_home: "{{ shell_home }}/{{ dot_xdg_config_dir | default('.config') }}"
+shell_xdg_config_home: "{{ dot_user_home }}/{{ dot_xdg_config_dir | default('.config') }}"

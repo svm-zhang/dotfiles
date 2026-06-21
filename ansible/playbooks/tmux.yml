@@ -1,0 +1,7 @@
+---
+- name: Manage tmux configuration
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - tmux

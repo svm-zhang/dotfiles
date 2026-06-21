@@ -29,6 +29,7 @@ macos_only_tools_formulae:
   - bash
   - bash-completion
   - git-lfs
+  - tmux
   - tree
 
 macos_tools_casks:
@@ -43,6 +44,10 @@ ubuntu_apt_packages:
   - curl
   - ca-certificates
   - less
+  - tmux
+  - acpi
+  - sysstat
+  - lm-sensors
   - tree
 
 ubuntu_only_tools_formulae: []

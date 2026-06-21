@@ -5,11 +5,12 @@
       - git_deploy_mode in ["test", "home"]
     fail_msg: "git_deploy_mode must be one of: test, home"
 
-- name: Create Git render directory
+- name: Create Git test render directory
   ansible.builtin.file:
     path: "{{ git_target_root }}"
     state: directory
     mode: "0700"
+  when: git_deploy_mode == "test"
 
 - name: Render public Git config files
   ansible.builtin.template:

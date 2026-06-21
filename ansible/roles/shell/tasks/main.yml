@@ -5,11 +5,12 @@
       - shell_deploy_mode in ["test", "home"]
     fail_msg: "shell_deploy_mode must be one of: test, home"
 
-- name: Create shell target directory
+- name: Create shell test render directory
   ansible.builtin.file:
     path: "{{ shell_target_root }}"
     state: directory
     mode: "0700"
+  when: shell_deploy_mode == "test"
 
 - name: Render shell files
   ansible.builtin.template:
