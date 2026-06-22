@@ -1,0 +1,7 @@
+---
+- name: Manage GitHub SSH identity
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - github_ssh

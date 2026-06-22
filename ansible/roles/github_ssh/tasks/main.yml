@@ -1,3 +1,116 @@
 ---
-# Placeholder. Per-machine GitHub SSH key setup will be implemented in a later step.
+- name: Validate GitHub SSH deploy mode
+  ansible.builtin.assert:
+    that:
+      - github_ssh_deploy_mode in ["test", "home"]
+    fail_msg: "github_ssh_deploy_mode must be one of: test, home"
 
+- name: Create SSH directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode }}"
+  loop:
+    - path: "{{ github_ssh_dir }}"
+      mode: "0700"
+    - path: "{{ github_ssh_config_dir }}"
+      mode: "0700"
+
+- name: Reset managed GitHub SSH keypair
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ github_ssh_key_path }}"
+    - "{{ github_ssh_public_key_path }}"
+  when: github_ssh_reset_key | bool
+
+- name: Check whether private key exists
+  ansible.builtin.stat:
+    path: "{{ github_ssh_key_path }}"
+  register: github_ssh_private_key
+
+- name: Check whether public key exists
+  ansible.builtin.stat:
+    path: "{{ github_ssh_public_key_path }}"
+  register: github_ssh_public_key_file
+
+- name: Remove old managed GitHub SSH keypair
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ github_ssh_key_path }}"
+    - "{{ github_ssh_public_key_path }}"
+  when: >
+    not github_ssh_private_key.stat.exists
+    or not github_ssh_public_key_file.stat.exists
+
+- name: Generate managed GitHub SSH keypair
+  ansible.builtin.command:
+    argv:
+      - ssh-keygen
+      - -t
+      - "{{ github_ssh_key_type }}"
+      - -f
+      - "{{ github_ssh_key_path }}"
+      - -C
+      - "{{ github_ssh_key_comment }}"
+      - -N
+      - ""
+  when: >
+    not github_ssh_private_key.stat.exists
+    or not github_ssh_public_key_file.stat.exists
+
+- name: Ensure managed GitHub private key mode
+  ansible.builtin.file:
+    path: "{{ github_ssh_key_path }}"
+    state: file
+    mode: "0600"
+
+- name: Ensure managed GitHub public key mode
+  ansible.builtin.file:
+    path: "{{ github_ssh_public_key_path }}"
+    state: file
+    mode: "0644"
+
+- name: Render GitHub SSH config
+  ansible.builtin.template:
+    src: github.conf.j2
+    dest: "{{ github_ssh_config_path }}"
+    mode: "0600"
+
+- name: Ensure SSH config exists
+  ansible.builtin.file:
+    path: "{{ github_ssh_main_config_path }}"
+    state: touch
+    mode: "0600"
+    modification_time: preserve
+    access_time: preserve
+
+- name: Ensure SSH config includes managed config directory
+  ansible.builtin.lineinfile:
+    path: "{{ github_ssh_main_config_path }}"
+    line: "{{ github_ssh_include_line }}"
+    insertbefore: BOF
+    create: true
+    mode: "0600"
+
+- name: Scan GitHub SSH host keys
+  ansible.builtin.command:
+    argv:
+      - ssh-keyscan
+      - -T
+      - "10"
+      - "{{ github_ssh_host }}"
+  register: github_ssh_keyscan
+  changed_when: false
+
+- name: Store GitHub SSH host keys
+  ansible.builtin.known_hosts:
+    path: "{{ github_ssh_known_hosts_path }}"
+    name: "{{ github_ssh_host }}"
+    key: "{{ item }}"
+    state: present
+  loop: "{{ github_ssh_keyscan.stdout_lines }}"
+  when: item | length > 0

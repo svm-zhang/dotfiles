@@ -1,0 +1,20 @@
+---
+github_ssh_deploy_mode: "test"
+github_ssh_reset_key: false
+
+github_ssh_key_type: "ed25519"
+github_ssh_key_name: "id_ed25519_github"
+github_ssh_host: "github.com"
+github_ssh_user: "git"
+github_ssh_key_comment: "{{ inventory_hostname }}@github"
+
+github_ssh_render_root: "{{ playbook_dir }}/../../.ansible-test-output/github_ssh/{{ inventory_hostname }}"
+github_ssh_home: "{{ github_ssh_render_root if github_ssh_deploy_mode == 'test' else dot_user_home }}"
+github_ssh_dir: "{{ github_ssh_home }}/.ssh"
+github_ssh_key_path: "{{ github_ssh_dir }}/{{ github_ssh_key_name }}"
+github_ssh_public_key_path: "{{ github_ssh_key_path }}.pub"
+github_ssh_config_dir: "{{ github_ssh_dir }}/config.d"
+github_ssh_config_path: "{{ github_ssh_config_dir }}/github.conf"
+github_ssh_main_config_path: "{{ github_ssh_dir }}/config"
+github_ssh_known_hosts_path: "{{ github_ssh_dir }}/known_hosts"
+github_ssh_include_line: "Include {{ github_ssh_config_dir }}/*.conf"

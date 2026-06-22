@@ -189,7 +189,6 @@ bootstrap_ubuntu() {
     curl
     wget
     ca-certificates
-    git
     ansible
   )
 
