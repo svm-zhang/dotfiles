@@ -1,0 +1,44 @@
+---
+document_deploy_mode: "test"
+
+document_formulae:
+  - r
+  - pandoc
+  - texlive
+
+document_command_checks:
+  - name: R
+    command: R
+    version_arg: --version
+  - name: pandoc
+    command: pandoc
+    version_arg: --version
+  - name: kpsewhich
+    command: kpsewhich
+    version_arg: --version
+  - name: tlmgr
+    command: tlmgr
+    version_arg: --version
+  - name: xelatex
+    command: xelatex
+    version_arg: --version
+  - name: texliveonfly
+    command: texliveonfly
+    version_arg: --help
+
+document_tex_file_checks:
+  - adjustbox.sty
+  - tcolorbox.sty
+  - collectbox.sty
+  - ucs.sty
+  - environ.sty
+  - trimspaces.sty
+  - titling.sty
+  - enumitem.sty
+  - mathrsfs.sty
+  - sectsty.sty
+  - titlesec.sty
+  - lastpage.sty
+  - datetime.sty
+  - fmtcount.sty
+  - orcidlink.sty

@@ -1,0 +1,65 @@
+---
+- name: Validate document deploy mode
+  ansible.builtin.assert:
+    that:
+      - document_deploy_mode in ["test", "home"]
+    fail_msg: "document_deploy_mode must be either 'test' or 'home'."
+
+- name: Skip document role on non-macOS hosts
+  ansible.builtin.debug:
+    msg: "Skipping macOS document role on {{ dotfiles_os_family }}."
+  when: dotfiles_os_family != "macos"
+
+- name: Check installed macOS document formulae
+  ansible.builtin.command:
+    argv:
+      - brew
+      - list
+      - --versions
+      - "{{ item }}"
+  loop: "{{ document_formulae }}"
+  register: document_formula_checks
+  changed_when: false
+  failed_when: false
+  when:
+    - dotfiles_os_family == "macos"
+    - document_deploy_mode == "home"
+
+- name: Install missing macOS document formulae
+  ansible.builtin.command:
+    argv:
+      - brew
+      - install
+      - "{{ item.item }}"
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+    HOMEBREW_NO_INSTALL_CLEANUP: "1"
+  loop: "{{ document_formula_checks.results | default([]) }}"
+  register: document_formula_installs
+  changed_when: true
+  when:
+    - dotfiles_os_family == "macos"
+    - document_deploy_mode == "home"
+    - item.rc != 0
+
+- name: Verify macOS document commands
+  ansible.builtin.command:
+    argv:
+      - "{{ item.command }}"
+      - "{{ item.version_arg }}"
+  loop: "{{ document_command_checks }}"
+  changed_when: false
+  when:
+    - dotfiles_os_family == "macos"
+    - document_deploy_mode == "home"
+
+- name: Verify document TeX files are available
+  ansible.builtin.command:
+    argv:
+      - kpsewhich
+      - "{{ item }}"
+  loop: "{{ document_tex_file_checks }}"
+  changed_when: false
+  when:
+    - dotfiles_os_family == "macos"
+    - document_deploy_mode == "home"

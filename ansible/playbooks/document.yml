@@ -1,0 +1,7 @@
+---
+- name: Manage macOS document environment
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - document
