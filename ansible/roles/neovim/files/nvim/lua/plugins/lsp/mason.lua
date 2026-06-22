@@ -44,7 +44,6 @@ return {
 				ensure_installed = {
 					"black",
 					"isort",
-					"htmlbeautifier",
 					"prettier",
 					"stylua",
 					"shfmt",

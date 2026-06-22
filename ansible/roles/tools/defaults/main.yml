@@ -5,6 +5,7 @@ tools_linuxbrew_default_prefix: "/home/linuxbrew/.linuxbrew"
 tools_linuxbrew_default_brew: "{{ tools_linuxbrew_default_prefix }}/bin/brew"
 tools_brew_bin: ""
 tools_manage_ghostty: true
+tools_uv_python_version: "3.12"
 
 common_tools_formulae:
   - git
@@ -28,6 +29,7 @@ common_tools_formulae:
   - rustup
   - tree-sitter-cli
   - uv
+  - neovim
 
 macos_only_tools_formulae:
   - bash

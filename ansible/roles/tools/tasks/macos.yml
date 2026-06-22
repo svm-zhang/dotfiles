@@ -41,6 +41,34 @@
     - rustc
   changed_when: false
 
+- name: Get macOS uv Homebrew prefix
+  ansible.builtin.command:
+    cmd: "brew --prefix uv"
+  register: tools_macos_uv_prefix
+  changed_when: false
+
+- name: Install macOS uv-managed Python
+  ansible.builtin.command:
+    argv:
+      - "{{ tools_macos_uv_prefix.stdout }}/bin/uv"
+      - python
+      - install
+      - "{{ tools_uv_python_version }}"
+  register: tools_macos_uv_python_install
+  changed_when: >-
+    'already installed' not in
+    ((tools_macos_uv_python_install.stdout | default('')) ~
+    (tools_macos_uv_python_install.stderr | default('')))
+
+- name: Verify macOS uv-managed Python
+  ansible.builtin.command:
+    argv:
+      - "{{ tools_macos_uv_prefix.stdout }}/bin/uv"
+      - python
+      - find
+      - "{{ tools_uv_python_version }}"
+  changed_when: false
+
 - name: Install macOS Ghostty cask
   ansible.builtin.command:
     cmd: "brew install --cask {{ item }}"

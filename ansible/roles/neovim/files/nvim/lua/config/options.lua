@@ -15,7 +15,7 @@ opt.wrap = false
 
 vim.api.nvim_create_autocmd("FileType", {
 	group = vim.api.nvim_create_augroup("prose_soft_wrap", { clear = true }),
-	pattern = { "markdown", "rmd", "Rmd", "text", "gitcommit" },
+	pattern = { "markdown", "text", "gitcommit" },
 	callback = function()
 		vim.opt_local.wrap = true
 		vim.opt_local.linebreak = true

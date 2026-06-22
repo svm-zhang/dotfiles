@@ -10,7 +10,7 @@ return {
 				formatters_by_ft = {
 					bash = { "shfmt" },
 					css = { "prettier" },
-					html = { "htmlbeautifier" },
+					html = { "prettier" },
 					json = { "prettier" },
 					lua = { "stylua" },
 					python = function(bufnr)

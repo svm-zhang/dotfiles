@@ -66,8 +66,6 @@ return {
 					"markdown",
 					"text",
 					"gitcommit",
-					"rmd",
-					"Rmd",
 				},
 			},
 		},

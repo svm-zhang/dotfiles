@@ -1,0 +1,7 @@
+---
+- name: Manage Neovim
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - neovim

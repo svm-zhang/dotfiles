@@ -142,3 +142,31 @@
     - cargo
     - rustc
   changed_when: false
+
+- name: Get Ubuntu uv Linuxbrew prefix
+  ansible.builtin.command:
+    cmd: "{{ tools_brew_bin }} --prefix uv"
+  register: tools_ubuntu_uv_prefix
+  changed_when: false
+
+- name: Install Ubuntu uv-managed Python
+  ansible.builtin.command:
+    argv:
+      - "{{ tools_ubuntu_uv_prefix.stdout }}/bin/uv"
+      - python
+      - install
+      - "{{ tools_uv_python_version }}"
+  register: tools_ubuntu_uv_python_install
+  changed_when: >-
+    'already installed' not in
+    ((tools_ubuntu_uv_python_install.stdout | default('')) ~
+    (tools_ubuntu_uv_python_install.stderr | default('')))
+
+- name: Verify Ubuntu uv-managed Python
+  ansible.builtin.command:
+    argv:
+      - "{{ tools_ubuntu_uv_prefix.stdout }}/bin/uv"
+      - python
+      - find
+      - "{{ tools_uv_python_version }}"
+  changed_when: false
