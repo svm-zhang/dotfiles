@@ -1,0 +1,19 @@
+---
+gpu_manage: true
+nvidia_cuda_smoke_image: "nvidia/cuda:13.0.2-base-ubuntu24.04"
+
+nvidia_container_toolkit_keyring_path: "/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg"
+nvidia_container_toolkit_list_url: "https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list"
+nvidia_container_toolkit_gpg_url: "https://nvidia.github.io/libnvidia-container/gpgkey"
+nvidia_container_toolkit_source_path: "/etc/apt/sources.list.d/nvidia-container-toolkit.list"
+
+nvidia_container_toolkit_prerequisites:
+  - ca-certificates
+  - curl
+  - gnupg2
+
+nvidia_container_toolkit_packages:
+  - nvidia-container-toolkit
+  - nvidia-container-toolkit-base
+  - libnvidia-container-tools
+  - libnvidia-container1

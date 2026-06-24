@@ -6,7 +6,6 @@ dotfiles_manage_packages: false
 dotfiles_manage_secrets: false
 dotfiles_manage_fonts: true
 dotfiles_desktop_profile: true
-dotfiles_enable_nvidia_gpu: false
 
 dot_user_home: "{{ ansible_facts['env']['HOME'] }}"
 dot_bash_path: "/bin/bash"

@@ -1,0 +1,176 @@
+---
+- name: Check nvidia-smi before driver install
+  ansible.builtin.command:
+    argv:
+      - nvidia-smi
+  register: nvidia_smi_before
+  changed_when: false
+  failed_when: false
+
+- name: Set Ubuntu NVIDIA driver installed fact
+  ansible.builtin.set_fact:
+    nvidia_driver_installed: "{{ nvidia_smi_before.rc == 0 }}"
+
+- name: Install ubuntu-drivers support
+  ansible.builtin.apt:
+    name: ubuntu-drivers-common
+    state: present
+    update_cache: true
+  become: true
+  when: not nvidia_driver_installed | bool
+
+- name: Install NVIDIA driver through ubuntu-drivers
+  ansible.builtin.command:
+    argv:
+      - ubuntu-drivers
+      - install
+      - --gpgpu
+  become: true
+  changed_when: true
+  when: not nvidia_driver_installed | bool
+
+- name: Verify nvidia-smi before container runtime setup
+  ansible.builtin.command:
+    argv:
+      - nvidia-smi
+  register: nvidia_smi_after
+  changed_when: false
+  failed_when: nvidia_smi_after.rc != 0
+
+- name: Set NVIDIA driver active fact
+  ansible.builtin.set_fact:
+    nvidia_driver_active: true
+
+- name: Check Docker availability
+  ansible.builtin.command:
+    argv:
+      - docker
+      - --version
+  register: nvidia_docker_command
+  changed_when: false
+  failed_when: false
+
+- name: Set Docker availability fact
+  ansible.builtin.set_fact:
+    nvidia_docker_available: "{{ nvidia_docker_command.rc == 0 }}"
+
+- name: Skip NVIDIA Container Toolkit when Docker is unavailable
+  ansible.builtin.debug:
+    msg: "Docker is unavailable; skipping NVIDIA Container Toolkit and runtime configuration."
+  when: not nvidia_docker_available | bool
+
+- name: Check NVIDIA Container Toolkit prerequisite packages
+  ansible.builtin.command:
+    argv:
+      - dpkg-query
+      - -W
+      - -f=${Status}
+      - "{{ item }}"
+  loop: "{{ nvidia_container_toolkit_prerequisites }}"
+  register: nvidia_container_toolkit_prerequisite_checks
+  changed_when: false
+  failed_when: false
+  when: nvidia_docker_available | bool
+
+- name: Set missing NVIDIA Container Toolkit prerequisites
+  ansible.builtin.set_fact:
+    nvidia_missing_container_toolkit_prerequisites: >-
+      {{
+        nvidia_container_toolkit_prerequisite_checks.results
+        | selectattr('stdout', 'ne', 'install ok installed')
+        | map(attribute='item')
+        | list
+      }}
+  when: nvidia_docker_available | bool
+
+- name: Install NVIDIA Container Toolkit prerequisites
+  ansible.builtin.apt:
+    name: "{{ nvidia_missing_container_toolkit_prerequisites }}"
+    state: present
+    update_cache: true
+  become: true
+  when:
+    - nvidia_docker_available | bool
+    - nvidia_missing_container_toolkit_prerequisites | length > 0
+
+- name: Add NVIDIA Container Toolkit apt repository
+  ansible.builtin.shell:
+    cmd: |
+      set -euo pipefail
+      curl -fsSL "{{ nvidia_container_toolkit_gpg_url }}" | gpg --dearmor --yes -o "{{ nvidia_container_toolkit_keyring_path }}"
+      curl -s -L "{{ nvidia_container_toolkit_list_url }}" |
+        sed 's#deb https://#deb [signed-by={{ nvidia_container_toolkit_keyring_path }}] https://#g' > "{{ nvidia_container_toolkit_source_path }}"
+    executable: /bin/bash
+    creates: "{{ nvidia_container_toolkit_source_path }}"
+  become: true
+  when: nvidia_docker_available | bool
+
+- name: Install NVIDIA Container Toolkit packages
+  ansible.builtin.apt:
+    name: "{{ nvidia_container_toolkit_packages }}"
+    state: present
+    update_cache: true
+  become: true
+  when: nvidia_docker_available | bool
+
+- name: Configure NVIDIA runtime for Docker
+  ansible.builtin.command:
+    argv:
+      - nvidia-ctk
+      - runtime
+      - configure
+      - --runtime=docker
+  become: true
+  register: nvidia_configure_docker
+  changed_when: true
+  when: nvidia_docker_available | bool
+
+- name: Configure NVIDIA runtime for containerd
+  ansible.builtin.command:
+    argv:
+      - nvidia-ctk
+      - runtime
+      - configure
+      - --runtime=containerd
+  become: true
+  register: nvidia_configure_containerd
+  changed_when: true
+  when: nvidia_docker_available | bool
+
+- name: Restart Docker after NVIDIA runtime configuration
+  ansible.builtin.service:
+    name: docker
+    state: restarted
+  become: true
+  when:
+    - nvidia_docker_available | bool
+    - nvidia_configure_docker is changed
+    - ansible_facts['service_mgr'] == "systemd"
+    - dotfiles_test_environment | default("") != "docker"
+
+- name: Restart containerd after NVIDIA runtime configuration
+  ansible.builtin.service:
+    name: containerd
+    state: restarted
+  become: true
+  when:
+    - nvidia_docker_available | bool
+    - nvidia_configure_containerd is changed
+    - ansible_facts['service_mgr'] == "systemd"
+    - dotfiles_test_environment | default("") != "docker"
+
+- name: Run Docker GPU smoke test
+  ansible.builtin.command:
+    argv:
+      - docker
+      - run
+      - --rm
+      - --gpus
+      - all
+      - "{{ nvidia_cuda_smoke_image }}"
+      - nvidia-smi
+  changed_when: false
+  when:
+    - nvidia_docker_available | bool
+    - nvidia_driver_active | bool
+    - dotfiles_test_environment | default("") != "docker"

@@ -184,37 +184,68 @@ bootstrap_macos() {
 bootstrap_ubuntu() {
   log "detected Ubuntu/Debian"
 
-  local packages=(
+  local base_packages=(
     sudo
     curl
     wget
     ca-certificates
-    ansible
+    software-properties-common
   )
 
+  local missing_base=()
   local missing=()
   local pkg
   local status
+  local ansible_ppa_present=0
 
-  for pkg in "${packages[@]}"; do
+  for pkg in "${base_packages[@]}"; do
     status="$(dpkg-query -W -f='${Status}' "${pkg}" 2>/dev/null || true)"
     if [[ "${status}" == "install ok installed" ]]; then
       log "package installed: ${pkg}"
     else
       warn "package missing: ${pkg}"
+      missing_base+=("${pkg}")
       missing+=("${pkg}")
     fi
   done
+
+  status="$(dpkg-query -W -f='${Status}' ansible 2>/dev/null || true)"
+  if [[ "${status}" == "install ok installed" ]]; then
+    log "package installed: ansible"
+  else
+    warn "package missing: ansible"
+    missing+=("ansible")
+  fi
+
+  if grep -Rqs "^deb .*ppa.launchpadcontent.net/ansible/ansible/ubuntu" /etc/apt/sources.list /etc/apt/sources.list.d 2>/dev/null ||
+     grep -Rqs "^deb .*ppa.launchpad.net/ansible/ansible/ubuntu" /etc/apt/sources.list /etc/apt/sources.list.d 2>/dev/null; then
+    ansible_ppa_present=1
+    log "Ansible PPA is configured"
+  else
+    warn "Ansible PPA is missing"
+    missing+=("ansible-ppa")
+  fi
 
   if [[ "${MODE}" == "check" ]]; then
     [[ "${#missing[@]}" -eq 0 ]] || return 1
     return 0
   fi
 
-  if [[ "${#missing[@]}" -gt 0 ]]; then
-    export DEBIAN_FRONTEND=noninteractive
+  export DEBIAN_FRONTEND=noninteractive
+
+  if [[ "${#missing_base[@]}" -gt 0 ]]; then
     run_root apt-get update
-    run_root apt-get install -y --no-install-recommends "${missing[@]}"
+    run_root apt-get install -y --no-install-recommends "${missing_base[@]}"
+  fi
+
+  if [[ "${ansible_ppa_present}" -ne 1 ]]; then
+    run_root add-apt-repository --yes --update ppa:ansible/ansible
+  elif [[ " ${missing[*]} " == *" ansible "* ]]; then
+    run_root apt-get update
+  fi
+
+  if [[ " ${missing[*]} " == *" ansible "* || "${ansible_ppa_present}" -ne 1 ]]; then
+    run_root apt-get install -y --no-install-recommends ansible
   fi
 }
 

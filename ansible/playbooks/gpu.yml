@@ -1,0 +1,7 @@
+---
+- name: Manage GPU foundation
+  hosts: ubuntu
+  gather_facts: true
+
+  roles:
+    - gpu
