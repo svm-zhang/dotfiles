@@ -1,0 +1,13 @@
+---
+- name: Skip Docker role
+  ansible.builtin.debug:
+    msg: "Skipping Docker role: host is not Ubuntu or docker_manage=false"
+  when: >
+    ansible_facts['distribution'] != "Ubuntu"
+    or not docker_manage | bool
+
+- name: Include Ubuntu Docker tasks
+  ansible.builtin.include_tasks: ubuntu.yml
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
+    - docker_manage | bool

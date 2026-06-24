@@ -1,0 +1,7 @@
+---
+- name: Manage Docker
+  hosts: ubuntu
+  gather_facts: true
+
+  roles:
+    - docker
