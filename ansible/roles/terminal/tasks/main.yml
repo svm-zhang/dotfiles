@@ -1,0 +1,48 @@
+---
+- name: Validate global deploy mode
+  ansible.builtin.assert:
+    that:
+      - deploy_mode in ["render", "docker", "home"]
+    fail_msg: "deploy_mode must be one of: render, docker, home"
+
+- name: Validate terminal app choice
+  ansible.builtin.assert:
+    that:
+      - terminal_app in terminal_app_choices
+    fail_msg: "terminal_app must be one of: {{ terminal_app_choices | join(', ') }}"
+
+- name: Include Ubuntu terminal installation tasks
+  ansible.builtin.include_tasks: ubuntu.yml
+  when:
+    - allow_package_changes | bool
+    - ansible_facts['distribution'] == "Ubuntu"
+
+- name: Include macOS terminal installation tasks
+  ansible.builtin.include_tasks: macos.yml
+  when:
+    - allow_package_changes | bool
+    - ansible_facts['system'] == "Darwin"
+
+- name: Create terminal config directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0700"
+  loop: "{{ terminal_ghostty_directories }}"
+  when: terminal_app == "ghostty"
+
+- name: Render Ghostty config templates
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode | default('0644') }}"
+  loop: "{{ terminal_ghostty_template_files }}"
+  when: terminal_app == "ghostty"
+
+- name: Deploy Ghostty profile files
+  ansible.builtin.copy:
+    src: "ghostty/profiles/{{ item }}"
+    dest: "{{ terminal_ghostty_profiles_dir }}/{{ item }}"
+    mode: "0644"
+  loop: "{{ terminal_ghostty_profile_files }}"
+  when: terminal_app == "ghostty"

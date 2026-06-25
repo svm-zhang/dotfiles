@@ -46,10 +46,3 @@
     dest: "{{ config_xdg_config_home }}/oh-my-posh/themes/{{ item.value }}"
     mode: "0644"
   loop: "{{ dot_theme_assets.omp | dict2items }}"
-
-- name: Deploy Ghostty profile files
-  ansible.builtin.copy:
-    src: "ghostty/profiles/{{ item }}"
-    dest: "{{ config_ghostty_profiles_dir }}/{{ item }}"
-    mode: "0644"
-  loop: "{{ config_ghostty_profile_files }}"

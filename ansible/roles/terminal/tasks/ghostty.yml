@@ -1,0 +1,76 @@
+---
+- name: Validate Ubuntu Ghostty install method
+  ansible.builtin.assert:
+    that:
+      - ubuntu_ghostty_install_method in ["ppa"]
+    fail_msg: "ubuntu_ghostty_install_method must be one of: ppa"
+
+- name: Install Ghostty deb822 prerequisite packages
+  ansible.builtin.apt:
+    name: "{{ ubuntu_deb822_prerequisites }}"
+    state: present
+    update_cache: true
+  become: true
+  when: ubuntu_ghostty_install_method == "ppa"
+
+- name: Create apt keyrings directory for Ghostty
+  ansible.builtin.file:
+    path: "{{ ubuntu_apt_keyring_dir }}"
+    state: directory
+    mode: "0755"
+  become: true
+  when: ubuntu_ghostty_install_method == "ppa"
+
+- name: Download Ghostty PPA signing key
+  ansible.builtin.get_url:
+    url: "{{ ubuntu_ghostty_ppa_key_url }}"
+    dest: "{{ ubuntu_ghostty_apt_keyring_path }}"
+    mode: "0644"
+  become: true
+  when: ubuntu_ghostty_install_method == "ppa"
+
+- name: Add Ghostty Ubuntu PPA
+  ansible.builtin.deb822_repository:
+    name: ghostty-ubuntu
+    types:
+      - deb
+    uris:
+      - "{{ ubuntu_ghostty_ppa_uri }}"
+    suites:
+      - "{{ ubuntu_apt_suite }}"
+    components: "{{ ubuntu_ghostty_ppa_components }}"
+    architectures:
+      - "{{ ubuntu_deb_arch }}"
+    signed_by: "{{ ubuntu_ghostty_apt_keyring_path }}"
+    state: present
+    enabled: true
+    install_python_debian: "{{ ubuntu_deb822_install_python_debian }}"
+  become: true
+  register: ubuntu_ghostty_apt_repository
+  when: ubuntu_ghostty_install_method == "ppa"
+
+- name: Update apt cache after Ghostty repository change
+  ansible.builtin.apt:
+    update_cache: true
+  become: true
+  when:
+    - ubuntu_ghostty_install_method == "ppa"
+    - ubuntu_ghostty_apt_repository.changed
+
+- name: Install Ghostty from apt/PPA
+  ansible.builtin.apt:
+    name: ghostty
+    state: present
+  become: true
+  when: ubuntu_ghostty_install_method == "ppa"
+
+- name: Verify Ubuntu Ghostty CLI actions
+  ansible.builtin.command:
+    argv:
+      - ghostty
+      - "{{ item }}"
+  loop:
+    - +version
+    - +help
+  changed_when: false
+  when: ubuntu_ghostty_install_method == "ppa"

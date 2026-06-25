@@ -2,6 +2,19 @@
 linuxbrew_default_base: "/home/linuxbrew/.linuxbrew"
 linuxbrew_default_bin: "{{ linuxbrew_default_base }}/bin/brew"
 
+ubuntu_apt_keyring_dir: "/etc/apt/keyrings"
+ubuntu_deb_arch_map:
+  x86_64: amd64
+  aarch64: arm64
+  armv7l: armhf
+ubuntu_deb_arch: "{{ ubuntu_deb_arch_map.get(ansible_facts['architecture'], ansible_facts['architecture']) }}"
+ubuntu_apt_suite: "{{ ansible_facts['distribution_release'] | lower }}"
+ubuntu_deb822_prerequisites:
+  - ca-certificates
+  - curl
+  - python3-debian
+ubuntu_deb822_install_python_debian: true
+
 ubuntu_apt_packages:
   - bash-completion
   - git-lfs
@@ -10,6 +23,7 @@ ubuntu_apt_packages:
   - file
   - curl
   - ca-certificates
+  - python3-debian
   - less
   - tmux
   - acpi
@@ -22,14 +36,5 @@ ubuntu_apt_packages:
   - cmake
 
 ubuntu_only_tools_formulae: []
-
-ubuntu_ghostty_install_method: "ppa"
-ubuntu_ghostty_apt_keyring_dir: "/etc/apt/keyrings"
-ubuntu_ghostty_apt_keyring_path: "{{ ubuntu_ghostty_apt_keyring_dir }}/ghostty.asc"
-ubuntu_ghostty_ppa_uri: "https://ppa.launchpadcontent.net/mkasberg/ghostty-ubuntu/ubuntu/"
-ubuntu_ghostty_ppa_key_fingerprint: "0721FDF5FECB88DC6920361657C8EF455CEAE491"
-ubuntu_ghostty_ppa_key_url: "https://keyserver.ubuntu.com/pks/lookup?op=get&options=mr&search=0x{{ ubuntu_ghostty_ppa_key_fingerprint }}"
-ubuntu_ghostty_ppa_components:
-  - main
 
 ubuntu_tools_formulae: "{{ common_tools_formulae + ubuntu_only_tools_formulae }}"

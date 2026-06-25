@@ -42,14 +42,14 @@
 
 - name: Install Docker prerequisite packages
   ansible.builtin.apt:
-    name: "{{ docker_prerequisites }}"
+    name: "{{ ubuntu_deb822_prerequisites }}"
     state: present
     update_cache: true
   become: true
 
 - name: Create keyrings directory
   ansible.builtin.file:
-    path: "{{ docker_apt_keyring_dir }}"
+    path: "{{ ubuntu_apt_keyring_dir }}"
     state: directory
     mode: "0755"
   become: true
@@ -69,13 +69,14 @@
     uris:
       - "{{ docker_apt_uri }}"
     suites:
-      - "{{ docker_apt_suite }}"
+      - "{{ ubuntu_apt_suite }}"
     components: "{{ docker_apt_components }}"
     architectures:
-      - "{{ docker_deb_arch }}"
+      - "{{ ubuntu_deb_arch }}"
     signed_by: "{{ docker_apt_keyring_path }}"
     state: present
     mode: "0644"
+    install_python_debian: "{{ ubuntu_deb822_install_python_debian }}"
   register: docker_apt_repository
   become: true
 

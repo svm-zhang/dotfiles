@@ -16,23 +16,3 @@
         | map(attribute='item')
         | list
       }}
-
-- name: Check macOS Homebrew casks before install
-  ansible.builtin.command:
-    cmd: "brew list --cask --versions {{ item }}"
-  loop: "{{ macos_tools_casks }}"
-  register: tools_macos_cask_precheck
-  changed_when: false
-  failed_when: false
-  when: terminal_app == "ghostty"
-
-- name: Set missing macOS Homebrew casks
-  ansible.builtin.set_fact:
-    tools_macos_missing_casks: >-
-      {{
-        tools_macos_cask_precheck.results
-        | selectattr('rc', 'ne', 0)
-        | map(attribute='item')
-        | list
-      }}
-  when: terminal_app == "ghostty"

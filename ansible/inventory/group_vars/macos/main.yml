@@ -12,7 +12,4 @@ macos_only_tools_formulae:
   - tree
   - cmake
 
-macos_tools_casks:
-  - ghostty
-
 macos_tools_formulae: "{{ common_tools_formulae + macos_only_tools_formulae }}"

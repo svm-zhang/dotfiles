@@ -1,0 +1,7 @@
+---
+- name: Manage terminal application
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - terminal
