@@ -79,7 +79,7 @@
   register: tools_macos_cask_install
   changed_when: true
   when:
-    - tools_manage_ghostty | bool
+    - terminal_app == "ghostty"
     - (tools_macos_missing_casks | default(macos_tools_casks)) | length > 0
 
 - name: Verify macOS Ghostty cask is installed
@@ -87,7 +87,7 @@
     cmd: "brew list --cask --versions {{ item }}"
   loop: "{{ macos_tools_casks }}"
   changed_when: false
-  when: tools_manage_ghostty | bool
+  when: terminal_app == "ghostty"
 
 - name: Verify macOS Ghostty CLI actions
   ansible.builtin.command:
@@ -98,4 +98,4 @@
     - +version
     - +help
   changed_when: false
-  when: tools_manage_ghostty | bool
+  when: terminal_app == "ghostty"

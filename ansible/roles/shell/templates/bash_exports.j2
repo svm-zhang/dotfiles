@@ -1,20 +1,20 @@
 # Define bash exports.
 # Invoked by .bashrc and login-shell startup files.
 
-[ -d "{{ shell_local_dir }}/bin" ] && export PATH="{{ shell_local_dir }}/bin:$PATH"
-[ -d "{{ shell_opt_dir }}/bin" ] && export PATH="{{ shell_opt_dir }}/bin:$PATH"
+[ -d "{{ dot_local_dir }}/bin" ] && export PATH="{{ dot_local_dir }}/bin:$PATH"
+[ -d "{{ dot_opt_dir }}/bin" ] && export PATH="{{ dot_opt_dir }}/bin:$PATH"
 [ -d "{{ dot_user_home }}/.cargo/bin" ] && export PATH="{{ dot_user_home }}/.cargo/bin:$PATH"
 
-if [ -d "{{ shell_macos_homebrew_dir }}/opt/node@24/bin" ]; then
-  export PATH="{{ shell_macos_homebrew_dir }}/opt/node@24/bin:$PATH"
-elif [ -d "{{ shell_linuxbrew_dir }}/opt/node@24/bin" ]; then
-  export PATH="{{ shell_linuxbrew_dir }}/opt/node@24/bin:$PATH"
+if [ -d "{{ macos_homebrew_base | default('/opt/homebrew') }}/opt/node@24/bin" ]; then
+  export PATH="{{ macos_homebrew_base | default('/opt/homebrew') }}/opt/node@24/bin:$PATH"
+elif [ -d "{{ linuxbrew_default_base | default('/home/linuxbrew/.linuxbrew') }}/opt/node@24/bin" ]; then
+  export PATH="{{ linuxbrew_default_base | default('/home/linuxbrew/.linuxbrew') }}/opt/node@24/bin:$PATH"
 fi
 
-if [ -d "{{ shell_macos_homebrew_dir }}/opt/rustup/bin" ]; then
-  export PATH="{{ shell_macos_homebrew_dir }}/opt/rustup/bin:$PATH"
-elif [ -d "{{ shell_linuxbrew_dir }}/opt/rustup/bin" ]; then
-  export PATH="{{ shell_linuxbrew_dir }}/opt/rustup/bin:$PATH"
+if [ -d "{{ macos_homebrew_base | default('/opt/homebrew') }}/opt/rustup/bin" ]; then
+  export PATH="{{ macos_homebrew_base | default('/opt/homebrew') }}/opt/rustup/bin:$PATH"
+elif [ -d "{{ linuxbrew_default_base | default('/home/linuxbrew/.linuxbrew') }}/opt/rustup/bin" ]; then
+  export PATH="{{ linuxbrew_default_base | default('/home/linuxbrew/.linuxbrew') }}/opt/rustup/bin:$PATH"
 fi
 
 {% if ansible_facts["system"] == "Darwin" %}
@@ -23,7 +23,7 @@ fi
 
 # set up for glow
 # set EDITOR to nvim for glow config
-export EDITOR="{{ shell_editor }}"
+export EDITOR="{{ dot_editor }}"
 
 # set XDG_CONFIG_HOME for glow to find its config
-export XDG_CONFIG_HOME="{{ shell_xdg_config_home }}"
+export XDG_CONFIG_HOME="{{ dot_config_home }}"

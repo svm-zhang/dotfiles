@@ -1,16 +1,16 @@
 ---
-- name: Validate shell deploy mode
+- name: Validate global deploy mode
   ansible.builtin.assert:
     that:
-      - shell_deploy_mode in ["test", "home"]
-    fail_msg: "shell_deploy_mode must be one of: test, home"
+      - deploy_mode in ["render", "docker", "home"]
+    fail_msg: "deploy_mode must be one of: render, docker, home"
 
-- name: Create shell test render directory
+- name: Create shell render directory
   ansible.builtin.file:
     path: "{{ shell_target_root }}"
     state: directory
     mode: "0700"
-  when: shell_deploy_mode == "test"
+  when: mode_render | bool
 
 - name: Render shell files
   ansible.builtin.template:

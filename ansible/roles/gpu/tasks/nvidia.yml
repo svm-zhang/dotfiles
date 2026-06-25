@@ -146,7 +146,7 @@
     - nvidia_docker_available | bool
     - nvidia_configure_docker is changed
     - ansible_facts['service_mgr'] == "systemd"
-    - dotfiles_test_environment | default("") != "docker"
+    - allow_service_actions | bool
 
 - name: Restart containerd after NVIDIA runtime configuration
   ansible.builtin.service:
@@ -157,7 +157,7 @@
     - nvidia_docker_available | bool
     - nvidia_configure_containerd is changed
     - ansible_facts['service_mgr'] == "systemd"
-    - dotfiles_test_environment | default("") != "docker"
+    - allow_service_actions | bool
 
 - name: Run Docker GPU smoke test
   ansible.builtin.command:
@@ -173,4 +173,4 @@
   when:
     - nvidia_docker_available | bool
     - nvidia_driver_active | bool
-    - dotfiles_test_environment | default("") != "docker"
+    - allow_service_actions | bool

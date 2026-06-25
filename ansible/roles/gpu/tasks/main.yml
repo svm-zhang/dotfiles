@@ -1,13 +1,13 @@
 ---
 - name: Skip GPU role
   ansible.builtin.debug:
-    msg: "Skipping GPU role: host is not Ubuntu or gpu_manage=false"
+    msg: "Skipping GPU role: host is not Ubuntu or package changes are disabled"
   when: >
     ansible_facts['distribution'] != "Ubuntu"
-    or not gpu_manage | bool
+    or not allow_package_changes | bool
 
 - name: Include Ubuntu GPU tasks
   ansible.builtin.include_tasks: ubuntu.yml
   when:
     - ansible_facts['distribution'] == "Ubuntu"
-    - gpu_manage | bool
+    - allow_package_changes | bool

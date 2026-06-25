@@ -1,6 +1,4 @@
 ---
-document_deploy_mode: "test"
-
 document_formulae:
   - r
   - pandoc

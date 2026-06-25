@@ -1,3 +1,18 @@
 ---
-dotfiles_os_family: macos
-dot_bash_path: "{{ '/opt/homebrew/bin/bash' if ansible_facts['architecture'] == 'arm64' else '/usr/local/bin/bash' }}"
+macos_homebrew_base: "/opt/homebrew"
+macos_homebrew_bin: "{{ macos_homebrew_base }}/bin/brew"
+
+dot_bash_path: "{{ macos_homebrew_base }}/bin/bash"
+
+macos_only_tools_formulae:
+  - bash
+  - bash-completion
+  - git-lfs
+  - tmux
+  - tree
+  - cmake
+
+macos_tools_casks:
+  - ghostty
+
+macos_tools_formulae: "{{ common_tools_formulae + macos_only_tools_formulae }}"

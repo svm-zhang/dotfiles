@@ -24,7 +24,7 @@
   register: tools_macos_cask_precheck
   changed_when: false
   failed_when: false
-  when: tools_manage_ghostty | bool
+  when: terminal_app == "ghostty"
 
 - name: Set missing macOS Homebrew casks
   ansible.builtin.set_fact:
@@ -35,4 +35,4 @@
         | map(attribute='item')
         | list
       }}
-  when: tools_manage_ghostty | bool
+  when: terminal_app == "ghostty"

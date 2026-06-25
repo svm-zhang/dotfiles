@@ -14,17 +14,46 @@
     update_cache: true
   become: true
   when:
-    - tools_manage_ghostty | bool
+    - terminal_app == "ghostty"
+    - ubuntu_ghostty_install_method == "ppa"
+
+- name: Create keyrings directory
+  ansible.builtin.file:
+    path: "{{ ubuntu_ghostty_apt_keyring_dir }}"
+    state: directory
+    mode: "0755"
+  become: true
+  when:
+    - terminal_app == "ghostty"
+    - ubuntu_ghostty_install_method == "ppa"
+
+- name: Download Ghostty PPA signing key
+  ansible.builtin.get_url:
+    url: "{{ ubuntu_ghostty_ppa_key_url }}"
+    dest: "{{ ubuntu_ghostty_apt_keyring_path }}"
+    mode: "0644"
+  become: true
+  when:
+    - terminal_app == "ghostty"
     - ubuntu_ghostty_install_method == "ppa"
 
 - name: Add Ghostty Ubuntu PPA
-  ansible.builtin.apt_repository:
-    repo: "{{ ubuntu_ghostty_ppa }}"
+  ansible.builtin.deb822_repository:
+    name: ghostty-ubuntu
+    types: deb
+    uris:
+      - "{{ ubuntu_ghostty_ppa_uri }}"
+    suites:
+      - "{{ ansible_facts['distribution_release'] | lower }}"
+    components:
+      - { { ubuntu_ghostty_ppa_components } }
+    signed_by: "{{ ubuntu_ghostty_apt_keyring_path }}"
     state: present
-    update_cache: true
+    enabled: true
+    install_python_debian: true
   become: true
   when:
-    - tools_manage_ghostty | bool
+    - terminal_app == "ghostty"
     - ubuntu_ghostty_install_method == "ppa"
 
 - name: Install Ghostty from apt/PPA
@@ -34,7 +63,7 @@
     update_cache: true
   become: true
   when:
-    - tools_manage_ghostty | bool
+    - terminal_app == "ghostty"
     - ubuntu_ghostty_install_method == "ppa"
 
 - name: Verify Ubuntu Ghostty CLI actions
@@ -47,13 +76,13 @@
     - +help
   changed_when: false
   when:
-    - tools_manage_ghostty | bool
+    - terminal_app == "ghostty"
     - ubuntu_ghostty_install_method == "ppa"
 
 - name: Check Linuxbrew default brew path
   ansible.builtin.stat:
-    path: "{{ tools_linuxbrew_default_brew }}"
-  register: tools_linuxbrew_default_brew_stat
+    path: "{{ linuxbrew_default_bin }}"
+  register: linuxbrew_default_bin_stat
 
 - name: Install Linuxbrew
   ansible.builtin.shell:
@@ -61,16 +90,16 @@
       set -eu
       NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     executable: /bin/bash
-  when: not tools_linuxbrew_default_brew_stat.stat.exists
+  when: not linuxbrew_default_bin_stat.stat.exists
 
 - name: Check Linuxbrew after install
   ansible.builtin.stat:
-    path: "{{ tools_linuxbrew_default_brew }}"
+    path: "{{ linuxbrew_default_bin }}"
   register: tools_linuxbrew_brew_after_install_stat
 
 - name: Set Linuxbrew command path
   ansible.builtin.set_fact:
-    tools_brew_bin: "{{ tools_linuxbrew_default_brew }}"
+    tools_brew_bin: "{{ linuxbrew_default_bin }}"
   when: tools_linuxbrew_brew_after_install_stat.stat.exists
 
 - name: Validate Linuxbrew command path

@@ -1,16 +1,16 @@
 ---
-- name: Validate tmux deploy mode
+- name: Validate global deploy mode
   ansible.builtin.assert:
     that:
-      - tmux_deploy_mode in ["test", "home"]
-    fail_msg: "tmux_deploy_mode must be one of: test, home"
+      - deploy_mode in ["render", "docker", "home"]
+    fail_msg: "deploy_mode must be one of: render, docker, home"
 
-- name: Create tmux test render root
+- name: Create tmux render root
   ansible.builtin.file:
     path: "{{ tmux_target_root }}"
     state: directory
     mode: "0700"
-  when: tmux_deploy_mode == "test"
+  when: mode_render | bool
 
 - name: Render tmux config
   ansible.builtin.template:
@@ -23,13 +23,13 @@
     path: "{{ tmux_plugin_dir }}"
     state: directory
     mode: "0755"
-  when: tmux_deploy_mode == "home"
+  when: mode_home | bool
 
 - name: Check TPM clone
   ansible.builtin.stat:
     path: "{{ tmux_tpm_dir }}/.git"
   register: tmux_tpm_git_dir
-  when: tmux_deploy_mode == "home"
+  when: mode_home | bool
 
 - name: Clone TPM
   ansible.builtin.command:
@@ -41,7 +41,7 @@
       - "{{ tmux_tpm_repo }}"
       - "{{ tmux_tpm_dir }}"
   when:
-    - tmux_deploy_mode == "home"
+    - mode_home | bool
     - not tmux_tpm_git_dir.stat.exists
 
 - name: Update TPM
@@ -55,7 +55,7 @@
   register: tmux_tpm_update
   changed_when: "'Already up to date.' not in tmux_tpm_update.stdout"
   when:
-    - tmux_deploy_mode == "home"
+    - mode_home | bool
     - tmux_tpm_git_dir.stat.exists
 
 - name: Install TPM plugins
@@ -64,6 +64,4 @@
   environment:
     TMUX_PLUGIN_MANAGER_PATH: "{{ tmux_plugin_dir }}"
   changed_when: true
-  when:
-    - tmux_deploy_mode == "home"
-    - tmux_install_plugins | bool
+  when: mode_home | bool

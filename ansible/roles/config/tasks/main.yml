@@ -1,16 +1,16 @@
 ---
-- name: Validate config deploy mode
+- name: Validate global deploy mode
   ansible.builtin.assert:
     that:
-      - config_deploy_mode in ["test", "home"]
-    fail_msg: "config_deploy_mode must be one of: test, home"
+      - deploy_mode in ["render", "docker", "home"]
+    fail_msg: "deploy_mode must be one of: render, docker, home"
 
-- name: Create config test render root
+- name: Create config render root
   ansible.builtin.file:
     path: "{{ config_target_user_home }}"
     state: directory
     mode: "0700"
-  when: config_deploy_mode == "test"
+  when: mode_render | bool
 
 - name: Create config directories
   ansible.builtin.file:

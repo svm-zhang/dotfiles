@@ -1,9 +1,9 @@
 ---
-- name: Validate Neovim deploy mode
+- name: Validate global deploy mode
   ansible.builtin.assert:
     that:
-      - neovim_deploy_mode in ["test", "home"]
-    fail_msg: "neovim_deploy_mode must be either 'test' or 'home'."
+      - deploy_mode in ["render", "docker", "home"]
+    fail_msg: "deploy_mode must be one of: render, docker, home"
 
 - name: Verify Neovim binary is available
   ansible.builtin.command:
@@ -12,14 +12,12 @@
       - --version
   register: neovim_version_check
   changed_when: false
-  when: neovim_manage_binary | bool
 
 - name: Verify Neovim major/minor version
   ansible.builtin.assert:
     that:
       - "'NVIM v' ~ neovim_major_minor in neovim_version_check.stdout"
     fail_msg: "Neovim must report NVIM v{{ neovim_major_minor }}."
-  when: neovim_manage_binary | bool
 
 - name: Create Neovim render XDG directories
   ansible.builtin.file:
@@ -31,34 +29,30 @@
     - "{{ neovim_headless_xdg_root }}/data"
     - "{{ neovim_headless_xdg_root }}/state"
     - "{{ neovim_headless_xdg_root }}/cache"
-  when: neovim_deploy_mode == "test"
+  when: mode_render | bool
 
 - name: Create Neovim config parent
   ansible.builtin.file:
     path: "{{ neovim_config_target_dir | dirname }}"
     state: directory
     mode: "0755"
-  when: neovim_manage_config | bool
 
 - name: Deploy Neovim config tree
   ansible.builtin.copy:
     src: "{{ neovim_source_config_dir }}/"
     dest: "{{ neovim_config_target_dir }}/"
     mode: preserve
-  when: neovim_manage_config | bool
 
 - name: Verify Neovim config was deployed
   ansible.builtin.stat:
     path: "{{ neovim_config_target_dir }}/init.lua"
   register: neovim_config_init_stat
-  when: neovim_manage_config | bool
 
 - name: Assert Neovim config was deployed
   ansible.builtin.assert:
     that:
       - neovim_config_init_stat.stat.exists
     fail_msg: "Neovim config init.lua was not deployed."
-  when: neovim_manage_config | bool
 
 - name: Install Neovim Treesitter parsers
   ansible.builtin.command:
@@ -73,21 +67,4 @@
     XDG_STATE_HOME: "{{ neovim_state_home }}"
     XDG_CACHE_HOME: "{{ neovim_cache_home }}"
   changed_when: false
-  when: neovim_manage_treesitter_parsers | bool
-
-- name: Run optional Neovim plugin sync
-  ansible.builtin.command:
-    argv:
-      - "{{ neovim_binary_path }}"
-      - --headless
-      - "+Lazy! sync"
-      - +qa
-  environment:
-    XDG_CONFIG_HOME: "{{ neovim_render_root }}/config"
-    XDG_DATA_HOME: "{{ neovim_headless_xdg_root }}/data"
-    XDG_STATE_HOME: "{{ neovim_headless_xdg_root }}/state"
-    XDG_CACHE_HOME: "{{ neovim_headless_xdg_root }}/cache"
-  changed_when: false
-  when:
-    - neovim_deploy_mode == "test"
-    - neovim_manage_plugins | bool
+  when: mode_home | bool

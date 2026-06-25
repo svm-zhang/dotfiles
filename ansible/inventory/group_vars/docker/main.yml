@@ -1,3 +1,2 @@
 ---
-dotfiles_test_environment: docker
-dotfiles_allow_home_deploy: false
+# Docker inventory uses deploy_mode=docker at runtime.

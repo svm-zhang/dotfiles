@@ -1,21 +1,20 @@
 ---
-neovim_deploy_mode: "test"
-neovim_manage_binary: true
-neovim_manage_config: true
-neovim_manage_plugins: false
-neovim_manage_treesitter_parsers: "{{ neovim_deploy_mode == 'home' }}"
-
 neovim_major_minor: "0.12"
 neovim_source_config_dir: "{{ role_path }}/files/nvim"
 
-neovim_macos_homebrew_dir: "{{ '/opt/homebrew' if ansible_facts['architecture'] == 'arm64' else '/usr/local' }}"
-neovim_linuxbrew_dir: "/home/linuxbrew/.linuxbrew"
-neovim_binary_path: "{{ neovim_macos_homebrew_dir ~ '/bin/nvim' if dotfiles_os_family == 'macos' else neovim_linuxbrew_dir ~ '/bin/nvim' if dotfiles_os_family == 'ubuntu' else 'nvim' }}"
+neovim_binary_path: >-
+  {{
+    (macos_homebrew_base | default('/opt/homebrew')) ~ '/bin/nvim'
+    if ansible_facts.get('system') == 'Darwin'
+    else (linuxbrew_default_base | default('/home/linuxbrew/.linuxbrew')) ~ '/bin/nvim'
+    if ansible_facts.get('distribution') == 'Ubuntu'
+    else 'nvim'
+  }}
 
-neovim_render_root: "{{ playbook_dir }}/../../.ansible-test-output/neovim"
-neovim_config_home: "{{ dot_user_home }}/{{ dot_xdg_config_dir | default('.config') }}"
+neovim_render_root: "{{ dot_render_root }}/neovim"
+neovim_config_home: "{{ dot_config_home }}"
 neovim_config_dir: "{{ neovim_config_home }}/nvim"
-neovim_config_target_dir: "{{ (neovim_render_root ~ '/config/nvim') if neovim_deploy_mode == 'test' else neovim_config_dir }}"
+neovim_config_target_dir: "{{ (neovim_render_root ~ '/config/nvim') if mode_render else neovim_config_dir }}"
 
 neovim_headless_xdg_root: "{{ neovim_render_root }}/xdg"
 neovim_data_home: "{{ dot_user_home }}/.local/share"

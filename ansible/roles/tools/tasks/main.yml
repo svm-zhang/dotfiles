@@ -1,16 +1,28 @@
 ---
+- name: Validate global deploy mode
+  ansible.builtin.assert:
+    that:
+      - deploy_mode in ["render", "docker", "home"]
+    fail_msg: "deploy_mode must be one of: render, docker, home"
+
+- name: Validate terminal app choice
+  ansible.builtin.assert:
+    that:
+      - terminal_app in terminal_app_choices
+    fail_msg: "terminal_app must be one of: {{ terminal_app_choices | join(', ') }}"
+
 - name: Include tools precheck
   ansible.builtin.include_tasks: precheck.yml
-  when: dotfiles_manage_packages | default(false) | bool
+  when: allow_package_changes | bool
 
 - name: Include Ubuntu tools tasks
   ansible.builtin.include_tasks: ubuntu.yml
   when:
-    - dotfiles_manage_packages | default(false) | bool
-    - dotfiles_os_family == "ubuntu"
+    - allow_package_changes | bool
+    - ansible_facts['distribution'] == "Ubuntu"
 
 - name: Include macOS tools tasks
   ansible.builtin.include_tasks: macos.yml
   when:
-    - dotfiles_manage_packages | bool
-    - dotfiles_os_family == "macos"
+    - allow_package_changes | bool
+    - ansible_facts['system'] == "Darwin"

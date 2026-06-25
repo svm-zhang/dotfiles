@@ -1,9 +1,7 @@
 ---
-docker_manage: "{{ dotfiles_manage_packages | default(false) }}"
 docker_reinstall: false
 docker_manage_group_membership: false
 docker_user: "{{ ansible_user_id }}"
-docker_start_service: "{{ dotfiles_test_environment | default('') != 'docker' }}"
 docker_verify_cli: true
 
 docker_apt_keyring_dir: "/etc/apt/keyrings"

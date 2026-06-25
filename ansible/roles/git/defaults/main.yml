@@ -1,11 +1,8 @@
 ---
-git_deploy_mode: "test"
-git_render_root: "{{ playbook_dir }}/../../.ansible-test-output/git"
 git_home: "{{ dot_user_home }}/.git"
-git_deploy_root: "{{ dot_user_home }}"
-git_target_root: "{{ git_render_root if git_deploy_mode == 'test' else git_deploy_root }}"
+git_target_root: "{{ (dot_render_root ~ '/git') if mode_render else dot_user_home }}"
 
-git_editor: "nvim"
+git_editor: "{{ dot_editor }}"
 
 git_pager_diff: "diffnav"
 git_pager_log: "delta"
@@ -15,6 +12,6 @@ git_pager_show: "delta"
 git_include_local_path: "{{ git_target_root }}/.gitconfig.local"
 git_include_delta_path: "{{ git_target_root }}/.gitconfig.delta"
 
-git_delta_syntax_theme: "catppuccin_mocha"
+git_delta_syntax_theme: "{{ dot_bat_theme_name }}"
 git_delta_dark: true
 git_delta_tabs: 4

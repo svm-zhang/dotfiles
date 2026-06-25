@@ -1,9 +1,9 @@
 ---
-- name: Validate GitHub SSH deploy mode
+- name: Validate global deploy mode
   ansible.builtin.assert:
     that:
-      - github_ssh_deploy_mode in ["test", "home"]
-    fail_msg: "github_ssh_deploy_mode must be one of: test, home"
+      - deploy_mode in ["render", "docker", "home"]
+    fail_msg: "deploy_mode must be one of: render, docker, home"
 
 - name: Create SSH directories
   ansible.builtin.file:

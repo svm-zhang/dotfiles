@@ -2,11 +2,11 @@
 - name: Include macOS font tasks
   ansible.builtin.include_tasks: macos.yml
   when:
-    - dotfiles_manage_fonts | default(true) | bool
+    - allow_home_write | bool
     - ansible_facts['os_family'] == 'Darwin'
 
 - name: Include Ubuntu font tasks
   ansible.builtin.include_tasks: ubuntu.yml
   when:
-    - dotfiles_manage_fonts | default(true) | bool
+    - allow_home_write | bool
     - ansible_facts['distribution'] == 'Ubuntu'

@@ -1,14 +1,14 @@
 ---
-- name: Validate document deploy mode
+- name: Validate global deploy mode
   ansible.builtin.assert:
     that:
-      - document_deploy_mode in ["test", "home"]
-    fail_msg: "document_deploy_mode must be either 'test' or 'home'."
+      - deploy_mode in ["render", "docker", "home"]
+    fail_msg: "deploy_mode must be one of: render, docker, home"
 
 - name: Skip document role on non-macOS hosts
   ansible.builtin.debug:
-    msg: "Skipping macOS document role on {{ dotfiles_os_family }}."
-  when: dotfiles_os_family != "macos"
+    msg: "Skipping macOS document role on {{ ansible_facts['system'] }}."
+  when: ansible_facts['system'] != "Darwin"
 
 - name: Check installed macOS document formulae
   ansible.builtin.command:
@@ -22,8 +22,8 @@
   changed_when: false
   failed_when: false
   when:
-    - dotfiles_os_family == "macos"
-    - document_deploy_mode == "home"
+    - ansible_facts['system'] == "Darwin"
+    - mode_home | bool
 
 - name: Install missing macOS document formulae
   ansible.builtin.command:
@@ -38,8 +38,8 @@
   register: document_formula_installs
   changed_when: true
   when:
-    - dotfiles_os_family == "macos"
-    - document_deploy_mode == "home"
+    - ansible_facts['system'] == "Darwin"
+    - mode_home | bool
     - item.rc != 0
 
 - name: Verify macOS document commands
@@ -50,8 +50,8 @@
   loop: "{{ document_command_checks }}"
   changed_when: false
   when:
-    - dotfiles_os_family == "macos"
-    - document_deploy_mode == "home"
+    - ansible_facts['system'] == "Darwin"
+    - mode_home | bool
 
 - name: Verify document TeX files are available
   ansible.builtin.command:
@@ -61,5 +61,5 @@
   loop: "{{ document_tex_file_checks }}"
   changed_when: false
   when:
-    - dotfiles_os_family == "macos"
-    - document_deploy_mode == "home"
+    - ansible_facts['system'] == "Darwin"
+    - mode_home | bool

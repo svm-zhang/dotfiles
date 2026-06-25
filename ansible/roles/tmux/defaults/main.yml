@@ -1,8 +1,6 @@
 ---
-tmux_deploy_mode: "test"
-tmux_render_root: "{{ playbook_dir }}/../../.ansible-test-output/tmux"
 tmux_home: "{{ dot_user_home }}/.tmux"
-tmux_target_root: "{{ tmux_render_root if tmux_deploy_mode == 'test' else dot_user_home }}"
+tmux_target_root: "{{ (dot_render_root ~ '/tmux') if mode_render else dot_user_home }}"
 
 tmux_config_path: "{{ tmux_target_root }}/.tmux.conf"
 tmux_plugin_dir: "{{ tmux_home }}/plugins"
@@ -10,7 +8,6 @@ tmux_tpm_dir: "{{ tmux_plugin_dir }}/tpm"
 tmux_tpm_repo: "https://github.com/tmux-plugins/tpm"
 tmux_tpm_version: "master"
 tmux_tpm_install_plugins_command: "{{ tmux_tpm_dir }}/bin/install_plugins"
-tmux_install_plugins: true
 
 tmux_default_terminal: "tmux-256color"
 tmux_truecolor_feature: ",*:RGB"
