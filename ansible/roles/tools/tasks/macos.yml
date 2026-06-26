@@ -1,20 +1,23 @@
 ---
+- name: Include macOS tools precheck
+  ansible.builtin.include_tasks: macos_precheck.yml
+
 - name: Install macOS Homebrew formulae
   ansible.builtin.command:
     cmd: "brew install {{ item }}"
   environment:
     HOMEBREW_NO_AUTO_UPDATE: "1"
     HOMEBREW_NO_INSTALL_CLEANUP: "1"
-  loop: "{{ tools_macos_missing_formulae | default(macos_tools_formulae) }}"
-  register: tools_macos_formula_install
+  loop: "{{ tools_macos_formulae_to_install }}"
   changed_when: true
-  when: (tools_macos_missing_formulae | default(macos_tools_formulae)) | length > 0
+  when: tools_macos_formulae_to_install | length > 0
 
-- name: Verify macOS Homebrew formulae are installed
+- name: Verify installed macOS Homebrew formulae
   ansible.builtin.command:
     cmd: "brew list --versions {{ item }}"
-  loop: "{{ macos_tools_formulae }}"
+  loop: "{{ tools_macos_formulae_to_install }}"
   changed_when: false
+  when: tools_macos_formulae_to_install | length > 0
 
 - name: Get macOS rustup Homebrew prefix
   ansible.builtin.command:
@@ -45,6 +48,22 @@
   ansible.builtin.command:
     cmd: "brew --prefix uv"
   register: tools_macos_uv_prefix
+  changed_when: false
+
+- name: Get macOS node@24 Homebrew prefix
+  ansible.builtin.command:
+    cmd: "brew --prefix node@24"
+  register: tools_macos_node_prefix
+  changed_when: false
+
+- name: Verify macOS node@24 tools
+  ansible.builtin.command:
+    argv:
+      - "{{ tools_macos_node_prefix.stdout }}/bin/{{ item }}"
+      - --version
+  loop:
+    - node
+    - npm
   changed_when: false
 
 - name: Install macOS uv-managed Python

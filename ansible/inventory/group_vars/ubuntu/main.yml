@@ -35,6 +35,6 @@ ubuntu_apt_packages:
   - xclip
   - cmake
 
-ubuntu_only_tools_formulae: []
+ubuntu_only_tools_formulae: {}
 
-ubuntu_tools_formulae: "{{ common_tools_formulae + ubuntu_only_tools_formulae }}"
+ubuntu_tools_formulae: "{{ common_tools_formulae | combine(ubuntu_only_tools_formulae) }}"

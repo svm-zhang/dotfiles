@@ -5,10 +5,6 @@
       - deploy_mode in ["render", "docker", "home"]
     fail_msg: "deploy_mode must be one of: render, docker, home"
 
-- name: Include tools precheck
-  ansible.builtin.include_tasks: precheck.yml
-  when: allow_package_changes | bool
-
 - name: Include Ubuntu tools tasks
   ansible.builtin.include_tasks: ubuntu.yml
   when:

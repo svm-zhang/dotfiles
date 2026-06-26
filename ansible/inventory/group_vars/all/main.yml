@@ -24,33 +24,28 @@ terminal_app_choices:
   - ghostty
 
 common_tools_formulae:
-  - git
-  - git-delta
-  - diffnav
-  - fzf
-  - eza
-  - bat
-  - zoxide
-  - oh-my-posh
-  - yazi
-  - btop
-  - glow
-  - jqp
-  - jq
-  - yq
-  - xh
-  - fd
-  - ripgrep
-  - node@24
-  - rustup
-  - tree-sitter-cli
-  - uv
-  - neovim
-
-tools_formula_command_overrides:
+  git: git
   git-delta: delta
+  diffnav: diffnav
+  fzf: fzf
+  eza: eza
+  bat: bat
+  zoxide: zoxide
+  oh-my-posh: oh-my-posh
+  yazi: yazi
+  btop: btop
+  glow: glow
+  jqp: jqp
+  jq: jq
+  yq: yq
+  xh: xh
+  fd: fd
   ripgrep: rg
+  node@24: node
+  rustup: rustup
   tree-sitter-cli: tree-sitter
+  uv: uv
+  neovim: nvim
 
 dot_theme_assets:
   bat:

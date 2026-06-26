@@ -1,8 +1,0 @@
----
-- name: Include macOS tools precheck
-  ansible.builtin.include_tasks: macos_precheck.yml
-  when: ansible_facts['system'] == "Darwin"
-
-- name: Include Ubuntu tools precheck
-  ansible.builtin.include_tasks: ubuntu_precheck.yml
-  when: ansible_facts['distribution'] == "Ubuntu"

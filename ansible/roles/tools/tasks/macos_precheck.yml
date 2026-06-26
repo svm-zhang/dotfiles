@@ -1,18 +1,70 @@
 ---
+- name: Check macOS tool commands before install
+  ansible.builtin.shell:
+    cmd: "command -v {{ item.value }}"
+    executable: /bin/bash
+  loop: "{{ macos_tools_formulae | dict2items | rejectattr('value', 'none') }}"
+  register: tools_macos_command_precheck
+  changed_when: false
+  failed_when: false
+
+- name: Set missing macOS tool commands
+  ansible.builtin.set_fact:
+    tools_macos_missing_commands: >-
+      {{
+        (
+          (
+            tools_macos_command_precheck.results
+            | selectattr('rc', 'ne', 0)
+            | map(attribute='item.key')
+            | list
+          )
+          +
+          (
+            tools_macos_command_precheck.results
+            | selectattr('rc', 'eq', 0)
+            | selectattr('stdout', 'match', '^/(usr/)?bin/')
+            | map(attribute='item.key')
+            | list
+          )
+        )
+        | unique
+      }}
+
 - name: Check macOS Homebrew formulae before install
   ansible.builtin.command:
-    cmd: "brew list --versions {{ item }}"
-  loop: "{{ macos_tools_formulae }}"
+    cmd: "brew list --versions {{ item.key }}"
+  loop: "{{ macos_tools_formulae | dict2items | rejectattr('value', 'none') }}"
   register: tools_macos_formula_precheck
   changed_when: false
   failed_when: false
 
 - name: Set missing macOS Homebrew formulae
   ansible.builtin.set_fact:
-    tools_macos_missing_formulae: >-
+    tools_macos_missing_brew_formulae: >-
       {{
         tools_macos_formula_precheck.results
         | selectattr('rc', 'ne', 0)
-        | map(attribute='item')
+        | map(attribute='item.key')
         | list
       }}
+
+- name: Set macOS formulae to install
+  ansible.builtin.set_fact:
+    tools_macos_formulae_to_install: >-
+      {{
+        tools_macos_missing_commands
+        | intersect(tools_macos_missing_brew_formulae)
+      }}
+
+- name: Check macOS bash-completion before install
+  ansible.builtin.command:
+    cmd: "brew list --versions bash-completion"
+  register: tools_macos_bash_completion_precheck
+  changed_when: false
+  failed_when: false
+
+- name: Add macOS bash-completion to install list
+  ansible.builtin.set_fact:
+    tools_macos_formulae_to_install: "{{ tools_macos_formulae_to_install + ['bash-completion'] }}"
+  when: tools_macos_bash_completion_precheck.rc != 0

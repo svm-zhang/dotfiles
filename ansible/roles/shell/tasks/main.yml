@@ -12,6 +12,12 @@
     mode: "0700"
   when: mode_render | bool
 
+- name: Include macOS login shell tasks
+  ansible.builtin.include_tasks: macos.yml
+  when:
+    - mode_home | bool
+    - ansible_facts['system'] == "Darwin"
+
 - name: Render shell files
   ansible.builtin.template:
     src: "{{ item.src }}"
