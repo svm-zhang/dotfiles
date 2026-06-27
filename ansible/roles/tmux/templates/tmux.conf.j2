@@ -61,24 +61,24 @@ unbind -T copy-mode-vi MouseDragEnd1Pane
 set -g @plugin '{{ plugin }}'
 {% endfor %}
 
-# catppuccin theme
-set -g @catppuccin_window_left_separator ""
-set -g @catppuccin_window_right_separator ""
-set -g @catppuccin_window_middle_separator " █"
+# catppuccin v2 theme
+set -g @catppuccin_flavor "{{ tmux_catppuccin_flavor }}"
+set -g @catppuccin_window_status_style "rounded"
 set -g @catppuccin_window_number_position "right"
-
-set -g @catppuccin_window_default_fill "number"
-set -g @catppuccin_window_default_text "#W"
-
-set -g @catppuccin_window_current_fill "number"
+set -g @catppuccin_window_text "#W"
 set -g @catppuccin_window_current_text "#W"
 
-set -g @catppuccin_status_modules_right "application cpu battery date_time"
 set -g @catppuccin_status_left_separator  " "
 set -g @catppuccin_status_right_separator ""
-set -g @catppuccin_status_fill "icon"
 set -g @catppuccin_status_connect_separator "yes"
 
-set -g @catppuccin_directory_text "#{pane_current_path}"
+if-shell "test -f '{{ tmux_plugin_dir }}/tmux/catppuccin.tmux'" "run-shell '{{ tmux_plugin_dir }}/tmux/catppuccin.tmux'"
+
+set -g status-right-length 120
+set -g status-left-length 100
+set -g status-left ""
+set -gF status-right "#{E:@catppuccin_status_cpu}"
+set -agF status-right "#{E:@catppuccin_status_ram}"
+set -agF status-right "#{E:@catppuccin_status_battery}"
 
 if-shell "test -f '{{ tmux_tpm_dir }}/tpm'" "run-shell '{{ tmux_tpm_dir }}/tpm'"
