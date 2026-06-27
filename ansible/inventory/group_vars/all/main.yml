@@ -68,6 +68,9 @@ dot_theme_assets:
     macchiato: "theme-catppuccin-macchiato.conf"
     tokyonight: "theme-tokyonight.conf"
     dracula: "theme-dracula.conf"
+  btop:
+    mocha: "catppuccin_mocha.theme"
+    macchiato: "catppuccin_macchiato.theme"
 
 dot_theme_catalog:
   mocha:
@@ -77,6 +80,8 @@ dot_theme_catalog:
     jqp_theme_name: "catppuccin-mocha"
     omp_theme_file: "{{ dot_theme_assets.omp.mocha }}"
     ghostty_theme_file: "{{ dot_theme_assets.ghostty.mocha }}"
+    btop_theme_name: "catppuccin_mocha"
+    btop_theme_file: "{{ dot_theme_assets.btop.mocha }}"
   macchiato:
     bat_theme_name: "catppuccin_macchiato"
     bat_theme_file: "{{ dot_theme_assets.bat.macchiato }}"
@@ -84,6 +89,8 @@ dot_theme_catalog:
     jqp_theme_name: "catppuccin-macchiato"
     omp_theme_file: "{{ dot_theme_assets.omp.macchiato }}"
     ghostty_theme_file: "{{ dot_theme_assets.ghostty.macchiato }}"
+    btop_theme_name: "catppuccin_macchiato"
+    btop_theme_file: "{{ dot_theme_assets.btop.macchiato }}"
   tokyonight:
     bat_theme_name: "tokyonight"
     bat_theme_file: "{{ dot_theme_assets.bat.tokyonight }}"
@@ -91,6 +98,8 @@ dot_theme_catalog:
     jqp_theme_name: "tokyonight"
     omp_theme_file: "{{ dot_theme_assets.omp.tokyonight }}"
     ghostty_theme_file: "{{ dot_theme_assets.ghostty.tokyonight }}"
+    btop_theme_name: "tokyo-night"
+    btop_theme_file: ""
   dracula:
     bat_theme_name: "dracula"
     bat_theme_file: "{{ dot_theme_assets.bat.dracula }}"
@@ -98,6 +107,8 @@ dot_theme_catalog:
     jqp_theme_name: "dracula"
     omp_theme_file: "{{ dot_theme_assets.omp.dracula }}"
     ghostty_theme_file: "{{ dot_theme_assets.ghostty.dracula }}"
+    btop_theme_name: "dracula"
+    btop_theme_file: ""
 
 dot_active_theme: "{{ dot_theme_catalog[dot_theme] }}"
 dot_bat_theme_name: "{{ dot_active_theme.bat_theme_name }}"
@@ -106,6 +117,8 @@ dot_glow_style_file: "{{ dot_active_theme.glow_style_file }}"
 dot_jqp_theme_name: "{{ dot_active_theme.jqp_theme_name }}"
 dot_omp_theme_file: "{{ dot_active_theme.omp_theme_file }}"
 dot_ghostty_theme_file: "{{ dot_active_theme.ghostty_theme_file }}"
+dot_btop_theme_name: "{{ dot_active_theme.btop_theme_name }}"
+dot_btop_theme_file: "{{ dot_active_theme.btop_theme_file }}"
 
 dot_terminal_font: "anthrosevka_mono"
 

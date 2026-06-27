@@ -46,3 +46,10 @@
     dest: "{{ config_xdg_config_home }}/oh-my-posh/themes/{{ item.value }}"
     mode: "0644"
   loop: "{{ dot_theme_assets.omp | dict2items }}"
+
+- name: Deploy btop theme asset
+  ansible.builtin.copy:
+    src: "btop/themes/{{ dot_btop_theme_file }}"
+    dest: "{{ config_xdg_config_home }}/btop/themes/{{ dot_btop_theme_file }}"
+    mode: "0644"
+  when: dot_btop_theme_file | length > 0
