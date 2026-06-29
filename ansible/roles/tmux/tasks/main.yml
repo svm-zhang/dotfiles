@@ -28,12 +28,7 @@
 
 - name: Set tmux plugin list
   ansible.builtin.set_fact:
-    tmux_all_plugins: >-
-      {{
-        tmux_plugins
-        + tmux_extra_plugins
-        + ([tmux_gpu_plugin] if tmux_nvidia_gpu_status_available | bool else [])
-      }}
+    tmux_all_plugins: "{{ tmux_plugins + tmux_extra_plugins }}"
 
 - name: Render tmux config
   ansible.builtin.template:
