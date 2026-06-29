@@ -77,34 +77,10 @@ if-shell "test -f '{{ tmux_plugin_dir }}/tmux/catppuccin.tmux'" "run-shell '{{ t
 {% if tmux_nvidia_gpu_status_available | bool %}
 %hidden MODULE_NAME="gpu"
 
-set -ogq @gpu_low_fg_color "#{E:@thm_fg}"
-set -ogq @gpu_medium_fg_color "#{E:@thm_fg}"
-set -ogq @gpu_high_fg_color "#{E:@thm_crust}"
-
-set -ogq @gpu_low_bg_color "#{E:@catppuccin_status_module_text_bg}"
-set -ogq @gpu_medium_bg_color "#{E:@catppuccin_status_module_text_bg}"
-set -ogq @gpu_high_bg_color "#{E:@thm_red}"
-
-set -ogq @gram_low_fg_color "#{E:@thm_fg}"
-set -ogq @gram_medium_fg_color "#{E:@thm_fg}"
-set -ogq @gram_high_fg_color "#{E:@thm_crust}"
-
-set -ogq @gram_low_bg_color "#{E:@catppuccin_status_module_text_bg}"
-set -ogq @gram_medium_bg_color "#{E:@catppuccin_status_module_text_bg}"
-set -ogq @gram_high_bg_color "#{E:@thm_red}"
-
-set -ogq @gpu_temp_low_fg_color "#{E:@thm_fg}"
-set -ogq @gpu_temp_medium_fg_color "#{E:@thm_fg}"
-set -ogq @gpu_temp_high_fg_color "#{E:@thm_crust}"
-
-set -ogq @gpu_temp_low_bg_color "#{E:@catppuccin_status_module_text_bg}"
-set -ogq @gpu_temp_medium_bg_color "#{E:@catppuccin_status_module_text_bg}"
-set -ogq @gpu_temp_high_bg_color "#{E:@thm_red}"
-
 set -ogq "@catppuccin_${MODULE_NAME}_icon" "GPU"
 set -ogqF "@catppuccin_${MODULE_NAME}_color" "#{E:@thm_mauve}"
-set -ogq "@catppuccin_status_${MODULE_NAME}_text_fg" "#{l:#{gpu_fg_color}}"
-set -ogq "@catppuccin_status_${MODULE_NAME}_text_bg" "#{l:#{gpu_bg_color}}"
+set -ogqF "@catppuccin_status_${MODULE_NAME}_text_fg" "#{E:@thm_fg}"
+set -ogqF "@catppuccin_status_${MODULE_NAME}_text_bg" "#{E:@catppuccin_status_module_text_bg}"
 set -ogq "@catppuccin_${MODULE_NAME}_text" " #{l:#{gpu_percentage}} #{l:#{gram_percentage}} #{l:#{gpu_temp}}"
 
 if-shell "test -f '{{ tmux_plugin_dir }}/tmux/utils/status_module.conf'" "source-file '{{ tmux_plugin_dir }}/tmux/utils/status_module.conf'"
@@ -128,4 +104,5 @@ set -agF status-right "#{E:@catppuccin_status_battery}"
 set -agF status-right "#{E:@catppuccin_status_gpu}"
 {% endif %}
 
+if-shell "test -f '{{ tmux_plugin_dir }}/tmux-cpu/cpu.tmux'" "run-shell '{{ tmux_plugin_dir }}/tmux-cpu/cpu.tmux'"
 if-shell "test -f '{{ tmux_tpm_dir }}/tpm'" "run-shell '{{ tmux_tpm_dir }}/tpm'"
