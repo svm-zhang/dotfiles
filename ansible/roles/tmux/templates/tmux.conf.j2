@@ -57,7 +57,7 @@ bind-key -T copy-mode-vi Escape send -X cancel
 unbind -T copy-mode-vi MouseDragEnd1Pane
 
 # plugins
-{% for plugin in tmux_plugins %}
+{% for plugin in tmux_all_plugins %}
 set -g @plugin '{{ plugin }}'
 {% endfor %}
 
@@ -72,13 +72,32 @@ set -g @catppuccin_status_left_separator  " "
 set -g @catppuccin_status_right_separator ""
 set -g @catppuccin_status_connect_separator "yes"
 
+{% if tmux_nvidia_gpu_status_available | bool %}
+%hidden MODULE_NAME="gpu"
+set -g "@catppuccin_${MODULE_NAME}_icon" "GPU"
+set -gF "@catppuccin_${MODULE_NAME}_color" "#{E:@thm_mauve}"
+set -g "@catppuccin_${MODULE_NAME}_text" "#({{ tmux_gpu_script_path }} gpu_percentage) #({{ tmux_gpu_script_path }} gram_percentage) #({{ tmux_gpu_script_path }} gpu_temp)"
+if-shell "test -f '{{ tmux_plugin_dir }}/tmux/utils/status_module.conf'" "source-file '{{ tmux_plugin_dir }}/tmux/utils/status_module.conf'"
+{% endif %}
+
 if-shell "test -f '{{ tmux_plugin_dir }}/tmux/catppuccin.tmux'" "run-shell '{{ tmux_plugin_dir }}/tmux/catppuccin.tmux'"
 
 set -g status-right-length 120
 set -g status-left-length 100
 set -g status-left ""
+{% if tmux_show_cpu | bool %}
 set -gF status-right "#{E:@catppuccin_status_cpu}"
+{% else %}
+set -g status-right ""
+{% endif %}
+{% if tmux_show_ram | bool %}
 set -agF status-right "#{E:@catppuccin_status_ram}"
+{% endif %}
+{% if tmux_show_battery | bool %}
 set -agF status-right "#{E:@catppuccin_status_battery}"
+{% endif %}
+{% if tmux_nvidia_gpu_status_available | bool %}
+set -agF status-right "#{E:@catppuccin_status_gpu}"
+{% endif %}
 
 if-shell "test -f '{{ tmux_tpm_dir }}/tpm'" "run-shell '{{ tmux_tpm_dir }}/tpm'"
