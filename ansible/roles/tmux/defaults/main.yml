@@ -26,8 +26,3 @@ tmux_plugins:
   - tmux-plugins/tmux-cpu
 
 tmux_extra_plugins: []
-
-tmux_show_cpu: true
-tmux_show_ram: true
-tmux_show_battery: false
-tmux_nvidia_smi_path: "/usr/bin/nvidia-smi"

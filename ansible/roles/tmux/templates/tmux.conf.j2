@@ -74,34 +74,13 @@ set -g @catppuccin_status_connect_separator "yes"
 
 if-shell "test -f '{{ tmux_plugin_dir }}/tmux/catppuccin.tmux'" "run-shell '{{ tmux_plugin_dir }}/tmux/catppuccin.tmux'"
 
-{% if tmux_nvidia_gpu_status_available | bool %}
-%hidden MODULE_NAME="gpu"
-
-set -ogq "@catppuccin_${MODULE_NAME}_icon" "GPU"
-set -ogqF "@catppuccin_${MODULE_NAME}_color" "#{E:@thm_mauve}"
-set -ogqF "@catppuccin_status_${MODULE_NAME}_text_fg" "#{E:@thm_fg}"
-set -ogqF "@catppuccin_status_${MODULE_NAME}_text_bg" "#{E:@catppuccin_status_module_text_bg}"
-set -ogq "@catppuccin_${MODULE_NAME}_text" " #{l:#{gpu_percentage}} #{l:#{gram_percentage}} #{l:#{gpu_temp}}"
-
-if-shell "test -f '{{ tmux_plugin_dir }}/tmux/utils/status_module.conf'" "source-file '{{ tmux_plugin_dir }}/tmux/utils/status_module.conf'"
-{% endif %}
-
 set -g status-right-length 120
 set -g status-left-length 100
 set -g status-left ""
-{% if tmux_show_cpu | bool %}
 set -gF status-right "#{E:@catppuccin_status_cpu}"
-{% else %}
-set -g status-right ""
-{% endif %}
-{% if tmux_show_ram | bool %}
 set -agF status-right "#{E:@catppuccin_status_ram}"
-{% endif %}
-{% if tmux_show_battery | bool %}
+{% if tmux_battery_status_available | bool %}
 set -agF status-right "#{E:@catppuccin_status_battery}"
-{% endif %}
-{% if tmux_nvidia_gpu_status_available | bool %}
-set -agF status-right "#{E:@catppuccin_status_gpu}"
 {% endif %}
 
 if-shell "test -f '{{ tmux_plugin_dir }}/tmux-cpu/cpu.tmux'" "run-shell '{{ tmux_plugin_dir }}/tmux-cpu/cpu.tmux'"

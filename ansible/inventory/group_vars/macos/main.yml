@@ -13,7 +13,3 @@ macos_only_tools_formulae:
   cmake: cmake
 
 macos_tools_formulae: "{{ common_tools_formulae | combine(macos_only_tools_formulae) }}"
-
-tmux_extra_plugins:
-  - tmux-plugins/tmux-battery
-tmux_show_battery: true

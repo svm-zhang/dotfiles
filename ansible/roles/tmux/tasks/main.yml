@@ -12,23 +12,18 @@
     mode: "0700"
   when: mode_render | bool
 
-- name: Check NVIDIA GPU status backend
-  ansible.builtin.command:
-    argv:
-      - "{{ tmux_nvidia_smi_path }}"
-      - --query-gpu=temperature.gpu
-      - --format=csv,noheader,nounits
-  register: tmux_nvidia_smi_check
-  changed_when: false
-  failed_when: false
-
-- name: Set tmux NVIDIA GPU status fact
+- name: Set tmux battery status fact
   ansible.builtin.set_fact:
-    tmux_nvidia_gpu_status_available: "{{ tmux_nvidia_smi_check.rc == 0 and (tmux_nvidia_smi_check.stdout | trim | length > 0) }}"
+    tmux_battery_status_available: "{{ ansible_facts['system'] == 'Darwin' }}"
 
 - name: Set tmux plugin list
   ansible.builtin.set_fact:
-    tmux_all_plugins: "{{ tmux_plugins + tmux_extra_plugins }}"
+    tmux_all_plugins: >-
+      {{
+        tmux_plugins
+        + (['tmux-plugins/tmux-battery'] if tmux_battery_status_available | bool else [])
+        + tmux_extra_plugins
+      }}
 
 - name: Render tmux config
   ansible.builtin.template:
