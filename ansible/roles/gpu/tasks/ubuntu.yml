@@ -19,7 +19,7 @@
 
 - name: Skip NVIDIA package tasks when no GPU is detected
   ansible.builtin.debug:
-    msg: "No NVIDIA PCI hardware detected; skipping NVIDIA driver and runtime setup."
+    msg: "No NVIDIA PCI hardware detected; skipping NVIDIA runtime setup."
   when: not nvidia_gpu_detected | bool
 
 - name: Include NVIDIA GPU tasks

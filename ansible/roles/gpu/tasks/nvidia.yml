@@ -1,41 +1,20 @@
 ---
-- name: Check nvidia-smi before driver install
+- name: Check NVIDIA driver availability
   ansible.builtin.command:
     argv:
       - nvidia-smi
-  register: nvidia_smi_before
+  register: nvidia_smi_check
   changed_when: false
   failed_when: false
 
-- name: Set Ubuntu NVIDIA driver installed fact
-  ansible.builtin.set_fact:
-    nvidia_driver_installed: "{{ nvidia_smi_before.rc == 0 }}"
-
-- name: Install ubuntu-drivers support
-  ansible.builtin.apt:
-    name: ubuntu-drivers-common
-    state: present
-    update_cache: true
-  become: true
-  when: not nvidia_driver_installed | bool
-
-- name: Install NVIDIA driver through ubuntu-drivers
-  ansible.builtin.command:
-    argv:
-      - ubuntu-drivers
-      - install
-      - --gpgpu
-  become: true
-  changed_when: true
-  when: not nvidia_driver_installed | bool
-
-- name: Verify nvidia-smi before container runtime setup
-  ansible.builtin.command:
-    argv:
-      - nvidia-smi
-  register: nvidia_smi_after
-  changed_when: false
-  failed_when: nvidia_smi_after.rc != 0
+- name: Fail when NVIDIA driver is unavailable
+  ansible.builtin.fail:
+    msg: >-
+      NVIDIA PCI hardware was detected, but nvidia-smi is unavailable.
+      Install and activate the NVIDIA proprietary driver outside Ansible,
+      then rerun this role. The GPU role manages NVIDIA container runtime
+      integration only; it does not install the base graphics driver.
+  when: nvidia_smi_check.rc != 0
 
 - name: Set NVIDIA driver active fact
   ansible.builtin.set_fact:
