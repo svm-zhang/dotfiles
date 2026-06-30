@@ -19,8 +19,8 @@
   ansible.builtin.file:
     path: "{{ linuxbrew_default_base | dirname }}"
     state: directory
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid | string }}"
+    owner: "{{ ansible_facts['user_id'] }}"
+    group: "{{ ansible_facts['user_gid'] | string }}"
     mode: "0755"
   become: true
   when: not linuxbrew_default_bin_stat.stat.exists

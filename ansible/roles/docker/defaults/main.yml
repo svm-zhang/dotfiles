@@ -1,7 +1,7 @@
 ---
 docker_reinstall: false
 docker_manage_group_membership: false
-docker_user: "{{ ansible_user_id }}"
+docker_user: "{{ ansible_facts['user_id'] }}"
 docker_verify_cli: true
 
 docker_apt_keyring_path: "{{ ubuntu_apt_keyring_dir | default('/etc/apt/keyrings') }}/docker.asc"
