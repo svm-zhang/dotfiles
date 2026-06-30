@@ -169,6 +169,7 @@
       - all
       - "{{ nvidia_cuda_smoke_image }}"
       - nvidia-smi
+  become: true
   changed_when: false
   when:
     - nvidia_docker_available | bool

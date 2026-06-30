@@ -15,6 +15,16 @@
     path: "{{ linuxbrew_default_bin }}"
   register: linuxbrew_default_bin_stat
 
+- name: Prepare Linuxbrew install parent
+  ansible.builtin.file:
+    path: "{{ linuxbrew_default_base | dirname }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid | string }}"
+    mode: "0755"
+  become: true
+  when: not linuxbrew_default_bin_stat.stat.exists
+
 - name: Install Linuxbrew
   ansible.builtin.shell:
     cmd: |
