@@ -25,6 +25,7 @@ terminal_app_choices:
 
 common_tools_formulae:
   git: git
+  gh: gh
   git-delta: delta
   diffnav: diffnav
   fzf: fzf
