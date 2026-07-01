@@ -4,7 +4,6 @@ set -euo pipefail
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 readonly ANSIBLE_CONFIG_FILE="${REPO_ROOT}/ansible/ansible.cfg"
-readonly ANSIBLE_INVENTORY="${REPO_ROOT}/ansible/inventory/local.yml"
 readonly ANSIBLE_PLAYBOOK="${REPO_ROOT}/ansible/playbooks/site.yml"
 export ANSIBLE_CONFIG="${ANSIBLE_CONFIG_FILE}"
 
@@ -250,13 +249,28 @@ bootstrap_ubuntu() {
 }
 
 verify_ansible() {
+  local os="$1"
+  local ansible_inventory
+
+  case "${os}" in
+    macos)
+      ansible_inventory="${REPO_ROOT}/ansible/inventory/local_macos.yml"
+      ;;
+    ubuntu)
+      ansible_inventory="${REPO_ROOT}/ansible/inventory/local_ubuntu.yml"
+      ;;
+    *)
+      die "unsupported detected OS: ${os}"
+      ;;
+  esac
+
   require_file "${ANSIBLE_CONFIG_FILE}"
-  require_file "${ANSIBLE_INVENTORY}"
+  require_file "${ansible_inventory}"
   require_file "${ANSIBLE_PLAYBOOK}"
 
   check_command ansible-playbook || die "ansible-playbook is required"
   run_cmd ansible-playbook --version
-  run_cmd ansible-playbook -i "${ANSIBLE_INVENTORY}" "${ANSIBLE_PLAYBOOK}" --syntax-check
+  run_cmd ansible-playbook -i "${ansible_inventory}" "${ANSIBLE_PLAYBOOK}" --syntax-check
 }
 
 main() {
@@ -277,7 +291,7 @@ main() {
       ;;
   esac
 
-  verify_ansible
+  verify_ansible "${os}"
   log "stage-0 bootstrap ${MODE} completed"
 }
 
