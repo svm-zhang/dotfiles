@@ -1,0 +1,5 @@
+---
+macos:
+  hosts:
+    mac1:
+      ansible_connection: local

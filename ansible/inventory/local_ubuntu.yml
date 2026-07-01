@@ -1,9 +1,4 @@
 ---
-macos:
-  hosts:
-    mac1:
-      ansible_connection: local
-
 ubuntu:
   hosts:
     ubuntu1:
