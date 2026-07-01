@@ -61,6 +61,30 @@ brew_install() {
   HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_CLEANUP=1 brew install "$@"
 }
 
+setup_homebrew_env() {
+  local brew_path
+
+  if have brew; then
+    eval "$(brew shellenv)"
+    return 0
+  fi
+
+  for brew_path in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+    if [[ -x "${brew_path}" ]]; then
+      eval "$("${brew_path}" shellenv)"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+install_homebrew() {
+  log "+ install Homebrew with the official installer"
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  setup_homebrew_env || die "Homebrew installed, but brew could not be found in the current shell"
+}
+
 run_root() {
   if [[ "$(id -u)" -eq 0 ]]; then
     run_cmd "$@"
@@ -150,12 +174,12 @@ bootstrap_macos() {
     die "rerun bootstrap after Command Line Tools installation completes"
   fi
 
-  if ! have brew; then
+  if ! setup_homebrew_env; then
     if [[ "${MODE}" == "check" ]]; then
       warn "Homebrew is missing"
       return 1
     fi
-    die "Homebrew is missing; install Homebrew, then rerun bootstrap"
+    install_homebrew
   fi
   log "found brew: $(command -v brew)"
 
@@ -165,13 +189,7 @@ bootstrap_macos() {
     missing=1
     if [[ "${MODE}" == "run" ]]; then
       brew_install ansible
-    fi
-  fi
-
-  if ! check_command uv; then
-    missing=1
-    if [[ "${MODE}" == "run" ]]; then
-      brew_install uv
+      hash -r
     fi
   fi
 
@@ -216,8 +234,8 @@ bootstrap_ubuntu() {
     missing+=("ansible")
   fi
 
-  if grep -Rqs "^deb .*ppa.launchpadcontent.net/ansible/ansible/ubuntu" /etc/apt/sources.list /etc/apt/sources.list.d 2>/dev/null ||
-     grep -Rqs "^deb .*ppa.launchpad.net/ansible/ansible/ubuntu" /etc/apt/sources.list /etc/apt/sources.list.d 2>/dev/null; then
+  if grep -Rqs "ppa.launchpadcontent.net/ansible/ansible/ubuntu" /etc/apt/sources.list /etc/apt/sources.list.d 2>/dev/null ||
+     grep -Rqs "ppa.launchpad.net/ansible/ansible/ubuntu" /etc/apt/sources.list /etc/apt/sources.list.d 2>/dev/null; then
     ansible_ppa_present=1
     log "Ansible PPA is configured"
   else
