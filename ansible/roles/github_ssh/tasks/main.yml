@@ -106,11 +106,25 @@
   register: github_ssh_keyscan
   changed_when: false
 
+- name: Keep only GitHub SSH host key lines
+  ansible.builtin.set_fact:
+    github_ssh_keyscan_host_key_lines: >-
+      {{
+        github_ssh_keyscan.stdout_lines
+        | select('match', '^' ~ (github_ssh_host | regex_escape) ~ '\s+')
+        | list
+      }}
+
+- name: Validate GitHub SSH host key scan result
+  ansible.builtin.assert:
+    that:
+      - github_ssh_keyscan_host_key_lines | length > 0
+    fail_msg: "ssh-keyscan returned no usable host key lines for {{ github_ssh_host }}."
+
 - name: Store GitHub SSH host keys
   ansible.builtin.known_hosts:
     path: "{{ github_ssh_known_hosts_path }}"
     name: "{{ github_ssh_host }}"
     key: "{{ item }}"
     state: present
-  loop: "{{ github_ssh_keyscan.stdout_lines }}"
-  when: item | length > 0
+  loop: "{{ github_ssh_keyscan_host_key_lines }}"
