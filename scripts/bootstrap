@@ -81,7 +81,7 @@ setup_homebrew_env() {
 
 install_homebrew() {
   log "+ install Homebrew with the official installer"
-  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   setup_homebrew_env || die "Homebrew installed, but brew could not be found in the current shell"
 }
 
