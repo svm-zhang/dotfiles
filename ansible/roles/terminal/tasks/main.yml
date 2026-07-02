@@ -11,17 +11,28 @@
       - terminal_app in terminal_app_choices
     fail_msg: "terminal_app must be one of: {{ terminal_app_choices | join(', ') }}"
 
-- name: Include Ubuntu terminal installation tasks
-  ansible.builtin.include_tasks: ubuntu.yml
-  when:
-    - allow_package_changes | bool
-    - ansible_facts['distribution'] == "Ubuntu"
+- name: Detect package-managed terminal platform
+  ansible.builtin.set_fact:
+    terminal_package_platform_supported: >-
+      {{
+        ansible_facts['system'] == "Darwin"
+        or ansible_facts['distribution'] == "Ubuntu"
+      }}
 
-- name: Include macOS terminal installation tasks
-  ansible.builtin.include_tasks: macos.yml
+- name: Include Ghostty terminal installation tasks
+  ansible.builtin.include_tasks: ghostty.yml
   when:
     - allow_package_changes | bool
-    - ansible_facts['system'] == "Darwin"
+    - terminal_app == "ghostty"
+    - terminal_package_platform_supported | bool
+
+- name: Fail for unsupported terminal app on package-managed platforms
+  ansible.builtin.fail:
+    msg: "terminal_app={{ terminal_app }} is not implemented for this platform."
+  when:
+    - allow_package_changes | bool
+    - terminal_app != "ghostty"
+    - terminal_package_platform_supported | bool
 
 - name: Create terminal config directories
   ansible.builtin.file:

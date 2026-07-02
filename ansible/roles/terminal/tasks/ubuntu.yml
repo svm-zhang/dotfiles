@@ -1,9 +1,0 @@
----
-- name: Include Ghostty terminal tasks
-  ansible.builtin.include_tasks: ghostty.yml
-  when: terminal_app == "ghostty"
-
-- name: Fail for unsupported Ubuntu terminal app
-  ansible.builtin.fail:
-    msg: "Ubuntu terminal_app={{ terminal_app }} is not implemented yet."
-  when: terminal_app != "ghostty"
