@@ -1,6 +1,5 @@
 ---
 docker_reinstall: false
-docker_manage_group_membership: false
 docker_user: "{{ ansible_facts['user_id'] }}"
 docker_verify_cli: true
 

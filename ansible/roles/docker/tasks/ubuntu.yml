@@ -108,7 +108,6 @@
     groups: docker
     append: true
   become: true
-  when: docker_manage_group_membership | bool
 
 - name: Verify Docker CLI
   ansible.builtin.command:
