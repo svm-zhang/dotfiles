@@ -1,0 +1,32 @@
+---
+verify_shell: "{{ dot_bash_path | default('/bin/bash') }}"
+verify_tmux_socket_name: "dotfiles-verify"
+
+verify_common_tool_commands: "{{ common_tools_formulae.values() | list }}"
+
+verify_macos_document_command_checks:
+  - "R --version"
+  - "pandoc --version"
+  - "kpsewhich --version"
+  - "tlmgr --version"
+  - "xelatex --version"
+  - "texliveonfly --help"
+
+verify_macos_document_tex_file_checks:
+  - adjustbox.sty
+  - tcolorbox.sty
+  - collectbox.sty
+  - ucs.sty
+  - environ.sty
+  - trimspaces.sty
+  - titling.sty
+  - enumitem.sty
+  - mathrsfs.sty
+  - sectsty.sty
+  - titlesec.sty
+  - lastpage.sty
+  - datetime.sty
+  - fmtcount.sty
+  - orcidlink.sty
+
+verify_ubuntu_gpu_smoke_image: "nvidia/cuda:13.0.2-base-ubuntu24.04"

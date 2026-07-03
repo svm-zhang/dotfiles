@@ -108,20 +108,3 @@
     groups: docker
     append: true
   become: true
-
-- name: Verify Docker CLI
-  ansible.builtin.command:
-    argv:
-      - docker
-      - --version
-  changed_when: false
-  when: docker_verify_cli | bool
-
-- name: Verify Docker Compose plugin
-  ansible.builtin.command:
-    argv:
-      - docker
-      - compose
-      - version
-  changed_when: false
-  when: docker_verify_cli | bool

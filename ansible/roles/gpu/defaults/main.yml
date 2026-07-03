@@ -1,5 +1,4 @@
 ---
-nvidia_cuda_smoke_image: "nvidia/cuda:13.0.2-base-ubuntu24.04"
 
 nvidia_container_toolkit_keyring_path: "/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg"
 nvidia_container_toolkit_list_url: "https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list"
