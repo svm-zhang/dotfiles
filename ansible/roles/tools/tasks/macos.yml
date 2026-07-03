@@ -1,10 +1,28 @@
 ---
+- name: Verify supported macOS architecture for Homebrew
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['architecture'] == "arm64"
+    fail_msg: "Only Apple Silicon macOS arm64 is supported by this deployment."
+
+- name: Verify macOS Homebrew binary exists
+  ansible.builtin.stat:
+    path: "{{ macos_homebrew_bin }}"
+  register: tools_macos_homebrew_bin
+
+- name: Require macOS Homebrew before tools install
+  ansible.builtin.assert:
+    that:
+      - tools_macos_homebrew_bin.stat.exists
+      - tools_macos_homebrew_bin.stat.executable
+    fail_msg: "Expected Homebrew at {{ macos_homebrew_bin }}. Run bootstrap before site deployment."
+
 - name: Include macOS tools precheck
   ansible.builtin.include_tasks: macos_precheck.yml
 
 - name: Install macOS Homebrew formulae
   ansible.builtin.command:
-    cmd: "brew install {{ item }}"
+    cmd: "{{ macos_homebrew_bin }} install {{ item }}"
   environment:
     HOMEBREW_NO_AUTO_UPDATE: "1"
     HOMEBREW_NO_INSTALL_CLEANUP: "1"
@@ -14,14 +32,14 @@
 
 - name: Verify installed macOS Homebrew formulae
   ansible.builtin.command:
-    cmd: "brew list --versions {{ item }}"
+    cmd: "{{ macos_homebrew_bin }} list --versions {{ item }}"
   loop: "{{ tools_macos_formulae_to_install }}"
   changed_when: false
   when: tools_macos_formulae_to_install | length > 0
 
 - name: Get macOS rustup Homebrew prefix
   ansible.builtin.command:
-    cmd: "brew --prefix rustup"
+    cmd: "{{ macos_homebrew_bin }} --prefix rustup"
   register: tools_macos_rustup_prefix
   changed_when: false
 
@@ -46,13 +64,13 @@
 
 - name: Get macOS uv Homebrew prefix
   ansible.builtin.command:
-    cmd: "brew --prefix uv"
+    cmd: "{{ macos_homebrew_bin }} --prefix uv"
   register: tools_macos_uv_prefix
   changed_when: false
 
 - name: Get macOS node@24 Homebrew prefix
   ansible.builtin.command:
-    cmd: "brew --prefix node@24"
+    cmd: "{{ macos_homebrew_bin }} --prefix node@24"
   register: tools_macos_node_prefix
   changed_when: false
 
@@ -61,6 +79,8 @@
     argv:
       - "{{ tools_macos_node_prefix.stdout }}/bin/{{ item }}"
       - --version
+  environment:
+    PATH: "{{ tools_macos_node_prefix.stdout }}/bin:{{ ansible_facts['env']['PATH'] | default('/usr/bin:/bin:/usr/sbin:/sbin') }}"
   loop:
     - node
     - npm

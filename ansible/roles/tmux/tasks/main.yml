@@ -75,6 +75,7 @@
   ansible.builtin.command:
     cmd: "{{ tmux_tpm_install_plugins_command }}"
   environment:
+    PATH: "{{ tmux_task_path }}"
     TMUX_PLUGIN_MANAGER_PATH: "{{ tmux_plugin_dir }}"
   changed_when: true
   when: mode_home | bool

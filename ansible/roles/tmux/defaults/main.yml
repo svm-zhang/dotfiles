@@ -16,6 +16,15 @@ tmux_default_terminal: "tmux-256color"
 tmux_truecolor_feature: ",*:RGB"
 tmux_prefix: "C-a"
 tmux_default_shell: "{{ dot_bash_path }}"
+tmux_binary_dir: >-
+  {{
+    macos_homebrew_base ~ '/bin'
+    if ansible_facts['system'] == 'Darwin'
+    else linuxbrew_default_base ~ '/bin'
+    if ansible_facts['distribution'] == 'Ubuntu'
+    else '/usr/bin'
+  }}
+tmux_task_path: "{{ tmux_binary_dir }}:{{ ansible_facts['env']['PATH'] | default('/usr/bin:/bin:/usr/sbin:/sbin') }}"
 
 tmux_plugins:
   - tmux-plugins/tpm

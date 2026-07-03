@@ -13,7 +13,7 @@
 - name: Check installed macOS document formulae
   ansible.builtin.command:
     argv:
-      - brew
+      - "{{ macos_homebrew_bin }}"
       - list
       - --versions
       - "{{ item }}"
@@ -28,7 +28,7 @@
 - name: Install missing macOS document formulae
   ansible.builtin.command:
     argv:
-      - brew
+      - "{{ macos_homebrew_bin }}"
       - install
       - "{{ item.item }}"
   environment:

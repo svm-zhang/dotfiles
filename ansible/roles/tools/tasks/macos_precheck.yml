@@ -33,7 +33,7 @@
 
 - name: Check macOS Homebrew formulae before install
   ansible.builtin.command:
-    cmd: "brew list --versions {{ item.key }}"
+    cmd: "{{ macos_homebrew_bin }} list --versions {{ item.key }}"
   loop: "{{ macos_tools_formulae | dict2items | rejectattr('value', 'none') }}"
   register: tools_macos_formula_precheck
   changed_when: false
@@ -59,7 +59,7 @@
 
 - name: Check macOS bash-completion before install
   ansible.builtin.command:
-    cmd: "brew list --versions bash-completion"
+    cmd: "{{ macos_homebrew_bin }} list --versions bash-completion"
   register: tools_macos_bash_completion_precheck
   changed_when: false
   failed_when: false

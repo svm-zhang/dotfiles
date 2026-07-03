@@ -4,7 +4,7 @@
   block:
     - name: Check macOS terminal casks before install
       ansible.builtin.command:
-        cmd: "brew list --cask --versions {{ item }}"
+        cmd: "{{ macos_homebrew_bin }} list --cask --versions {{ item }}"
       loop: "{{ macos_terminal_casks }}"
       register: terminal_macos_cask_precheck
       changed_when: false
@@ -22,7 +22,7 @@
 
     - name: Install macOS Ghostty cask
       ansible.builtin.command:
-        cmd: "brew install --cask {{ item }}"
+        cmd: "{{ macos_homebrew_bin }} install --cask {{ item }}"
       environment:
         HOMEBREW_NO_AUTO_UPDATE: "1"
         HOMEBREW_NO_INSTALL_CLEANUP: "1"
@@ -33,7 +33,7 @@
 
     - name: Verify macOS Ghostty cask is installed
       ansible.builtin.command:
-        cmd: "brew list --cask --versions {{ item }}"
+        cmd: "{{ macos_homebrew_bin }} list --cask --versions {{ item }}"
       loop: "{{ macos_terminal_casks }}"
       changed_when: false
 
