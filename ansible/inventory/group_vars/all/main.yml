@@ -43,7 +43,6 @@ common_tools_formulae:
   fd: fd
   ripgrep: rg
   node@24: node
-  rustup: rustup
   tree-sitter-cli: tree-sitter
   uv: uv
   neovim: nvim

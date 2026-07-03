@@ -11,12 +11,6 @@ elif [ -d "{{ linuxbrew_default_base | default('/home/linuxbrew/.linuxbrew') }}/
   export PATH="{{ linuxbrew_default_base | default('/home/linuxbrew/.linuxbrew') }}/opt/node@24/bin:$PATH"
 fi
 
-if [ -d "{{ macos_homebrew_base | default('/opt/homebrew') }}/opt/rustup/bin" ]; then
-  export PATH="{{ macos_homebrew_base | default('/opt/homebrew') }}/opt/rustup/bin:$PATH"
-elif [ -d "{{ linuxbrew_default_base | default('/home/linuxbrew/.linuxbrew') }}/opt/rustup/bin" ]; then
-  export PATH="{{ linuxbrew_default_base | default('/home/linuxbrew/.linuxbrew') }}/opt/rustup/bin:$PATH"
-fi
-
 {% if ansible_facts["system"] == "Darwin" %}
 [ -d "{{ shell_texbin_dir }}" ] && export PATH="{{ shell_texbin_dir }}:$PATH"
 {% endif %}

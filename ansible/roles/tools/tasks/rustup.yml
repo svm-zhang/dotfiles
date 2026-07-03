@@ -1,0 +1,53 @@
+---
+- name: Check user rustup install
+  ansible.builtin.stat:
+    path: "{{ tools_rustup_bin }}"
+  register: tools_rustup_bin_stat
+
+- name: Download official rustup installer
+  ansible.builtin.get_url:
+    url: "{{ tools_rustup_installer_url }}"
+    dest: "{{ tools_rustup_installer_path }}"
+    mode: "0755"
+  when: not tools_rustup_bin_stat.stat.exists
+
+- name: Install user Rust toolchain through rustup
+  ansible.builtin.command:
+    argv:
+      - /bin/sh
+      - "{{ tools_rustup_installer_path }}"
+      - -y
+      - --no-modify-path
+      - --profile
+      - "{{ tools_rustup_profile }}"
+      - --default-toolchain
+      - "{{ tools_rustup_default_toolchain }}"
+  register: tools_rustup_install
+  changed_when: tools_rustup_install.rc == 0
+  when: not tools_rustup_bin_stat.stat.exists
+
+- name: Remove rustup installer
+  ansible.builtin.file:
+    path: "{{ tools_rustup_installer_path }}"
+    state: absent
+  when: not tools_rustup_bin_stat.stat.exists
+
+- name: Set Rust default toolchain
+  ansible.builtin.command:
+    argv:
+      - "{{ tools_rustup_bin }}"
+      - default
+      - "{{ tools_rustup_default_toolchain }}"
+  register: tools_rustup_default
+  changed_when: "'unchanged' not in ((tools_rustup_default.stdout | default('')) ~ (tools_rustup_default.stderr | default('')))"
+
+- name: Verify Rust tools are available through user rustup
+  ansible.builtin.command:
+    argv:
+      - "{{ tools_cargo_home }}/bin/{{ item }}"
+      - --version
+  loop:
+    - rustup
+    - cargo
+    - rustc
+  changed_when: false

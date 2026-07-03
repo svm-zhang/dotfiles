@@ -37,30 +37,8 @@
   changed_when: false
   when: tools_macos_formulae_to_install | length > 0
 
-- name: Get macOS rustup Homebrew prefix
-  ansible.builtin.command:
-    cmd: "{{ macos_homebrew_bin }} --prefix rustup"
-  register: tools_macos_rustup_prefix
-  changed_when: false
-
-- name: Install macOS Rust stable toolchain
-  ansible.builtin.command:
-    argv:
-      - "{{ tools_macos_rustup_prefix.stdout }}/bin/rustup"
-      - default
-      - stable
-  register: tools_macos_rustup_default
-  changed_when: "'unchanged' not in ((tools_macos_rustup_default.stdout | default('')) ~ (tools_macos_rustup_default.stderr | default('')))"
-
-- name: Verify macOS Rust tools are available through rustup
-  ansible.builtin.command:
-    argv:
-      - "{{ tools_macos_rustup_prefix.stdout }}/bin/{{ item }}"
-      - --version
-  loop:
-    - cargo
-    - rustc
-  changed_when: false
+- name: Include user rustup tasks
+  ansible.builtin.include_tasks: rustup.yml
 
 - name: Get macOS uv Homebrew prefix
   ansible.builtin.command:

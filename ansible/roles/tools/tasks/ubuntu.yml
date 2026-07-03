@@ -88,30 +88,8 @@
   loop: "{{ ubuntu_tools_formulae | dict2items }}"
   changed_when: false
 
-- name: Get Ubuntu rustup Linuxbrew prefix
-  ansible.builtin.command:
-    cmd: "{{ tools_brew_bin }} --prefix rustup"
-  register: tools_ubuntu_rustup_prefix
-  changed_when: false
-
-- name: Install Ubuntu Rust stable toolchain
-  ansible.builtin.command:
-    argv:
-      - "{{ tools_ubuntu_rustup_prefix.stdout }}/bin/rustup"
-      - default
-      - stable
-  register: tools_ubuntu_rustup_default
-  changed_when: "'unchanged' not in ((tools_ubuntu_rustup_default.stdout | default('')) ~ (tools_ubuntu_rustup_default.stderr | default('')))"
-
-- name: Verify Ubuntu Rust tools are available through rustup
-  ansible.builtin.command:
-    argv:
-      - "{{ tools_ubuntu_rustup_prefix.stdout }}/bin/{{ item }}"
-      - --version
-  loop:
-    - cargo
-    - rustc
-  changed_when: false
+- name: Include user rustup tasks
+  ansible.builtin.include_tasks: rustup.yml
 
 - name: Get Ubuntu uv Linuxbrew prefix
   ansible.builtin.command:
