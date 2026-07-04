@@ -71,5 +71,6 @@
   environment:
     PATH: "{{ tmux_task_path }}"
     TMUX_PLUGIN_MANAGER_PATH: "{{ tmux_plugin_dir }}"
-  changed_when: true
+  register: tmux_tpm_install_plugins
+  changed_when: "'download success' in tmux_tpm_install_plugins.stdout"
   when: mode_home | bool
