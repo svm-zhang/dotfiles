@@ -16,10 +16,6 @@
       integration only; it does not install the base graphics driver.
   when: nvidia_smi_check.rc != 0
 
-- name: Set NVIDIA driver active fact
-  ansible.builtin.set_fact:
-    nvidia_driver_active: true
-
 - name: Check Docker availability
   ansible.builtin.command:
     argv:
