@@ -38,102 +38,121 @@
     msg: "Docker is unavailable; skipping NVIDIA Container Toolkit and runtime configuration."
   when: not nvidia_docker_available | bool
 
-- name: Check NVIDIA Container Toolkit prerequisite packages
-  ansible.builtin.command:
-    argv:
-      - dpkg-query
-      - -W
-      - -f=${Status}
-      - "{{ item }}"
-  loop: "{{ nvidia_container_toolkit_prerequisites }}"
-  register: nvidia_container_toolkit_prerequisite_checks
-  changed_when: false
-  failed_when: false
+- name: Manage NVIDIA Container Toolkit when Docker is available
   when: nvidia_docker_available | bool
+  block:
+    - name: Check NVIDIA Container Toolkit prerequisite packages
+      ansible.builtin.command:
+        argv:
+          - dpkg-query
+          - -W
+          - -f=${Status}
+          - "{{ item }}"
+      loop: "{{ nvidia_container_toolkit_prerequisites }}"
+      register: nvidia_container_toolkit_prerequisite_checks
+      changed_when: false
+      failed_when: false
 
-- name: Set missing NVIDIA Container Toolkit prerequisites
-  ansible.builtin.set_fact:
-    nvidia_missing_container_toolkit_prerequisites: >-
-      {{
-        nvidia_container_toolkit_prerequisite_checks.results
-        | selectattr('stdout', 'ne', 'install ok installed')
-        | map(attribute='item')
-        | list
-      }}
-  when: nvidia_docker_available | bool
+    - name: Set missing NVIDIA Container Toolkit prerequisites
+      ansible.builtin.set_fact:
+        nvidia_missing_container_toolkit_prerequisites: >-
+          {{
+            nvidia_container_toolkit_prerequisite_checks.results
+            | selectattr('stdout', 'ne', 'install ok installed')
+            | map(attribute='item')
+            | list
+          }}
 
-- name: Install NVIDIA Container Toolkit prerequisites
-  ansible.builtin.apt:
-    name: "{{ nvidia_missing_container_toolkit_prerequisites }}"
-    state: present
-    update_cache: true
-  become: true
-  when:
-    - nvidia_docker_available | bool
-    - nvidia_missing_container_toolkit_prerequisites | length > 0
+    - name: Install NVIDIA Container Toolkit prerequisites
+      ansible.builtin.apt:
+        name: "{{ nvidia_missing_container_toolkit_prerequisites }}"
+        state: present
+        update_cache: true
+      become: true
+      when: nvidia_missing_container_toolkit_prerequisites | length > 0
 
-- name: Add NVIDIA Container Toolkit apt repository
-  ansible.builtin.shell:
-    cmd: |
-      set -euo pipefail
-      curl -fsSL "{{ nvidia_container_toolkit_gpg_url }}" | gpg --dearmor --yes -o "{{ nvidia_container_toolkit_keyring_path }}"
-      curl -s -L "{{ nvidia_container_toolkit_list_url }}" |
-        sed 's#deb https://#deb [signed-by={{ nvidia_container_toolkit_keyring_path }}] https://#g' > "{{ nvidia_container_toolkit_source_path }}"
-    executable: /bin/bash
-    creates: "{{ nvidia_container_toolkit_source_path }}"
-  become: true
-  when: nvidia_docker_available | bool
+    - name: Add NVIDIA Container Toolkit apt repository
+      ansible.builtin.shell:
+        cmd: |
+          set -euo pipefail
+          curl -fsSL "{{ nvidia_container_toolkit_gpg_url }}" | gpg --dearmor --yes -o "{{ nvidia_container_toolkit_keyring_path }}"
+          curl -s -L "{{ nvidia_container_toolkit_list_url }}" |
+            sed 's#deb https://#deb [signed-by={{ nvidia_container_toolkit_keyring_path }}] https://#g' > "{{ nvidia_container_toolkit_source_path }}"
+        executable: /bin/bash
+        creates: "{{ nvidia_container_toolkit_source_path }}"
+      become: true
 
-- name: Install NVIDIA Container Toolkit packages
-  ansible.builtin.apt:
-    name: "{{ nvidia_container_toolkit_packages }}"
-    state: present
-    update_cache: true
-  become: true
-  when: nvidia_docker_available | bool
+    - name: Install NVIDIA Container Toolkit packages
+      ansible.builtin.apt:
+        name: "{{ nvidia_container_toolkit_packages }}"
+        state: present
+        update_cache: true
+      become: true
 
-- name: Configure NVIDIA runtime for Docker
-  ansible.builtin.command:
-    argv:
-      - nvidia-ctk
-      - runtime
-      - configure
-      - --runtime=docker
-  become: true
-  register: nvidia_configure_docker
-  changed_when: true
-  when: nvidia_docker_available | bool
+    - name: Check Docker NVIDIA runtime configuration
+      ansible.builtin.command:
+        argv:
+          - grep
+          - -Eq
+          - '"nvidia"|"nvidia-container-runtime"'
+          - /etc/docker/daemon.json
+      register: nvidia_docker_runtime_config
+      changed_when: false
+      failed_when: false
 
-- name: Configure NVIDIA runtime for containerd
-  ansible.builtin.command:
-    argv:
-      - nvidia-ctk
-      - runtime
-      - configure
-      - --runtime=containerd
-  become: true
-  register: nvidia_configure_containerd
-  changed_when: true
-  when: nvidia_docker_available | bool
+    - name: Configure NVIDIA runtime for Docker
+      ansible.builtin.command:
+        argv:
+          - nvidia-ctk
+          - runtime
+          - configure
+          - --runtime=docker
+      become: true
+      register: nvidia_configure_docker
+      changed_when: true
+      when: nvidia_docker_runtime_config.rc != 0
 
-- name: Restart Docker after NVIDIA runtime configuration
-  ansible.builtin.service:
-    name: docker
-    state: restarted
-  become: true
-  when:
-    - nvidia_docker_available | bool
-    - nvidia_configure_docker is changed
-    - ansible_facts['service_mgr'] == "systemd"
-    - allow_service_actions | bool
+    - name: Check containerd NVIDIA runtime configuration
+      ansible.builtin.command:
+        argv:
+          - grep
+          - -Eq
+          - "nvidia-container-runtime|runtimes\\.nvidia"
+          - /etc/containerd/config.toml
+      register: nvidia_containerd_runtime_config
+      changed_when: false
+      failed_when: false
 
-- name: Restart containerd after NVIDIA runtime configuration
-  ansible.builtin.service:
-    name: containerd
-    state: restarted
-  become: true
-  when:
-    - nvidia_docker_available | bool
-    - nvidia_configure_containerd is changed
-    - ansible_facts['service_mgr'] == "systemd"
-    - allow_service_actions | bool
+    - name: Configure NVIDIA runtime for containerd
+      ansible.builtin.command:
+        argv:
+          - nvidia-ctk
+          - runtime
+          - configure
+          - --runtime=containerd
+      become: true
+      register: nvidia_configure_containerd
+      changed_when: true
+      when: nvidia_containerd_runtime_config.rc != 0
+
+    - name: Restart Docker after NVIDIA runtime configuration
+      ansible.builtin.service:
+        name: docker
+        state: restarted
+      become: true
+      when:
+        - nvidia_configure_docker is defined
+        - nvidia_configure_docker is changed
+        - ansible_facts['service_mgr'] == "systemd"
+        - allow_service_actions | bool
+
+    - name: Restart containerd after NVIDIA runtime configuration
+      ansible.builtin.service:
+        name: containerd
+        state: restarted
+      become: true
+      when:
+        - nvidia_configure_containerd is defined
+        - nvidia_configure_containerd is changed
+        - ansible_facts['service_mgr'] == "systemd"
+        - allow_service_actions | bool
