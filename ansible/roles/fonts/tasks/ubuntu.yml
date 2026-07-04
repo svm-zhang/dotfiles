@@ -1,11 +1,24 @@
 ---
-- name: Skip Ubuntu GUI font installation on headless profile
+- name: Check Ubuntu default systemd target
+  ansible.builtin.command:
+    argv:
+      - systemctl
+      - get-default
+  register: fonts_ubuntu_default_target
+  changed_when: false
+  failed_when: false
+
+- name: Set Ubuntu graphical profile fact
+  ansible.builtin.set_fact:
+    fonts_ubuntu_graphical_profile: "{{ fonts_ubuntu_default_target.stdout == 'graphical.target' }}"
+
+- name: Skip Ubuntu user font installation on non-graphical profile
   ansible.builtin.debug:
-    msg: "Skipping user font installation because dotfiles_desktop_profile is false."
-  when: not (dotfiles_desktop_profile | default(true) | bool)
+    msg: "Skipping Ubuntu user font installation because systemd default target is not graphical.target."
+  when: not fonts_ubuntu_graphical_profile | bool
 
 - name: Manage Ubuntu desktop user fonts
-  when: dotfiles_desktop_profile | default(true) | bool
+  when: fonts_ubuntu_graphical_profile | bool
   block:
     - name: Install Ubuntu font prerequisites
       ansible.builtin.apt:
