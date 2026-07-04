@@ -26,16 +26,16 @@
   environment:
     HOMEBREW_NO_AUTO_UPDATE: "1"
     HOMEBREW_NO_INSTALL_CLEANUP: "1"
-  loop: "{{ tools_macos_formulae_to_install }}"
+  loop: "{{ macos_brew_formulae_to_install }}"
   changed_when: true
-  when: tools_macos_formulae_to_install | length > 0
+  when: macos_brew_formulae_to_install | length > 0
 
 - name: Verify installed macOS Homebrew formulae
   ansible.builtin.command:
     cmd: "{{ macos_homebrew_bin }} list --versions {{ item }}"
-  loop: "{{ tools_macos_formulae_to_install }}"
+  loop: "{{ macos_brew_formulae_to_install }}"
   changed_when: false
-  when: tools_macos_formulae_to_install | length > 0
+  when: macos_brew_formulae_to_install | length > 0
 
 - name: Include user rustup tasks
   ansible.builtin.include_tasks: rustup.yml

@@ -23,7 +23,7 @@ terminal_app: "ghostty"
 terminal_app_choices:
   - ghostty
 
-common_tools_formulae:
+common_brew_formulae_with_commands:
   git: git
   gh: gh
   git-delta: delta

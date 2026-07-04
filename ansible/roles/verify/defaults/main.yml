@@ -2,7 +2,7 @@
 verify_shell: "{{ dot_bash_path | default('/bin/bash') }}"
 verify_tmux_socket_name: "dotfiles-verify"
 
-verify_common_tool_commands: "{{ common_tools_formulae.values() | list }}"
+verify_common_tool_commands: "{{ common_brew_formulae_with_commands.values() | list }}"
 
 verify_macos_document_command_checks:
   - "R --version"

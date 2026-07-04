@@ -48,16 +48,16 @@
 - name: Check Ubuntu Linuxbrew formulae before install
   ansible.builtin.command:
     cmd: "{{ linuxbrew_default_bin }} list --versions {{ item.key }}"
-  loop: "{{ ubuntu_tools_formulae | dict2items }}"
-  register: tools_linuxbrew_formula_precheck
+  loop: "{{ ubuntu_brew_formulae_with_commands_all | dict2items }}"
+  register: ubuntu_brew_formula_precheck
   changed_when: false
   failed_when: false
 
 - name: Set missing Ubuntu Linuxbrew formulae
   ansible.builtin.set_fact:
-    tools_linuxbrew_missing_formulae: >-
+    ubuntu_brew_missing_formulae: >-
       {{
-        tools_linuxbrew_formula_precheck.results
+        ubuntu_brew_formula_precheck.results
         | selectattr('rc', 'ne', 0)
         | map(attribute='item.key')
         | list
@@ -69,15 +69,15 @@
   environment:
     HOMEBREW_NO_AUTO_UPDATE: "1"
     HOMEBREW_NO_INSTALL_CLEANUP: "1"
-  loop: "{{ tools_linuxbrew_missing_formulae | default(ubuntu_tools_formulae.keys() | list) }}"
-  register: tools_linuxbrew_install
+  loop: "{{ ubuntu_brew_missing_formulae | default(ubuntu_brew_formulae_with_commands_all.keys() | list) }}"
+  register: ubuntu_brew_install
   changed_when: true
-  when: (tools_linuxbrew_missing_formulae | default(ubuntu_tools_formulae.keys() | list)) | length > 0
+  when: (ubuntu_brew_missing_formulae | default(ubuntu_brew_formulae_with_commands_all.keys() | list)) | length > 0
 
 - name: Verify Ubuntu Linuxbrew formulae are installed
   ansible.builtin.command:
     cmd: "{{ linuxbrew_default_bin }} list --versions {{ item.key }}"
-  loop: "{{ ubuntu_tools_formulae | dict2items }}"
+  loop: "{{ ubuntu_brew_formulae_with_commands_all | dict2items }}"
   changed_when: false
 
 - name: Include user rustup tasks

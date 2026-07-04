@@ -4,12 +4,14 @@ macos_homebrew_bin: "{{ macos_homebrew_base }}/bin/brew"
 
 dot_bash_path: "{{ macos_homebrew_base }}/bin/bash"
 
-macos_only_tools_formulae:
+macos_brew_formulae_with_commands:
   bash: bash
-  bash-completion:
   git-lfs: git-lfs
   tmux: tmux
   tree: tree
   cmake: cmake
 
-macos_tools_formulae: "{{ common_tools_formulae | combine(macos_only_tools_formulae) }}"
+macos_brew_formulae_without_commands:
+  - bash-completion
+
+macos_brew_formulae_with_commands_all: "{{ common_brew_formulae_with_commands | combine(macos_brew_formulae_with_commands) }}"
