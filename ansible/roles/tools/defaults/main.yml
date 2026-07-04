@@ -1,5 +1,4 @@
 ---
-tools_brew_bin: ""
 tools_uv_python_version: "3.12"
 tools_cargo_home: "{{ dot_user_home }}/.cargo"
 tools_rustup_bin: "{{ tools_cargo_home }}/bin/rustup"

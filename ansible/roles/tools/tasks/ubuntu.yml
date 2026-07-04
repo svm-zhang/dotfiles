@@ -38,24 +38,16 @@
     path: "{{ linuxbrew_default_bin }}"
   register: tools_linuxbrew_brew_after_install_stat
 
-- name: Set Linuxbrew command path
-  ansible.builtin.set_fact:
-    tools_brew_bin: "{{ linuxbrew_default_bin }}"
-  when: tools_linuxbrew_brew_after_install_stat.stat.exists
-
 - name: Validate Linuxbrew command path
   ansible.builtin.assert:
     that:
-      - tools_brew_bin | length > 0
+      - tools_linuxbrew_brew_after_install_stat.stat.exists
+      - tools_linuxbrew_brew_after_install_stat.stat.executable
     fail_msg: "Linuxbrew brew command was not found after installation."
-
-- name: Debug linuxbrew bin location
-  ansible.builtin.debug:
-    msg: "{{ tools_brew_bin }}"
 
 - name: Check Ubuntu Linuxbrew formulae before install
   ansible.builtin.command:
-    cmd: "{{ tools_brew_bin }} list --versions {{ item.key }}"
+    cmd: "{{ linuxbrew_default_bin }} list --versions {{ item.key }}"
   loop: "{{ ubuntu_tools_formulae | dict2items }}"
   register: tools_linuxbrew_formula_precheck
   changed_when: false
@@ -73,7 +65,7 @@
 
 - name: Install Ubuntu Linuxbrew formulae
   ansible.builtin.command:
-    cmd: "{{ tools_brew_bin }} install {{ item }}"
+    cmd: "{{ linuxbrew_default_bin }} install {{ item }}"
   environment:
     HOMEBREW_NO_AUTO_UPDATE: "1"
     HOMEBREW_NO_INSTALL_CLEANUP: "1"
@@ -84,7 +76,7 @@
 
 - name: Verify Ubuntu Linuxbrew formulae are installed
   ansible.builtin.command:
-    cmd: "{{ tools_brew_bin }} list --versions {{ item.key }}"
+    cmd: "{{ linuxbrew_default_bin }} list --versions {{ item.key }}"
   loop: "{{ ubuntu_tools_formulae | dict2items }}"
   changed_when: false
 
@@ -93,7 +85,7 @@
 
 - name: Get Ubuntu uv Linuxbrew prefix
   ansible.builtin.command:
-    cmd: "{{ tools_brew_bin }} --prefix uv"
+    cmd: "{{ linuxbrew_default_bin }} --prefix uv"
   register: tools_ubuntu_uv_prefix
   changed_when: false
 
