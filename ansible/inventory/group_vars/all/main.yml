@@ -52,24 +52,29 @@ dot_theme_assets:
     macchiato: "catppuccin_macchiato.tmTheme"
     tokyonight: "tokyonight.tmTheme"
     dracula: "dracula.tmTheme"
+    kanagawa_dragon: "kanagawa_dragon.tmTheme"
   glow:
     mocha: "mocha.glow.json"
     macchiato: "macchiato.glow.json"
     tokyonight: "tokyonight.glow.json"
     dracula: "dracula.glow.json"
+    kanagawa_dragon: "kanagawa_dragon.glow.json"
   omp:
     mocha: "mocha.omp.json"
     macchiato: "macchiato.omp.json"
     tokyonight: "tokyonight.omp.json"
     dracula: "dracula.omp.json"
+    kanagawa_dragon: "kanagawa_dragon.omp.json"
   ghostty:
     mocha: "theme-catppuccin-mocha.conf"
     macchiato: "theme-catppuccin-macchiato.conf"
     tokyonight: "theme-tokyonight.conf"
     dracula: "theme-dracula.conf"
+    kanagawa_dragon: "theme-kanagawa-dragon.conf"
   btop:
     mocha: "catppuccin_mocha.theme"
     macchiato: "catppuccin_macchiato.theme"
+    kanagawa_dragon: "kanagawa_dragon.theme"
 
 dot_theme_catalog:
   mocha:
@@ -108,6 +113,15 @@ dot_theme_catalog:
     ghostty_theme_file: "{{ dot_theme_assets.ghostty.dracula }}"
     btop_theme_name: "dracula"
     btop_theme_file: ""
+  kanagawa_dragon:
+    bat_theme_name: "kanagawa_dragon"
+    bat_theme_file: "{{ dot_theme_assets.bat.kanagawa_dragon }}"
+    glow_style_file: "{{ dot_theme_assets.glow.kanagawa_dragon }}"
+    jqp_theme_name: "dracula"
+    omp_theme_file: "{{ dot_theme_assets.omp.kanagawa_dragon }}"
+    ghostty_theme_file: "{{ dot_theme_assets.ghostty.kanagawa_dragon }}"
+    btop_theme_name: "kanagawa_dragon"
+    btop_theme_file: "{{ dot_theme_assets.btop.kanagawa_dragon }}"
 
 dot_active_theme: "{{ dot_theme_catalog[dot_theme] }}"
 dot_bat_theme_name: "{{ dot_active_theme.bat_theme_name }}"

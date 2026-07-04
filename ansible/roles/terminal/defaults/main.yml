@@ -27,6 +27,7 @@ terminal_ghostty_profile_files:
   - theme-catppuccin-macchiato.conf
   - theme-tokyonight.conf
   - theme-dracula.conf
+  - theme-kanagawa-dragon.conf
 
 macos_terminal_casks:
   - ghostty
