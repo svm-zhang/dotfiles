@@ -31,11 +31,12 @@
     state: directory
     mode: "0755"
 
-- name: Deploy Neovim config tree
-  ansible.builtin.copy:
+- name: Mirror Neovim config tree
+  ansible.posix.synchronize:
     src: "{{ neovim_source_config_dir }}/"
     dest: "{{ neovim_config_target_dir }}/"
-    mode: preserve
+    delete: true
+    recursive: true
 
 - name: Verify Neovim config was deployed
   ansible.builtin.stat:
@@ -47,6 +48,21 @@
     that:
       - neovim_config_init_stat.stat.exists
     fail_msg: "Neovim config init.lua was not deployed."
+
+- name: Restore Neovim plugins from lazy-lock.json
+  ansible.builtin.command:
+    argv:
+      - "{{ neovim_binary_path }}"
+      - --headless
+      - "+Lazy! restore"
+      - +qa
+  environment:
+    XDG_CONFIG_HOME: "{{ neovim_config_home }}"
+    XDG_DATA_HOME: "{{ neovim_data_home }}"
+    XDG_STATE_HOME: "{{ neovim_state_home }}"
+    XDG_CACHE_HOME: "{{ neovim_cache_home }}"
+  changed_when: false
+  when: mode_home | bool
 
 - name: Install Neovim Treesitter parsers
   ansible.builtin.command:
