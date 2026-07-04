@@ -5,10 +5,10 @@
 [ -d "{{ dot_opt_dir }}/bin" ] && export PATH="{{ dot_opt_dir }}/bin:$PATH"
 [ -d "{{ dot_user_home }}/.cargo/bin" ] && export PATH="{{ dot_user_home }}/.cargo/bin:$PATH"
 
-if [ -d "{{ macos_homebrew_base | default('/opt/homebrew') }}/opt/node@24/bin" ]; then
-  export PATH="{{ macos_homebrew_base | default('/opt/homebrew') }}/opt/node@24/bin:$PATH"
-elif [ -d "{{ linuxbrew_default_base | default('/home/linuxbrew/.linuxbrew') }}/opt/node@24/bin" ]; then
-  export PATH="{{ linuxbrew_default_base | default('/home/linuxbrew/.linuxbrew') }}/opt/node@24/bin:$PATH"
+if [ -d "{{ macos_homebrew_base }}/opt/node@24/bin" ]; then
+  export PATH="{{ macos_homebrew_base }}/opt/node@24/bin:$PATH"
+elif [ -d "{{ linuxbrew_default_base }}/opt/node@24/bin" ]; then
+  export PATH="{{ linuxbrew_default_base }}/opt/node@24/bin:$PATH"
 fi
 
 {% if ansible_facts["system"] == "Darwin" %}

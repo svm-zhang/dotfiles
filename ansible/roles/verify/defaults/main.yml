@@ -1,5 +1,5 @@
 ---
-verify_shell: "{{ dot_bash_path | default('/bin/bash') }}"
+verify_shell: "{{ dot_bash_path }}"
 verify_tmux_socket_name: "dotfiles-verify"
 
 verify_common_tool_commands: "{{ common_brew_formulae_with_commands.values() | list }}"

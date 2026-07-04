@@ -4,9 +4,9 @@ neovim_source_config_dir: "{{ role_path }}/files/nvim"
 
 neovim_binary_path: >-
   {{
-    (macos_homebrew_base | default('/opt/homebrew')) ~ '/bin/nvim'
+    macos_homebrew_base ~ '/bin/nvim'
     if ansible_facts.get('system') == 'Darwin'
-    else (linuxbrew_default_base | default('/home/linuxbrew/.linuxbrew')) ~ '/bin/nvim'
+    else linuxbrew_default_base ~ '/bin/nvim'
     if ansible_facts.get('distribution') == 'Ubuntu'
     else 'nvim'
   }}

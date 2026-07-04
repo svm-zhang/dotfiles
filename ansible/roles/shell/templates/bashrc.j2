@@ -4,10 +4,10 @@
 set -o vi
 
 # to make sure brew can be called
-if [ -x "{{ macos_homebrew_bin | default('/opt/homebrew/bin/brew') }}" ]; then
-  eval "$("{{ macos_homebrew_bin | default('/opt/homebrew/bin/brew') }}" shellenv)"
-elif [ -x "{{ linuxbrew_default_bin | default('/home/linuxbrew/.linuxbrew/bin/brew') }}" ]; then
-  eval "$("{{ linuxbrew_default_bin | default('/home/linuxbrew/.linuxbrew/bin/brew') }}" shellenv)"
+if [ -x "{{ macos_homebrew_bin }}" ]; then
+  eval "$("{{ macos_homebrew_bin }}" shellenv)"
+elif [ -x "{{ linuxbrew_default_bin }}" ]; then
+  eval "$("{{ linuxbrew_default_bin }}" shellenv)"
 fi
 
 # load exports after brew shellenv so dotfile-managed PATH entries take precedence
@@ -28,15 +28,15 @@ fi
 # load Rust cargo env
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
-if [ -f "{{ macos_homebrew_base | default('/opt/homebrew') }}/etc/profile.d/bash_completion.sh" ]; then
-  . "{{ macos_homebrew_base | default('/opt/homebrew') }}/etc/profile.d/bash_completion.sh"
-elif [ -f "{{ linuxbrew_default_base | default('/home/linuxbrew/.linuxbrew') }}/etc/profile.d/bash_completion.sh" ]; then
-  . "{{ linuxbrew_default_base | default('/home/linuxbrew/.linuxbrew') }}/etc/profile.d/bash_completion.sh"
+if [ -f "{{ macos_homebrew_base }}/etc/profile.d/bash_completion.sh" ]; then
+  . "{{ macos_homebrew_base }}/etc/profile.d/bash_completion.sh"
+elif [ -f "{{ linuxbrew_default_base }}/etc/profile.d/bash_completion.sh" ]; then
+  . "{{ linuxbrew_default_base }}/etc/profile.d/bash_completion.sh"
 fi
 
 command -v fzf >/dev/null 2>&1 && eval "$(fzf --bash)"
 
-theme_file="{{ dot_config_home }}/oh-my-posh/themes/{{ dot_omp_theme_file | default('mocha.omp.json') }}"
+theme_file="{{ dot_config_home }}/oh-my-posh/themes/{{ dot_omp_theme_file }}"
 if command -v oh-my-posh >/dev/null 2>&1 && [ -f "$theme_file" ]; then
   eval "$(oh-my-posh init bash --config "$theme_file")"
 fi
