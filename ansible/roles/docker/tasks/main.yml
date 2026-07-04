@@ -1,11 +1,4 @@
 ---
-- name: Skip Docker role
-  ansible.builtin.debug:
-    msg: "Skipping Docker role: host is not Ubuntu or package changes are disabled"
-  when: >
-    ansible_facts['distribution'] != "Ubuntu"
-    or not allow_package_changes | bool
-
 - name: Include Ubuntu Docker tasks
   ansible.builtin.include_tasks: ubuntu.yml
   when:

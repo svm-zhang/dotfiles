@@ -1,9 +1,4 @@
 ---
-- name: Skip document role on non-macOS hosts
-  ansible.builtin.debug:
-    msg: "Skipping macOS document role on {{ ansible_facts['system'] }}."
-  when: ansible_facts['system'] != "Darwin"
-
 - name: Check installed macOS document formulae
   ansible.builtin.command:
     argv:

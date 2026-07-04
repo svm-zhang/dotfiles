@@ -28,11 +28,6 @@
   ansible.builtin.set_fact:
     verify_nvidia_gpu_detected: "{{ verify_nvidia_lspci.rc == 0 and 'nvidia' in (verify_nvidia_lspci.stdout | lower) }}"
 
-- name: Skip GPU verification when no NVIDIA PCI hardware is detected
-  ansible.builtin.debug:
-    msg: "No NVIDIA PCI hardware detected; skipping GPU verification."
-  when: not verify_nvidia_gpu_detected | bool
-
 - name: Check NVIDIA driver before GPU verification
   ansible.builtin.command:
     argv:
