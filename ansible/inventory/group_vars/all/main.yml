@@ -1,5 +1,6 @@
 ---
 deploy_mode: render
+render_target_dir: ""
 
 mode_render: "{{ deploy_mode == 'render' }}"
 mode_docker: "{{ deploy_mode == 'docker' }}"
@@ -10,8 +11,6 @@ allow_home_write: "{{ deploy_mode in ['docker', 'home'] }}"
 allow_service_actions: "{{ deploy_mode == 'home' }}"
 
 dot_user_home: "{{ ansible_facts['env']['HOME'] }}"
-dot_repo_root: "{{ lookup('env', 'PWD') }}"
-dot_render_root: "{{ dot_repo_root }}/.ansible-test-output"
 dot_local_dir: "{{ dot_user_home }}/.local"
 dot_opt_dir: "{{ dot_local_dir }}/opt"
 dot_bash_path: "/bin/bash"

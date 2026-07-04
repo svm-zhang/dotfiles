@@ -1,6 +1,6 @@
 ---
 git_home: "{{ dot_user_home }}/.git"
-git_target_root: "{{ (dot_render_root ~ '/git') if mode_render else dot_user_home }}"
+git_target_root: "{{ (render_target_dir ~ '/git') if mode_render else dot_user_home }}"
 
 git_editor: "{{ dot_editor }}"
 

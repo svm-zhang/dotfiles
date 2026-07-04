@@ -1,10 +1,4 @@
 ---
-- name: Validate global deploy mode
-  ansible.builtin.assert:
-    that:
-      - deploy_mode in ["render", "docker", "home"]
-    fail_msg: "deploy_mode must be one of: render, docker, home"
-
 - name: Create tmux render root
   ansible.builtin.file:
     path: "{{ tmux_target_root }}"

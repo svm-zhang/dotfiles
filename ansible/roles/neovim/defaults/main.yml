@@ -11,7 +11,7 @@ neovim_binary_path: >-
     else 'nvim'
   }}
 
-neovim_render_root: "{{ dot_render_root }}/neovim"
+neovim_render_root: "{{ render_target_dir }}/neovim"
 neovim_config_home: "{{ dot_config_home }}"
 neovim_config_dir: "{{ neovim_config_home }}/nvim"
 neovim_config_target_dir: "{{ (neovim_render_root ~ '/config/nvim') if mode_render else neovim_config_dir }}"

@@ -7,7 +7,7 @@ github_ssh_host: "github.com"
 github_ssh_user: "git"
 github_ssh_key_comment: "{{ inventory_hostname }}@github"
 
-github_ssh_render_root: "{{ dot_render_root }}/github_ssh/{{ inventory_hostname }}"
+github_ssh_render_root: "{{ render_target_dir }}/github_ssh/{{ inventory_hostname }}"
 github_ssh_home: "{{ github_ssh_render_root if mode_render else dot_user_home }}"
 github_ssh_dir: "{{ github_ssh_home }}/.ssh"
 github_ssh_key_path: "{{ github_ssh_dir }}/{{ github_ssh_key_name }}"

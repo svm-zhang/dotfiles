@@ -1,10 +1,4 @@
 ---
-- name: Validate global deploy mode
-  ansible.builtin.assert:
-    that:
-      - deploy_mode in ["render", "docker", "home"]
-    fail_msg: "deploy_mode must be one of: render, docker, home"
-
 - name: Skip document role on non-macOS hosts
   ansible.builtin.debug:
     msg: "Skipping macOS document role on {{ ansible_facts['system'] }}."

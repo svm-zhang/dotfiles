@@ -1,6 +1,6 @@
 ---
 tmux_home: "{{ dot_user_home }}/.tmux"
-tmux_target_root: "{{ (dot_render_root ~ '/tmux') if mode_render else dot_user_home }}"
+tmux_target_root: "{{ (render_target_dir ~ '/tmux') if mode_render else dot_user_home }}"
 
 tmux_config_path: "{{ tmux_target_root }}/.tmux.conf"
 tmux_plugin_dir: "{{ tmux_home }}/plugins"

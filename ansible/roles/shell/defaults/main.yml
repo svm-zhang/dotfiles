@@ -1,5 +1,5 @@
 ---
-shell_target_root: "{{ (dot_render_root ~ '/shell') if mode_render else dot_user_home }}"
+shell_target_root: "{{ (render_target_dir ~ '/shell') if mode_render else dot_user_home }}"
 
 shell_bashrc_file: ".bashrc"
 shell_bash_profile_file: ".bash_profile"

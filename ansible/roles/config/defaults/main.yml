@@ -1,5 +1,5 @@
 ---
-config_target_user_home: "{{ (dot_render_root ~ '/config') if mode_render else dot_user_home }}"
+config_target_user_home: "{{ (render_target_dir ~ '/config') if mode_render else dot_user_home }}"
 config_target_root: "{{ config_target_user_home }}/{{ dot_xdg_config_dir }}"
 config_xdg_config_home: "{{ config_target_root }}"
 
