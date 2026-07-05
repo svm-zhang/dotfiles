@@ -1,7 +1,14 @@
 .DS_Store
 
-# vocabulary
-en.utf-8.add.spl
+# Ansible local secrets
+.vault-password.txt
+vault-password.txt
+vault-password.gpg
+inventory/private.yml
+inventory/private*.yml
+group_vars/private.yml
+group_vars/private*.yml
+*.retry
 
-# personal command shortcut
-.my_aliases
+# Runtime/editor noise
+en.utf-8.add.spl

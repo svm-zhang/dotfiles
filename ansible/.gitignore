@@ -1,8 +1,0 @@
-vault-password.txt
-vault-password.gpg
-inventory/private.yml
-inventory/private*.yml
-group_vars/private.yml
-group_vars/private*.yml
-*.retry
-
