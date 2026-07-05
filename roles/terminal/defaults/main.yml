@@ -1,0 +1,41 @@
+---
+terminal_target_user_home: "{{ (render_target_dir ~ '/terminal') if mode_render else dot_user_home }}"
+terminal_xdg_config_home: "{{ terminal_target_user_home }}/{{ dot_xdg_config_dir }}"
+
+terminal_ghostty_config_dir: "{{ terminal_xdg_config_home }}/ghostty"
+terminal_ghostty_profiles_dir: "{{ terminal_ghostty_config_dir }}/profiles"
+terminal_ghostty_local_dir: "{{ terminal_ghostty_config_dir }}/local"
+
+terminal_ghostty_template_files:
+  - src: ghostty-config.j2
+    dest: "{{ terminal_ghostty_config_dir }}/config"
+  - src: ghostty-local-theme.conf.j2
+    dest: "{{ terminal_ghostty_local_dir }}/theme.conf"
+  - src: ghostty-local-fonts.conf.j2
+    dest: "{{ terminal_ghostty_local_dir }}/fonts.conf"
+
+terminal_ghostty_directories:
+  - "{{ terminal_ghostty_config_dir }}"
+  - "{{ terminal_ghostty_profiles_dir }}"
+  - "{{ terminal_ghostty_local_dir }}"
+
+terminal_ghostty_profile_files:
+  - font-anthrosevka-mono.conf
+  - font-liga-paper-mono.conf
+  - font-iosevka-term.conf
+  - theme-catppuccin-mocha.conf
+  - theme-catppuccin-macchiato.conf
+  - theme-tokyonight.conf
+  - theme-dracula.conf
+  - theme-kanagawa-dragon.conf
+
+macos_terminal_casks:
+  - ghostty
+
+ubuntu_ghostty_install_method: "ppa"
+ubuntu_ghostty_apt_keyring_path: "{{ ubuntu_apt_keyring_dir }}/ghostty.asc"
+ubuntu_ghostty_ppa_uri: "https://ppa.launchpadcontent.net/mkasberg/ghostty-ubuntu/ubuntu/"
+ubuntu_ghostty_ppa_key_fingerprint: "0721FDF5FECB88DC6920361657C8EF455CEAE491"
+ubuntu_ghostty_ppa_key_url: "https://keyserver.ubuntu.com/pks/lookup?op=get&options=mr&search=0x{{ ubuntu_ghostty_ppa_key_fingerprint }}"
+ubuntu_ghostty_ppa_components:
+  - main

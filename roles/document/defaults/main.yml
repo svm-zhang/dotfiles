@@ -1,0 +1,5 @@
+---
+document_formulae:
+  - r
+  - pandoc
+  - texlive

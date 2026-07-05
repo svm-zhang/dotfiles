@@ -1,0 +1,6 @@
+---
+- name: Include Ubuntu Docker tasks
+  ansible.builtin.include_tasks: ubuntu.yml
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
+    - allow_package_changes | bool

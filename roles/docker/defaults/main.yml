@@ -1,0 +1,25 @@
+---
+docker_reinstall: false
+docker_user: "{{ ansible_facts['user_id'] }}"
+
+docker_apt_keyring_path: "{{ ubuntu_apt_keyring_dir }}/docker.asc"
+docker_apt_gpg_url: "https://download.docker.com/linux/ubuntu/gpg"
+docker_apt_uri: "https://download.docker.com/linux/ubuntu"
+docker_apt_components:
+  - stable
+
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+docker_conflicting_packages:
+  - docker.io
+  - docker-doc
+  - docker-compose
+  - docker-compose-v2
+  - podman-docker
+  - containerd
+  - runc

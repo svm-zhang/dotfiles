@@ -1,0 +1,8 @@
+---
+clipboard_bin_dir: "{{ dot_user_home }}/.local/bin"
+
+clipboard_helper_files:
+  - src: clipcopy.j2
+    dest: "{{ clipboard_bin_dir }}/clipcopy"
+  - src: clippaste.j2
+    dest: "{{ clipboard_bin_dir }}/clippaste"

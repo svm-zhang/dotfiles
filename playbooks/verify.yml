@@ -1,0 +1,7 @@
+---
+- name: Verify deployed dotfiles environment
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - verify

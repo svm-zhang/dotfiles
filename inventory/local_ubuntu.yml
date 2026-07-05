@@ -1,0 +1,5 @@
+---
+ubuntu:
+  hosts:
+    ubuntu1:
+      ansible_connection: local

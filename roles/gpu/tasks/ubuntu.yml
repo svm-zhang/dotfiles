@@ -1,0 +1,27 @@
+---
+- name: Detect NVIDIA PCI hardware
+  ansible.builtin.command:
+    argv:
+      - lspci
+      - -nn
+  register: nvidia_lspci
+  changed_when: false
+  failed_when: false
+
+- name: Skip GPU role when lspci is unavailable
+  ansible.builtin.debug:
+    msg: "lspci is unavailable; install pciutils through the tools role before GPU detection."
+  when: nvidia_lspci.rc != 0
+
+- name: Set NVIDIA GPU detection fact
+  ansible.builtin.set_fact:
+    nvidia_gpu_detected: "{{ nvidia_lspci.rc == 0 and 'nvidia' in (nvidia_lspci.stdout | lower) }}"
+
+- name: Skip NVIDIA package tasks when no GPU is detected
+  ansible.builtin.debug:
+    msg: "No NVIDIA PCI hardware detected; skipping NVIDIA runtime setup."
+  when: not nvidia_gpu_detected | bool
+
+- name: Include NVIDIA GPU tasks
+  ansible.builtin.include_tasks: nvidia.yml
+  when: nvidia_gpu_detected | bool

@@ -1,0 +1,17 @@
+---
+macos_homebrew_base: "/opt/homebrew"
+macos_homebrew_bin: "{{ macos_homebrew_base }}/bin/brew"
+
+dot_bash_path: "{{ macos_homebrew_base }}/bin/bash"
+
+macos_brew_formulae_with_commands:
+  bash: bash
+  git-lfs: git-lfs
+  tmux: tmux
+  tree: tree
+  cmake: cmake
+
+macos_brew_formulae_without_commands:
+  - bash-completion
+
+macos_brew_formulae_with_commands_all: "{{ common_brew_formulae_with_commands | combine(macos_brew_formulae_with_commands) }}"

@@ -1,0 +1,29 @@
+background-opacity = 1.0
+
+window-padding-x = 10,10
+window-padding-y = 10,10
+
+scrollback-limit = 100000
+
+copy-on-select = clipboard
+
+keybind = super+c=copy_to_clipboard:mixed
+keybind = super+v=paste_from_clipboard
+keybind = ctrl+shift+c=copy_to_clipboard:mixed
+keybind = ctrl+shift+v=paste_from_clipboard
+
+# keybind = ctrl+a>c=new_tab
+# keybind = ctrl+a>h=previous_tab
+# keybind = ctrl+a>l=next_tab
+
+keybind = ctrl+a>v=new_split:right
+keybind = ctrl+a>j=new_split:up
+# keybind = ctrl+h=goto_split:left
+# keybind = ctrl+l=goto_split:right
+# keybind = ctrl+j=goto_split:top
+# keybind = ctrl+k=goto_split:bottom
+# keybind = ctrl+a>e=equalize_splits
+
+# Local overrides for frequently changed appearance settings.
+config-file = ?local/theme.conf
+config-file = ?local/fonts.conf

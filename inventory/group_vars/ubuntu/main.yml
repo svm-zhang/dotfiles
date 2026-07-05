@@ -1,0 +1,41 @@
+---
+linuxbrew_default_base: "/home/linuxbrew/.linuxbrew"
+linuxbrew_default_bin: "{{ linuxbrew_default_base }}/bin/brew"
+
+ubuntu_apt_keyring_dir: "/etc/apt/keyrings"
+ubuntu_deb_arch_map:
+  x86_64: amd64
+  aarch64: arm64
+  armv7l: armhf
+ubuntu_deb_arch: "{{ ubuntu_deb_arch_map.get(ansible_facts['architecture'], ansible_facts['architecture']) }}"
+ubuntu_apt_suite: "{{ ansible_facts['distribution_release'] | lower }}"
+ubuntu_deb822_prerequisites:
+  - ca-certificates
+  - curl
+  - python3-debian
+ubuntu_deb822_install_python_debian: true
+
+ubuntu_apt_packages:
+  - bash-completion
+  - git-lfs
+  - build-essential
+  - procps
+  - file
+  - curl
+  - ca-certificates
+  - python3-debian
+  - less
+  - tmux
+  - acpi
+  - sysstat
+  - lm-sensors
+  - tree
+  - pciutils
+  - wl-clipboard
+  - xclip
+  - cmake
+  - rsync
+
+ubuntu_brew_formulae_with_commands: {}
+
+ubuntu_brew_formulae_with_commands_all: "{{ common_brew_formulae_with_commands | combine(ubuntu_brew_formulae_with_commands) }}"

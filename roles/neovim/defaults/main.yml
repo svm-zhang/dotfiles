@@ -1,0 +1,38 @@
+---
+neovim_major_minor: "0.12"
+neovim_source_config_dir: "{{ role_path }}/files/nvim"
+
+neovim_binary_path: >-
+  {{
+    macos_homebrew_base ~ '/bin/nvim'
+    if ansible_facts.get('system') == 'Darwin'
+    else linuxbrew_default_base ~ '/bin/nvim'
+    if ansible_facts.get('distribution') == 'Ubuntu'
+    else 'nvim'
+  }}
+
+neovim_render_root: "{{ render_target_dir }}/neovim"
+neovim_config_home: "{{ dot_config_home }}"
+neovim_config_dir: "{{ neovim_config_home }}/nvim"
+neovim_config_target_dir: "{{ (neovim_render_root ~ '/config/nvim') if mode_render else neovim_config_dir }}"
+
+neovim_headless_xdg_root: "{{ neovim_render_root }}/xdg"
+neovim_data_home: "{{ dot_user_home }}/.local/share"
+neovim_state_home: "{{ dot_user_home }}/.local/state"
+neovim_cache_home: "{{ dot_user_home }}/.cache"
+neovim_treesitter_parsers:
+  - lua
+  - vim
+  - javascript
+  - html
+  - python
+  - rust
+  - bash
+  - csv
+  - diff
+  - markdown
+  - markdown_inline
+  - json
+  - toml
+  - xml
+  - yaml

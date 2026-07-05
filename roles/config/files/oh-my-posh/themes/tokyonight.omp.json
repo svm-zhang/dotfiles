@@ -1,0 +1,71 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "palette": {
+    "os": "#a9b1d6",
+    "closer": "p:os",
+    "pink": "#bb9af7",
+    "lavender": "#7aa2f7",
+    "blue": "#7dcfff",
+    "maroon": "#f7768e",
+    "yellow": "#e0af68"
+  },
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "foreground": "p:yellow",
+          "properties": {
+            "folder_icon": "....",
+            "home_icon": "~",
+            "style": "agnoster_full"
+          },
+          "style": "plain",
+          "template": "󰉋 {{ .Path }} ",
+          "type": "path"
+        },
+        {
+          "foreground": "p:lavender",
+          "options": {
+            "branch_icon": " ",
+            "cherry_pick_icon": " ",
+            "commit_icon": " ",
+            "fetch_status": true,
+            "fetch_upstream_icon": false,
+            "merge_icon": " ",
+            "no_commits_icon": " ",
+            "rebase_icon": " ",
+            "revert_icon": " ",
+            "tag_icon": " "
+          },
+          "template": "{{ .HEAD }} <p:maroon>({{.ShortHash}})",
+          "style": "plain",
+          "type": "git"
+        }
+      ]
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "type": "prompt",
+      "segments": [
+        {
+          "foreground": "p:os",
+          "style": "plain",
+          "template": "{{.Icon}} ",
+          "type": "os"
+        },
+        {
+          "style": "plain",
+          "foreground": "#7DC4E4",
+          "template": "➜",
+          "type": "text"
+        }
+      ]
+    }
+  ],
+  "enable_cursor_positioning": true,
+  "final_space": true,
+  "version": 2
+}

@@ -1,0 +1,46 @@
+---
+- name: Verify Ubuntu Docker CLI
+  ansible.builtin.command:
+    argv:
+      - "{{ verify_shell }}"
+      - -lc
+      - "docker --version"
+  changed_when: false
+
+- name: Verify Ubuntu Docker Compose plugin
+  ansible.builtin.command:
+    argv:
+      - "{{ verify_shell }}"
+      - -lc
+      - "docker compose version"
+  changed_when: false
+
+- name: Detect NVIDIA PCI hardware before GPU verification
+  ansible.builtin.command:
+    argv:
+      - lspci
+      - -nn
+  register: verify_nvidia_lspci
+  changed_when: false
+  failed_when: false
+
+- name: Set NVIDIA GPU verification gate
+  ansible.builtin.set_fact:
+    verify_nvidia_gpu_detected: "{{ verify_nvidia_lspci.rc == 0 and 'nvidia' in (verify_nvidia_lspci.stdout | lower) }}"
+
+- name: Check NVIDIA driver before GPU verification
+  ansible.builtin.command:
+    argv:
+      - nvidia-smi
+  register: verify_nvidia_smi_check
+  changed_when: false
+  when: verify_nvidia_gpu_detected | bool
+
+- name: Verify Ubuntu Docker GPU runtime
+  ansible.builtin.command:
+    argv:
+      - "{{ verify_shell }}"
+      - -lc
+      - "docker run --rm --gpus all {{ verify_ubuntu_gpu_smoke_image }} nvidia-smi"
+  changed_when: false
+  when: verify_nvidia_gpu_detected | bool

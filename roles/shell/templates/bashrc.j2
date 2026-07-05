@@ -1,0 +1,52 @@
+# .bashrc file executed by non-login shells
+
+# enable vi-mode on command line
+set -o vi
+
+# to make sure brew can be called
+{% if ansible_facts["system"] == "Darwin" %}
+if [ -x "{{ macos_homebrew_bin }}" ]; then
+  eval "$("{{ macos_homebrew_bin }}" shellenv)"
+fi
+{% elif ansible_facts["distribution"] == "Ubuntu" %}
+if [ -x "{{ linuxbrew_default_bin }}" ]; then
+  eval "$("{{ linuxbrew_default_bin }}" shellenv)"
+fi
+{% endif %}
+
+# load exports after brew shellenv so dotfile-managed PATH entries take precedence
+[ -f "$HOME/.bash_exports" ] && . "$HOME/.bash_exports"
+
+# load aliases setup
+[ -f "$HOME/.bash_aliases" ] && . "$HOME/.bash_aliases"
+
+# load functions setup
+[ -f "$HOME/.functionsrc" ] && . "$HOME/.functionsrc"
+
+# load private/local aliases rendered from vault-backed variables
+[ -f "$HOME/.bash_aliases.local" ] && . "$HOME/.bash_aliases.local"
+
+# load fzfrc
+[ -f "$HOME/.fzfrc" ] && . "$HOME/.fzfrc"
+
+# load Rust cargo env
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+{% if ansible_facts["system"] == "Darwin" %}
+if [ -f "{{ macos_homebrew_base }}/etc/profile.d/bash_completion.sh" ]; then
+  . "{{ macos_homebrew_base }}/etc/profile.d/bash_completion.sh"
+fi
+{% elif ansible_facts["distribution"] == "Ubuntu" %}
+if [ -f "{{ linuxbrew_default_base }}/etc/profile.d/bash_completion.sh" ]; then
+  . "{{ linuxbrew_default_base }}/etc/profile.d/bash_completion.sh"
+fi
+{% endif %}
+
+command -v fzf >/dev/null 2>&1 && eval "$(fzf --bash)"
+
+theme_file="{{ dot_config_home }}/oh-my-posh/themes/{{ dot_omp_theme_file }}"
+if command -v oh-my-posh >/dev/null 2>&1 && [ -f "$theme_file" ]; then
+  eval "$(oh-my-posh init bash --config "$theme_file")"
+fi
+
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init --cmd cd bash)"

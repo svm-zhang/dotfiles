@@ -1,0 +1,22 @@
+---
+- name: Check Ubuntu apt packages before install
+  ansible.builtin.command:
+    argv:
+      - dpkg-query
+      - -W
+      - "-f=${Status}"
+      - "{{ item }}"
+  loop: "{{ ubuntu_apt_packages }}"
+  register: tools_ubuntu_apt_precheck
+  changed_when: false
+  failed_when: false
+
+- name: Set missing Ubuntu apt packages
+  ansible.builtin.set_fact:
+    tools_ubuntu_missing_apt_packages: >-
+      {{
+        tools_ubuntu_apt_precheck.results
+        | rejectattr('stdout', 'equalto', 'install ok installed')
+        | map(attribute='item')
+        | list
+      }}

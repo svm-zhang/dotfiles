@@ -1,0 +1,12 @@
+---
+- name: Include macOS font tasks
+  ansible.builtin.include_tasks: macos.yml
+  when:
+    - allow_home_write | bool
+    - ansible_facts['os_family'] == 'Darwin'
+
+- name: Include Ubuntu font tasks
+  ansible.builtin.include_tasks: ubuntu.yml
+  when:
+    - allow_home_write | bool
+    - ansible_facts['distribution'] == 'Ubuntu'

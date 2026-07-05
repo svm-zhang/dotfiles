@@ -1,0 +1,120 @@
+---
+- name: Check NVIDIA driver availability
+  ansible.builtin.command:
+    argv:
+      - nvidia-smi
+  register: nvidia_smi_check
+  changed_when: false
+  failed_when: false
+
+- name: Fail when NVIDIA driver is unavailable
+  ansible.builtin.fail:
+    msg: >-
+      NVIDIA PCI hardware was detected, but nvidia-smi is unavailable.
+      Install and activate the NVIDIA proprietary driver outside Ansible,
+      then rerun this role. The GPU role manages NVIDIA container runtime
+      integration only; it does not install the base graphics driver.
+  when: nvidia_smi_check.rc != 0
+
+- name: Check Docker availability
+  ansible.builtin.command:
+    argv:
+      - docker
+      - --version
+  register: nvidia_docker_command
+  changed_when: false
+  failed_when: false
+
+- name: Set Docker availability fact
+  ansible.builtin.set_fact:
+    nvidia_docker_available: "{{ nvidia_docker_command.rc == 0 }}"
+
+- name: Skip NVIDIA Container Toolkit when Docker is unavailable
+  ansible.builtin.debug:
+    msg: "Docker is unavailable; skipping NVIDIA Container Toolkit and runtime configuration."
+  when: not nvidia_docker_available | bool
+
+- name: Manage NVIDIA Container Toolkit when Docker is available
+  when: nvidia_docker_available | bool
+  block:
+    - name: Check NVIDIA Container Toolkit prerequisite packages
+      ansible.builtin.command:
+        argv:
+          - dpkg-query
+          - -W
+          - -f=${Status}
+          - "{{ item }}"
+      loop: "{{ nvidia_container_toolkit_prerequisites }}"
+      register: nvidia_container_toolkit_prerequisite_checks
+      changed_when: false
+      failed_when: false
+
+    - name: Set missing NVIDIA Container Toolkit prerequisites
+      ansible.builtin.set_fact:
+        nvidia_missing_container_toolkit_prerequisites: >-
+          {{
+            nvidia_container_toolkit_prerequisite_checks.results
+            | selectattr('stdout', 'ne', 'install ok installed')
+            | map(attribute='item')
+            | list
+          }}
+
+    - name: Install NVIDIA Container Toolkit prerequisites
+      ansible.builtin.apt:
+        name: "{{ nvidia_missing_container_toolkit_prerequisites }}"
+        state: present
+        update_cache: true
+      become: true
+      when: nvidia_missing_container_toolkit_prerequisites | length > 0
+
+    - name: Add NVIDIA Container Toolkit apt repository
+      ansible.builtin.shell:
+        cmd: |
+          set -euo pipefail
+          curl -fsSL "{{ nvidia_container_toolkit_gpg_url }}" | gpg --dearmor --yes -o "{{ nvidia_container_toolkit_keyring_path }}"
+          curl -s -L "{{ nvidia_container_toolkit_list_url }}" |
+            sed 's#deb https://#deb [signed-by={{ nvidia_container_toolkit_keyring_path }}] https://#g' > "{{ nvidia_container_toolkit_source_path }}"
+        executable: /bin/bash
+        creates: "{{ nvidia_container_toolkit_source_path }}"
+      become: true
+
+    - name: Install NVIDIA Container Toolkit packages
+      ansible.builtin.apt:
+        name: "{{ nvidia_container_toolkit_packages }}"
+        state: present
+        update_cache: true
+      become: true
+
+    - name: Check Docker NVIDIA runtime configuration
+      ansible.builtin.command:
+        argv:
+          - grep
+          - -Eq
+          - '"nvidia"|"nvidia-container-runtime"'
+          - /etc/docker/daemon.json
+      register: nvidia_docker_runtime_config
+      changed_when: false
+      failed_when: false
+
+    - name: Configure NVIDIA runtime for Docker
+      ansible.builtin.command:
+        argv:
+          - nvidia-ctk
+          - runtime
+          - configure
+          - --runtime=docker
+      become: true
+      register: nvidia_configure_docker
+      changed_when: true
+      when: nvidia_docker_runtime_config.rc != 0
+
+    - name: Restart Docker after NVIDIA runtime configuration
+      ansible.builtin.service:
+        name: docker
+        state: restarted
+      become: true
+      when:
+        - nvidia_configure_docker is defined
+        - nvidia_configure_docker is changed
+        - ansible_facts['service_mgr'] == "systemd"
+        - allow_service_actions | bool

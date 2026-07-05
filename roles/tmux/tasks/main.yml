@@ -1,0 +1,76 @@
+---
+- name: Create tmux render root
+  ansible.builtin.file:
+    path: "{{ tmux_target_root }}"
+    state: directory
+    mode: "0700"
+  when: mode_render | bool
+
+- name: Set tmux battery status fact
+  ansible.builtin.set_fact:
+    tmux_battery_status_available: "{{ ansible_facts['system'] == 'Darwin' }}"
+
+- name: Set tmux plugin list
+  ansible.builtin.set_fact:
+    tmux_all_plugins: >-
+      {{
+        tmux_plugins
+        + (['tmux-plugins/tmux-battery'] if tmux_battery_status_available | bool else [])
+        + tmux_extra_plugins
+      }}
+
+- name: Render tmux config
+  ansible.builtin.template:
+    src: tmux.conf.j2
+    dest: "{{ tmux_config_path }}"
+    mode: "0644"
+
+- name: Create tmux plugin directory
+  ansible.builtin.file:
+    path: "{{ tmux_plugin_dir }}"
+    state: directory
+    mode: "0755"
+  when: mode_home | bool
+
+- name: Check TPM clone
+  ansible.builtin.stat:
+    path: "{{ tmux_tpm_dir }}/.git"
+  register: tmux_tpm_git_dir
+  when: mode_home | bool
+
+- name: Clone TPM
+  ansible.builtin.command:
+    argv:
+      - git
+      - clone
+      - --branch
+      - "{{ tmux_tpm_version }}"
+      - "{{ tmux_tpm_repo }}"
+      - "{{ tmux_tpm_dir }}"
+  when:
+    - mode_home | bool
+    - not tmux_tpm_git_dir.stat.exists
+
+- name: Update TPM
+  ansible.builtin.command:
+    argv:
+      - git
+      - -C
+      - "{{ tmux_tpm_dir }}"
+      - pull
+      - --ff-only
+  register: tmux_tpm_update
+  changed_when: "'Already up to date.' not in tmux_tpm_update.stdout"
+  when:
+    - mode_home | bool
+    - tmux_tpm_git_dir.stat.exists
+
+- name: Install TPM plugins
+  ansible.builtin.command:
+    cmd: "{{ tmux_tpm_install_plugins_command }}"
+  environment:
+    PATH: "{{ tmux_task_path }}"
+    TMUX_PLUGIN_MANAGER_PATH: "{{ tmux_plugin_dir }}"
+  register: tmux_tpm_install_plugins
+  changed_when: "'download success' in tmux_tpm_install_plugins.stdout"
+  when: mode_home | bool

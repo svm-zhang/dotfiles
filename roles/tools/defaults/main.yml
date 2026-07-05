@@ -1,0 +1,8 @@
+---
+tools_uv_python_version: "3.12"
+tools_cargo_home: "{{ dot_user_home }}/.cargo"
+tools_rustup_bin: "{{ tools_cargo_home }}/bin/rustup"
+tools_rustup_installer_url: "https://sh.rustup.rs"
+tools_rustup_installer_path: "/tmp/rustup-init.sh"
+tools_rustup_default_toolchain: "stable"
+tools_rustup_profile: "default"

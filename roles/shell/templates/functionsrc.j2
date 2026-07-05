@@ -1,0 +1,44 @@
+# .functionsrc file
+# defines functions for bash
+# loaded by .bashrc
+
+# yazi file manager
+function yy() {
+  if ! command -v yazi >/dev/null 2>&1; then
+    printf 'yy: yazi is not installed\n' >&2
+    return 127
+  fi
+
+  local tmp=
+  tmp="$(mktemp -t "yazi-cwd.XXXXXX")" || return
+  yazi "$@" --cwd-file="$tmp"
+  if [ -f "$tmp" ]; then
+    local cwd
+    cwd="$(cat "$tmp")"
+    [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && cd "$cwd"
+    rm -f "$tmp"
+  fi
+}
+
+
+function h() {
+  if [ "$#" -eq 0 ]; then
+      printf 'usage: h <command>\n' >&2
+      return 2
+  fi
+
+  if command -v bat >/dev/null 2>&1; then
+    "$@" --help 2>&1 | bat --language=help --style=plain
+  else
+    "$@" --help 2>&1
+  fi
+}
+
+function batcache() {
+  if ! command -v bat >/dev/null 2>&1; then
+    printf 'batcache: bat is not installed or not on PATH\n' >&2
+    return 127
+  fi
+
+  bat cache --build
+}

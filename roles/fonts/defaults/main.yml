@@ -1,0 +1,44 @@
+---
+fonts_macos_user_dir: "{{ dot_user_home }}/Library/Fonts"
+fonts_linux_user_dir: "{{ dot_user_home }}/.local/share/fonts"
+fonts_target_dir: "{{ fonts_macos_user_dir if ansible_facts['os_family'] == 'Darwin' else fonts_linux_user_dir }}"
+
+fonts_anthrosevka_version: "v0.3.0"
+fonts_anthrosevka_sha256: "0ec9529e1bfc5b7be3d9191eb47cf44383aa3ac08dc51d01b3a2ade4a413ebd5"
+fonts_liga_paper_mono_ref: "ab01676fcf0e0b37e30be0a4e989fb957517bd37"
+fonts_nerd_fonts_version: "v3.4.0"
+
+fonts_managed_sources:
+  - key: anthrosevka_mono
+    family: "Anthrosevka Mono"
+    family_names:
+      - "Anthrosevka Mono"
+    url: "https://github.com/nanxstats/anthrosevka/releases/download/{{ fonts_anthrosevka_version }}/AnthrosevkaMono.zip"
+    asset: "AnthrosevkaMono.zip"
+    checksum: "sha256:{{ fonts_anthrosevka_sha256 }}"
+    file_patterns:
+      - "*.ttf"
+  - key: liga_paper_mono
+    family: "Liga Paper Mono"
+    family_names:
+      - "Liga Paper Mono"
+    url: "https://github.com/nanxstats/paper-mono-ligaturized/archive/{{ fonts_liga_paper_mono_ref }}.zip"
+    asset: "paper-mono-ligaturized-{{ fonts_liga_paper_mono_ref }}.zip"
+    file_patterns:
+      - "LigaPaperMono-Thin.otf"
+      - "LigaPaperMono-ExtraLight.otf"
+      - "LigaPaperMono-Light.otf"
+      - "LigaPaperMono-Regular.otf"
+      - "LigaPaperMono-Medium.otf"
+      - "LigaPaperMono-SemiBold.otf"
+      - "LigaPaperMono-Bold.otf"
+      - "LigaPaperMono-ExtraBold.otf"
+  - key: iosevka_term_nerd_font
+    family: "IosevkaTerm Nerd Font"
+    family_names:
+      - "IosevkaTerm Nerd Font"
+      - "IosevkaTerm Nerd Font Mono"
+    url: "https://github.com/ryanoasis/nerd-fonts/releases/download/{{ fonts_nerd_fonts_version }}/IosevkaTerm.zip"
+    asset: "IosevkaTerm.zip"
+    file_patterns:
+      - "*.ttf"

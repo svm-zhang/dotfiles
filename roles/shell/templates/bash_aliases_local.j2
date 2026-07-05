@@ -1,0 +1,6 @@
+# Local/private aliases rendered by Ansible.
+# Define shell_local_aliases in vault-backed inventory vars when needed.
+
+{% for name, command in shell_local_aliases | default({}) | dictsort %}
+alias {{ name }}={{ command | quote }}
+{% endfor %}

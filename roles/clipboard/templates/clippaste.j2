@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if command -v pbpaste >/dev/null 2>&1; then
+  exec pbpaste
+fi
+
+if command -v wl-paste >/dev/null 2>&1 && [ -n "${WAYLAND_DISPLAY:-}" ]; then
+  exec wl-paste --no-newline
+fi
+
+if command -v xclip >/dev/null 2>&1 && [ -n "${DISPLAY:-}" ]; then
+  exec xclip -selection clipboard -out
+fi
+
+printf 'clippaste: no supported clipboard backend found\n' >&2
+exit 1

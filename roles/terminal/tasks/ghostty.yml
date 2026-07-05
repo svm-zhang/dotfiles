@@ -1,0 +1,102 @@
+---
+- name: Install Ghostty from Homebrew cask
+  when: ansible_facts['system'] == "Darwin"
+  block:
+    - name: Check macOS terminal casks before install
+      ansible.builtin.command:
+        cmd: "{{ macos_homebrew_bin }} list --cask --versions {{ item }}"
+      loop: "{{ macos_terminal_casks }}"
+      register: terminal_macos_cask_precheck
+      changed_when: false
+      failed_when: false
+
+    - name: Set missing macOS terminal casks
+      ansible.builtin.set_fact:
+        terminal_macos_missing_casks: >-
+          {{
+            terminal_macos_cask_precheck.results
+            | selectattr('rc', 'ne', 0)
+            | map(attribute='item')
+            | list
+          }}
+
+    - name: Install macOS Ghostty cask
+      ansible.builtin.command:
+        cmd: "{{ macos_homebrew_bin }} install --cask {{ item }}"
+      environment:
+        HOMEBREW_NO_AUTO_UPDATE: "1"
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+      loop: "{{ terminal_macos_missing_casks | default(macos_terminal_casks) }}"
+      register: terminal_macos_cask_install
+      changed_when: true
+      when: (terminal_macos_missing_casks | default(macos_terminal_casks)) | length > 0
+
+    - name: Verify macOS Ghostty cask is installed
+      ansible.builtin.command:
+        cmd: "{{ macos_homebrew_bin }} list --cask --versions {{ item }}"
+      loop: "{{ macos_terminal_casks }}"
+      changed_when: false
+
+- name: Validate Ubuntu Ghostty install method
+  ansible.builtin.assert:
+    that:
+      - ubuntu_ghostty_install_method in ["ppa"]
+    fail_msg: "ubuntu_ghostty_install_method must be one of: ppa"
+  when: ansible_facts['distribution'] == "Ubuntu"
+
+- name: Install Ghostty from Ubuntu PPA
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
+    - ubuntu_ghostty_install_method == "ppa"
+  block:
+    - name: Install Ghostty deb822 prerequisite packages
+      ansible.builtin.apt:
+        name: "{{ ubuntu_deb822_prerequisites }}"
+        state: present
+        update_cache: true
+      become: true
+
+    - name: Create apt keyrings directory for Ghostty
+      ansible.builtin.file:
+        path: "{{ ubuntu_apt_keyring_dir }}"
+        state: directory
+        mode: "0755"
+      become: true
+
+    - name: Download Ghostty PPA signing key
+      ansible.builtin.get_url:
+        url: "{{ ubuntu_ghostty_ppa_key_url }}"
+        dest: "{{ ubuntu_ghostty_apt_keyring_path }}"
+        mode: "0644"
+      become: true
+
+    - name: Add Ghostty Ubuntu PPA
+      ansible.builtin.deb822_repository:
+        name: ghostty-ubuntu
+        types:
+          - deb
+        uris:
+          - "{{ ubuntu_ghostty_ppa_uri }}"
+        suites:
+          - "{{ ubuntu_apt_suite }}"
+        components: "{{ ubuntu_ghostty_ppa_components }}"
+        architectures:
+          - "{{ ubuntu_deb_arch }}"
+        signed_by: "{{ ubuntu_ghostty_apt_keyring_path }}"
+        state: present
+        enabled: true
+        install_python_debian: "{{ ubuntu_deb822_install_python_debian }}"
+      become: true
+      register: ubuntu_ghostty_apt_repository
+
+    - name: Update apt cache after Ghostty repository change
+      ansible.builtin.apt:
+        update_cache: true
+      become: true
+      when: ubuntu_ghostty_apt_repository.changed
+
+    - name: Install Ghostty from apt/PPA
+      ansible.builtin.apt:
+        name: ghostty
+        state: present
+      become: true

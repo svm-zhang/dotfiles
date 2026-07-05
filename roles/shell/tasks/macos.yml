@@ -1,0 +1,54 @@
+---
+- name: Check configured macOS bash path
+  ansible.builtin.stat:
+    path: "{{ dot_bash_path }}"
+  register: shell_macos_login_shell_stat
+
+- name: Assert configured macOS bash path exists
+  ansible.builtin.assert:
+    that:
+      - shell_macos_login_shell_stat.stat.exists
+      - shell_macos_login_shell_stat.stat.executable
+    fail_msg: "dot_bash_path={{ dot_bash_path }} is missing or not executable; run tools before shell."
+
+- name: Check whether macOS login shell is registered
+  ansible.builtin.command:
+    argv:
+      - grep
+      - -qxF
+      - "{{ dot_bash_path }}"
+      - /etc/shells
+  register: shell_macos_registered_login_shell
+  changed_when: false
+  failed_when: false
+
+- name: Register macOS login shell
+  ansible.builtin.lineinfile:
+    path: /etc/shells
+    line: "{{ dot_bash_path }}"
+    state: present
+    create: false
+  become: true
+  when: shell_macos_registered_login_shell.rc != 0
+
+- name: Read current macOS login shell
+  ansible.builtin.command:
+    argv:
+      - dscl
+      - .
+      - -read
+      - "/Users/{{ ansible_facts['user_id'] }}"
+      - UserShell
+  register: shell_macos_current_login_shell
+  changed_when: false
+
+- name: Set macOS login shell
+  ansible.builtin.command:
+    argv:
+      - chsh
+      - -s
+      - "{{ dot_bash_path }}"
+      - "{{ ansible_facts['user_id'] }}"
+  become: true
+  changed_when: true
+  when: dot_bash_path not in shell_macos_current_login_shell.stdout

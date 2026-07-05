@@ -1,0 +1,20 @@
+---
+- name: Validate deploy mode
+  ansible.builtin.assert:
+    that:
+      - deploy_mode in ["render", "docker", "home"]
+    fail_msg: "deploy_mode must be one of: render, docker, home."
+
+- name: Require render target directory in render mode
+  ansible.builtin.assert:
+    that:
+      - render_target_dir | length > 0
+    fail_msg: "render_target_dir must be provided when deploy_mode=render."
+  when: mode_render | bool
+
+- name: Require absolute render target directory in render mode
+  ansible.builtin.assert:
+    that:
+      - render_target_dir is abs
+    fail_msg: "render_target_dir must be an absolute path when deploy_mode=render."
+  when: mode_render | bool

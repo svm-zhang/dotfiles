@@ -1,0 +1,73 @@
+---
+- name: Check Ubuntu default systemd target
+  ansible.builtin.command:
+    argv:
+      - systemctl
+      - get-default
+  register: fonts_ubuntu_default_target
+  changed_when: false
+  failed_when: false
+
+- name: Set Ubuntu graphical profile fact
+  ansible.builtin.set_fact:
+    fonts_ubuntu_graphical_profile: "{{ fonts_ubuntu_default_target.stdout == 'graphical.target' }}"
+
+- name: Skip Ubuntu user font installation on non-graphical profile
+  ansible.builtin.debug:
+    msg: "Skipping Ubuntu user font installation because systemd default target is not graphical.target."
+  when: not fonts_ubuntu_graphical_profile | bool
+
+- name: Manage Ubuntu desktop user fonts
+  when: fonts_ubuntu_graphical_profile | bool
+  block:
+    - name: Install Ubuntu font prerequisites
+      ansible.builtin.apt:
+        name:
+          - fontconfig
+          - unzip
+        state: present
+        update_cache: true
+      become: true
+
+    - name: Create Ubuntu user font directory
+      ansible.builtin.file:
+        path: "{{ fonts_linux_user_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Reset Ubuntu missing font source list
+      ansible.builtin.set_fact:
+        fonts_missing_sources: []
+
+    - name: Detect Ubuntu installed font families
+      ansible.builtin.command:
+        cmd: "fc-list : family"
+      register: fonts_ubuntu_fc_list
+      changed_when: false
+
+    - name: Build Ubuntu missing font source list
+      ansible.builtin.set_fact:
+        fonts_missing_sources: "{{ fonts_missing_sources + ([item] if (item.family_names | select('in', fonts_ubuntu_fc_list.stdout) | list | length == 0) else []) }}"
+      loop: "{{ fonts_managed_sources }}"
+
+    - name: Install missing Ubuntu fonts
+      ansible.builtin.include_tasks: install_archives.yml
+
+    - name: Refresh Ubuntu user font cache
+      ansible.builtin.command:
+        cmd: "fc-cache -fv {{ fonts_linux_user_dir }}"
+      changed_when: fonts_missing_sources | length > 0
+      when: fonts_missing_sources | length > 0
+
+    - name: Detect Ubuntu installed font families after install
+      ansible.builtin.command:
+        cmd: "fc-list : family"
+      register: fonts_ubuntu_fc_list_after
+      changed_when: false
+
+    - name: Verify Ubuntu managed fonts are visible
+      ansible.builtin.assert:
+        that:
+          - item.family_names | select('in', fonts_ubuntu_fc_list_after.stdout) | list | length > 0
+        fail_msg: "Managed font family is not visible on Ubuntu: {{ item.family }}"
+      loop: "{{ fonts_managed_sources }}"

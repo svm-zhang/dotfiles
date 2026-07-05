@@ -1,0 +1,53 @@
+---
+- name: Validate terminal app choice
+  ansible.builtin.assert:
+    that:
+      - terminal_app in terminal_app_choices
+    fail_msg: "terminal_app must be one of: {{ terminal_app_choices | join(', ') }}"
+
+- name: Detect package-managed terminal platform
+  ansible.builtin.set_fact:
+    terminal_package_platform_supported: >-
+      {{
+        ansible_facts['system'] == "Darwin"
+        or ansible_facts['distribution'] == "Ubuntu"
+      }}
+
+- name: Include Ghostty terminal installation tasks
+  ansible.builtin.include_tasks: ghostty.yml
+  when:
+    - allow_package_changes | bool
+    - terminal_app == "ghostty"
+    - terminal_package_platform_supported | bool
+
+- name: Fail for unsupported terminal app on package-managed platforms
+  ansible.builtin.fail:
+    msg: "terminal_app={{ terminal_app }} is not implemented for this platform."
+  when:
+    - allow_package_changes | bool
+    - terminal_app != "ghostty"
+    - terminal_package_platform_supported | bool
+
+- name: Create terminal config directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0700"
+  loop: "{{ terminal_ghostty_directories }}"
+  when: terminal_app == "ghostty"
+
+- name: Render Ghostty config templates
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode | default('0644') }}"
+  loop: "{{ terminal_ghostty_template_files }}"
+  when: terminal_app == "ghostty"
+
+- name: Deploy Ghostty profile files
+  ansible.builtin.copy:
+    src: "ghostty/profiles/{{ item }}"
+    dest: "{{ terminal_ghostty_profiles_dir }}/{{ item }}"
+    mode: "0644"
+  loop: "{{ terminal_ghostty_profile_files }}"
+  when: terminal_app == "ghostty"

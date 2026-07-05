@@ -1,0 +1,37 @@
+---
+tmux_home: "{{ dot_user_home }}/.tmux"
+tmux_target_root: "{{ (render_target_dir ~ '/tmux') if mode_render else dot_user_home }}"
+
+tmux_config_path: "{{ tmux_target_root }}/.tmux.conf"
+tmux_plugin_dir: "{{ tmux_home }}/plugins"
+tmux_tpm_dir: "{{ tmux_plugin_dir }}/tpm"
+tmux_tpm_repo: "https://github.com/tmux-plugins/tpm"
+tmux_tpm_version: "master"
+tmux_tpm_install_plugins_command: "{{ tmux_tpm_dir }}/bin/install_plugins"
+tmux_catppuccin_version: "v2.3.0"
+tmux_catppuccin_plugin: "catppuccin/tmux#{{ tmux_catppuccin_version }}"
+tmux_catppuccin_flavor: "mocha"
+
+tmux_default_terminal: "tmux-256color"
+tmux_truecolor_feature: ",*:RGB"
+tmux_prefix: "C-a"
+tmux_default_shell: "{{ dot_bash_path }}"
+tmux_binary_dir: >-
+  {{
+    macos_homebrew_base ~ '/bin'
+    if ansible_facts['system'] == 'Darwin'
+    else linuxbrew_default_base ~ '/bin'
+    if ansible_facts['distribution'] == 'Ubuntu'
+    else '/usr/bin'
+  }}
+tmux_task_path: "{{ tmux_binary_dir }}:{{ ansible_facts['env']['PATH'] | default('/usr/bin:/bin:/usr/sbin:/sbin') }}"
+
+tmux_plugins:
+  - tmux-plugins/tpm
+  - christoomey/vim-tmux-navigator
+  - tmux-plugins/tmux-resurrect
+  - tmux-plugins/tmux-continuum
+  - "{{ tmux_catppuccin_plugin }}"
+  - tmux-plugins/tmux-cpu
+
+tmux_extra_plugins: []

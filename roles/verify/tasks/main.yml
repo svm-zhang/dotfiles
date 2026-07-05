@@ -1,0 +1,36 @@
+---
+- name: Verify common cross-platform tools are available
+  ansible.builtin.command:
+    argv:
+      - "{{ verify_shell }}"
+      - -lc
+      - "command -v {{ item }}"
+  loop: "{{ verify_common_tool_commands }}"
+  changed_when: false
+
+- name: Verify tmux binary
+  ansible.builtin.command:
+    argv:
+      - "{{ verify_shell }}"
+      - -lc
+      - "tmux -V"
+  changed_when: false
+
+- name: Verify tmux config loads on isolated server
+  ansible.builtin.command:
+    argv:
+      - "{{ verify_shell }}"
+      - -lc
+      - >-
+        tmux -L {{ verify_tmux_socket_name }} -f "$HOME/.tmux.conf"
+        start-server \; source-file "$HOME/.tmux.conf" \;
+        display-message -p "ok" \; kill-server
+  changed_when: false
+
+- name: Include macOS verification tasks
+  ansible.builtin.include_tasks: macos.yml
+  when: ansible_facts['system'] == "Darwin"
+
+- name: Include Ubuntu verification tasks
+  ansible.builtin.include_tasks: ubuntu.yml
+  when: ansible_facts['distribution'] == "Ubuntu"

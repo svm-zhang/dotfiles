@@ -1,0 +1,2 @@
+---
+# Docker inventory uses deploy_mode=docker at runtime.

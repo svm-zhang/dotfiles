@@ -1,0 +1,143 @@
+---
+deploy_mode: render
+render_target_dir: ""
+
+mode_render: "{{ deploy_mode == 'render' }}"
+mode_docker: "{{ deploy_mode == 'docker' }}"
+mode_home: "{{ deploy_mode == 'home' }}"
+
+allow_package_changes: "{{ deploy_mode in ['docker', 'home'] }}"
+allow_home_write: "{{ deploy_mode in ['docker', 'home'] }}"
+allow_service_actions: "{{ deploy_mode == 'home' }}"
+
+dot_user_home: "{{ ansible_facts['env']['HOME'] }}"
+dot_local_dir: "{{ dot_user_home }}/.local"
+dot_opt_dir: "{{ dot_local_dir }}/opt"
+dot_bash_path: "/bin/bash"
+dot_xdg_config_dir: ".config"
+dot_config_home: "{{ dot_user_home }}/{{ dot_xdg_config_dir }}"
+dot_editor: "nvim"
+dot_theme: "mocha"
+terminal_app: "ghostty"
+terminal_app_choices:
+  - ghostty
+
+common_brew_formulae_with_commands:
+  git: git
+  gh: gh
+  git-delta: delta
+  diffnav: diffnav
+  fzf: fzf
+  eza: eza
+  bat: bat
+  zoxide: zoxide
+  oh-my-posh: oh-my-posh
+  yazi: yazi
+  btop: btop
+  glow: glow
+  jqp: jqp
+  jq: jq
+  yq: yq
+  xh: xh
+  fd: fd
+  ripgrep: rg
+  node@24: node
+  tree-sitter-cli: tree-sitter
+  uv: uv
+  neovim: nvim
+
+dot_theme_assets:
+  bat:
+    mocha: "catppuccin_mocha.tmTheme"
+    macchiato: "catppuccin_macchiato.tmTheme"
+    tokyonight: "tokyonight.tmTheme"
+    dracula: "dracula.tmTheme"
+    kanagawa_dragon: "kanagawa_dragon.tmTheme"
+  glow:
+    mocha: "mocha.glow.json"
+    macchiato: "macchiato.glow.json"
+    tokyonight: "tokyonight.glow.json"
+    dracula: "dracula.glow.json"
+    kanagawa_dragon: "kanagawa_dragon.glow.json"
+  omp:
+    mocha: "mocha.omp.json"
+    macchiato: "macchiato.omp.json"
+    tokyonight: "tokyonight.omp.json"
+    dracula: "dracula.omp.json"
+    kanagawa_dragon: "kanagawa_dragon.omp.json"
+  ghostty:
+    mocha: "theme-catppuccin-mocha.conf"
+    macchiato: "theme-catppuccin-macchiato.conf"
+    tokyonight: "theme-tokyonight.conf"
+    dracula: "theme-dracula.conf"
+    kanagawa_dragon: "theme-kanagawa-dragon.conf"
+  btop:
+    mocha: "catppuccin_mocha.theme"
+    macchiato: "catppuccin_macchiato.theme"
+    kanagawa_dragon: "kanagawa_dragon.theme"
+
+dot_theme_catalog:
+  mocha:
+    bat_theme_name: "catppuccin_mocha"
+    bat_theme_file: "{{ dot_theme_assets.bat.mocha }}"
+    glow_style_file: "{{ dot_theme_assets.glow.mocha }}"
+    jqp_theme_name: "catppuccin-mocha"
+    omp_theme_file: "{{ dot_theme_assets.omp.mocha }}"
+    ghostty_theme_file: "{{ dot_theme_assets.ghostty.mocha }}"
+    btop_theme_name: "catppuccin_mocha"
+    btop_theme_file: "{{ dot_theme_assets.btop.mocha }}"
+  macchiato:
+    bat_theme_name: "catppuccin_macchiato"
+    bat_theme_file: "{{ dot_theme_assets.bat.macchiato }}"
+    glow_style_file: "{{ dot_theme_assets.glow.macchiato }}"
+    jqp_theme_name: "catppuccin-macchiato"
+    omp_theme_file: "{{ dot_theme_assets.omp.macchiato }}"
+    ghostty_theme_file: "{{ dot_theme_assets.ghostty.macchiato }}"
+    btop_theme_name: "catppuccin_macchiato"
+    btop_theme_file: "{{ dot_theme_assets.btop.macchiato }}"
+  tokyonight:
+    bat_theme_name: "tokyonight"
+    bat_theme_file: "{{ dot_theme_assets.bat.tokyonight }}"
+    glow_style_file: "{{ dot_theme_assets.glow.tokyonight }}"
+    jqp_theme_name: "tokyonight"
+    omp_theme_file: "{{ dot_theme_assets.omp.tokyonight }}"
+    ghostty_theme_file: "{{ dot_theme_assets.ghostty.tokyonight }}"
+    btop_theme_name: "tokyo-night"
+    btop_theme_file: ""
+  dracula:
+    bat_theme_name: "dracula"
+    bat_theme_file: "{{ dot_theme_assets.bat.dracula }}"
+    glow_style_file: "{{ dot_theme_assets.glow.dracula }}"
+    jqp_theme_name: "dracula"
+    omp_theme_file: "{{ dot_theme_assets.omp.dracula }}"
+    ghostty_theme_file: "{{ dot_theme_assets.ghostty.dracula }}"
+    btop_theme_name: "dracula"
+    btop_theme_file: ""
+  kanagawa_dragon:
+    bat_theme_name: "kanagawa_dragon"
+    bat_theme_file: "{{ dot_theme_assets.bat.kanagawa_dragon }}"
+    glow_style_file: "{{ dot_theme_assets.glow.kanagawa_dragon }}"
+    jqp_theme_name: "dracula"
+    omp_theme_file: "{{ dot_theme_assets.omp.kanagawa_dragon }}"
+    ghostty_theme_file: "{{ dot_theme_assets.ghostty.kanagawa_dragon }}"
+    btop_theme_name: "kanagawa_dragon"
+    btop_theme_file: "{{ dot_theme_assets.btop.kanagawa_dragon }}"
+
+dot_active_theme: "{{ dot_theme_catalog[dot_theme] }}"
+dot_bat_theme_name: "{{ dot_active_theme.bat_theme_name }}"
+dot_bat_theme_file: "{{ dot_active_theme.bat_theme_file }}"
+dot_glow_style_file: "{{ dot_active_theme.glow_style_file }}"
+dot_jqp_theme_name: "{{ dot_active_theme.jqp_theme_name }}"
+dot_omp_theme_file: "{{ dot_active_theme.omp_theme_file }}"
+dot_ghostty_theme_file: "{{ dot_active_theme.ghostty_theme_file }}"
+dot_btop_theme_name: "{{ dot_active_theme.btop_theme_name }}"
+dot_btop_theme_file: "{{ dot_active_theme.btop_theme_file }}"
+
+dot_terminal_font: "anthrosevka_mono"
+
+dot_terminal_font_assets:
+  anthrosevka_mono: "font-anthrosevka-mono.conf"
+  liga_paper_mono: "font-liga-paper-mono.conf"
+  iosevka_term: "font-iosevka-term.conf"
+
+dot_terminal_font_file: "{{ dot_terminal_font_assets[dot_terminal_font] }}"

@@ -1,0 +1,12 @@
+---
+shell_target_root: "{{ (render_target_dir ~ '/shell') if mode_render else dot_user_home }}"
+
+shell_bashrc_file: ".bashrc"
+shell_bash_profile_file: ".bash_profile"
+shell_aliases_file: ".bash_aliases"
+shell_local_aliases_file: ".bash_aliases.local"
+shell_exports_file: ".bash_exports"
+shell_functions_file: ".functionsrc"
+shell_local_aliases: []
+
+shell_texbin_dir: "/Library/TeX/texbin"

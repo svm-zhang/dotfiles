@@ -1,0 +1,25 @@
+---
+- name: Create Git render directory
+  ansible.builtin.file:
+    path: "{{ git_target_root }}"
+    state: directory
+    mode: "0700"
+  when: mode_render | bool
+
+- name: Render public Git config files
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ git_target_root }}/{{ item.dest }}"
+    mode: "0644"
+  loop:
+    - src: gitconfig.j2
+      dest: .gitconfig
+    - src: gitconfig.delta.j2
+      dest: .gitconfig.delta
+
+- name: Render private Git config
+  ansible.builtin.template:
+    src: gitconfig.local.j2
+    dest: "{{ git_target_root }}/.gitconfig.local"
+    mode: "0600"
+  no_log: true

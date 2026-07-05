@@ -1,0 +1,80 @@
+---
+- name: Check macOS tool commands before install
+  ansible.builtin.shell:
+    cmd: "command -v {{ item.value }}"
+    executable: /bin/bash
+  loop: "{{ macos_brew_formulae_with_commands_all | dict2items }}"
+  register: macos_brew_command_precheck
+  changed_when: false
+  failed_when: false
+
+- name: Set missing macOS tool commands
+  ansible.builtin.set_fact:
+    macos_brew_missing_commands: >-
+      {{
+        (
+          (
+            macos_brew_command_precheck.results
+            | selectattr('rc', 'ne', 0)
+            | map(attribute='item.key')
+            | list
+          )
+          +
+          (
+            macos_brew_command_precheck.results
+            | selectattr('rc', 'eq', 0)
+            | selectattr('stdout', 'match', '^/(usr/)?bin/')
+            | map(attribute='item.key')
+            | list
+          )
+        )
+        | unique
+      }}
+
+- name: Check macOS Homebrew formulae before install
+  ansible.builtin.command:
+    cmd: "{{ macos_homebrew_bin }} list --versions {{ item.key }}"
+  loop: "{{ macos_brew_formulae_with_commands_all | dict2items }}"
+  register: macos_brew_formula_precheck
+  changed_when: false
+  failed_when: false
+
+- name: Set missing macOS Homebrew formulae
+  ansible.builtin.set_fact:
+    macos_brew_missing_formulae: >-
+      {{
+        macos_brew_formula_precheck.results
+        | selectattr('rc', 'ne', 0)
+        | map(attribute='item.key')
+        | list
+      }}
+
+- name: Set macOS formulae to install
+  ansible.builtin.set_fact:
+    macos_brew_formulae_to_install: >-
+      {{
+        macos_brew_missing_commands
+        | intersect(macos_brew_missing_formulae)
+      }}
+
+- name: Check macOS Homebrew formulae without commands before install
+  ansible.builtin.command:
+    cmd: "{{ macos_homebrew_bin }} list --versions {{ item }}"
+  loop: "{{ macos_brew_formulae_without_commands }}"
+  register: macos_brew_formulae_without_commands_precheck
+  changed_when: false
+  failed_when: false
+
+- name: Add missing macOS Homebrew formulae without commands to install list
+  ansible.builtin.set_fact:
+    macos_brew_formulae_to_install: >-
+      {{
+        macos_brew_formulae_to_install
+        +
+        (
+          macos_brew_formulae_without_commands_precheck.results
+          | selectattr('rc', 'ne', 0)
+          | map(attribute='item')
+          | list
+        )
+      }}

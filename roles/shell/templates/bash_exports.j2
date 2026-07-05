@@ -1,0 +1,27 @@
+# Define bash exports.
+# Invoked by .bashrc and login-shell startup files.
+
+[ -d "{{ dot_local_dir }}/bin" ] && export PATH="{{ dot_local_dir }}/bin:$PATH"
+[ -d "{{ dot_opt_dir }}/bin" ] && export PATH="{{ dot_opt_dir }}/bin:$PATH"
+[ -d "{{ dot_user_home }}/.cargo/bin" ] && export PATH="{{ dot_user_home }}/.cargo/bin:$PATH"
+
+{% if ansible_facts["system"] == "Darwin" %}
+if [ -d "{{ macos_homebrew_base }}/opt/node@24/bin" ]; then
+  export PATH="{{ macos_homebrew_base }}/opt/node@24/bin:$PATH"
+fi
+{% elif ansible_facts["distribution"] == "Ubuntu" %}
+if [ -d "{{ linuxbrew_default_base }}/opt/node@24/bin" ]; then
+  export PATH="{{ linuxbrew_default_base }}/opt/node@24/bin:$PATH"
+fi
+{% endif %}
+
+{% if ansible_facts["system"] == "Darwin" %}
+[ -d "{{ shell_texbin_dir }}" ] && export PATH="{{ shell_texbin_dir }}:$PATH"
+{% endif %}
+
+# set up for glow
+# set EDITOR to nvim for glow config
+export EDITOR="{{ dot_editor }}"
+
+# set XDG_CONFIG_HOME for glow to find its config
+export XDG_CONFIG_HOME="{{ dot_config_home }}"

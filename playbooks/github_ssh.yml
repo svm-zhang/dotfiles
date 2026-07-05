@@ -1,0 +1,11 @@
+---
+- name: Manage GitHub SSH identity
+  hosts: all
+  gather_facts: true
+
+  pre_tasks:
+    - name: Validate deployment inputs
+      ansible.builtin.include_tasks: tasks/validate.yml
+
+  roles:
+    - github_ssh

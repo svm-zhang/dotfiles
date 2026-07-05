@@ -1,0 +1,12 @@
+---
+- name: Include Ubuntu tools tasks
+  ansible.builtin.include_tasks: ubuntu.yml
+  when:
+    - allow_package_changes | bool
+    - ansible_facts['distribution'] == "Ubuntu"
+
+- name: Include macOS tools tasks
+  ansible.builtin.include_tasks: macos.yml
+  when:
+    - allow_package_changes | bool
+    - ansible_facts['system'] == "Darwin"

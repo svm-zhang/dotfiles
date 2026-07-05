@@ -1,0 +1,87 @@
+unbind r
+bind r source-file ~/.tmux.conf
+
+set -g default-terminal "{{ tmux_default_terminal }}"
+set -as terminal-features "{{ tmux_truecolor_feature }}"
+
+# Undercurl
+set -as terminal-overrides ',*:Smulx=\E[4::%p1%dm'
+set -as terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'
+
+set -g focus-events on
+
+set -g prefix {{ tmux_prefix }}
+unbind C-b
+bind-key {{ tmux_prefix }} send-prefix
+
+set -g base-index 1
+setw -g pane-base-index 1
+
+set -g mouse on
+
+set-option -g status-position top
+set-option -g default-shell "{{ tmux_default_shell }}"
+
+# pane navigation
+bind-key h select-pane -L
+bind-key j select-pane -D
+bind-key k select-pane -U
+bind-key l select-pane -R
+
+# pane resizing
+bind-key -r H resize-pane -L 2
+bind-key -r J resize-pane -D 2
+bind-key -r K resize-pane -U 2
+bind-key -r L resize-pane -R 2
+
+unbind %
+bind-key - split-window -v
+unbind '"'
+bind-key _ split-window -h
+
+unbind p
+unbind n
+bind-key h previous-window
+bind-key l next-window
+bind Tab last-window
+
+# maximize the current pane with leader+m
+bind-key -r m resize-pane -Z
+
+# copy
+set-window-option -g mode-keys vi
+bind-key -T copy-mode-vi v send -X begin-selection
+bind-key -T copy-mode-vi C-v send -X rectangle-toggle
+bind-key -T copy-mode-vi y send -X copy-selection-and-cancel
+bind-key -T copy-mode-vi Escape send -X cancel
+unbind -T copy-mode-vi MouseDragEnd1Pane
+
+# plugins
+{% for plugin in tmux_all_plugins %}
+set -g @plugin '{{ plugin }}'
+{% endfor %}
+
+# catppuccin v2 theme
+set -g @catppuccin_flavor "{{ tmux_catppuccin_flavor }}"
+set -g @catppuccin_window_status_style "rounded"
+set -g @catppuccin_window_number_position "right"
+set -g @catppuccin_window_text "#W"
+set -g @catppuccin_window_current_text "#W"
+
+set -g @catppuccin_status_left_separator  " "
+set -g @catppuccin_status_right_separator ""
+set -g @catppuccin_status_connect_separator "yes"
+
+if-shell "test -f '{{ tmux_plugin_dir }}/tmux/catppuccin.tmux'" "run-shell '{{ tmux_plugin_dir }}/tmux/catppuccin.tmux'"
+
+set -g status-right-length 120
+set -g status-left-length 100
+set -g status-left ""
+set -gF status-right "#{E:@catppuccin_status_cpu}"
+set -agF status-right "#{E:@catppuccin_status_ram}"
+{% if tmux_battery_status_available | bool %}
+set -agF status-right "#{E:@catppuccin_status_battery}"
+{% endif %}
+
+if-shell "test -f '{{ tmux_plugin_dir }}/tmux-cpu/cpu.tmux'" "run-shell '{{ tmux_plugin_dir }}/tmux-cpu/cpu.tmux'"
+if-shell "test -f '{{ tmux_tpm_dir }}/tpm'" "run-shell '{{ tmux_tpm_dir }}/tpm'"

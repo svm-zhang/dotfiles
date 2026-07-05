@@ -1,0 +1,87 @@
+---
+- name: Verify supported macOS architecture for Homebrew
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['architecture'] == "arm64"
+    fail_msg: "Only Apple Silicon macOS arm64 is supported by this deployment."
+
+- name: Verify macOS Homebrew binary exists
+  ansible.builtin.stat:
+    path: "{{ macos_homebrew_bin }}"
+  register: tools_macos_homebrew_bin
+
+- name: Require macOS Homebrew before tools install
+  ansible.builtin.assert:
+    that:
+      - tools_macos_homebrew_bin.stat.exists
+      - tools_macos_homebrew_bin.stat.executable
+    fail_msg: "Expected Homebrew at {{ macos_homebrew_bin }}. Run bootstrap before site deployment."
+
+- name: Include macOS tools precheck
+  ansible.builtin.include_tasks: macos_precheck.yml
+
+- name: Install macOS Homebrew formulae
+  ansible.builtin.command:
+    cmd: "{{ macos_homebrew_bin }} install {{ item }}"
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+    HOMEBREW_NO_INSTALL_CLEANUP: "1"
+  loop: "{{ macos_brew_formulae_to_install }}"
+  changed_when: true
+  when: macos_brew_formulae_to_install | length > 0
+
+- name: Verify installed macOS Homebrew formulae
+  ansible.builtin.command:
+    cmd: "{{ macos_homebrew_bin }} list --versions {{ item }}"
+  loop: "{{ macos_brew_formulae_to_install }}"
+  changed_when: false
+  when: macos_brew_formulae_to_install | length > 0
+
+- name: Include user rustup tasks
+  ansible.builtin.include_tasks: rustup.yml
+
+- name: Get macOS uv Homebrew prefix
+  ansible.builtin.command:
+    cmd: "{{ macos_homebrew_bin }} --prefix uv"
+  register: tools_macos_uv_prefix
+  changed_when: false
+
+- name: Get macOS node@24 Homebrew prefix
+  ansible.builtin.command:
+    cmd: "{{ macos_homebrew_bin }} --prefix node@24"
+  register: tools_macos_node_prefix
+  changed_when: false
+
+- name: Verify macOS node@24 tools
+  ansible.builtin.command:
+    argv:
+      - "{{ tools_macos_node_prefix.stdout }}/bin/{{ item }}"
+      - --version
+  environment:
+    PATH: "{{ tools_macos_node_prefix.stdout }}/bin:{{ ansible_facts['env']['PATH'] | default('/usr/bin:/bin:/usr/sbin:/sbin') }}"
+  loop:
+    - node
+    - npm
+  changed_when: false
+
+- name: Install macOS uv-managed Python
+  ansible.builtin.command:
+    argv:
+      - "{{ tools_macos_uv_prefix.stdout }}/bin/uv"
+      - python
+      - install
+      - "{{ tools_uv_python_version }}"
+  register: tools_macos_uv_python_install
+  changed_when: >-
+    'already installed' not in
+    ((tools_macos_uv_python_install.stdout | default('')) ~
+    (tools_macos_uv_python_install.stderr | default('')))
+
+- name: Verify macOS uv-managed Python
+  ansible.builtin.command:
+    argv:
+      - "{{ tools_macos_uv_prefix.stdout }}/bin/uv"
+      - python
+      - find
+      - "{{ tools_uv_python_version }}"
+  changed_when: false

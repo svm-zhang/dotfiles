@@ -1,0 +1,7 @@
+---
+- name: Bootstrap target for Ansible deployment
+  hosts: all
+  gather_facts: false
+
+  roles:
+    - bootstrap

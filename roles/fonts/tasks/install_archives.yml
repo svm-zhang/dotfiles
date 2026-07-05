@@ -1,0 +1,72 @@
+---
+- name: Install missing font archives
+  when: fonts_missing_sources | length > 0
+  block:
+    - name: Create font download temp directory
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: fonts-download
+      register: fonts_download_dir
+
+    - name: Create font extract temp directory
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: fonts-extract
+      register: fonts_extract_dir
+
+    - name: Create per-font extract directories
+      ansible.builtin.file:
+        path: "{{ fonts_extract_dir['path'] }}/{{ item.key }}"
+        state: directory
+        mode: "0755"
+      loop: "{{ fonts_missing_sources }}"
+
+    - name: Download missing font archives
+      ansible.builtin.get_url:
+        url: "{{ item.url }}"
+        dest: "{{ fonts_download_dir['path'] }}/{{ item.asset }}"
+        checksum: "{{ item.checksum | default(omit) }}"
+        mode: "0644"
+      loop: "{{ fonts_missing_sources }}"
+
+    - name: Extract missing font archives
+      ansible.builtin.unarchive:
+        src: "{{ fonts_download_dir['path'] }}/{{ item.asset }}"
+        dest: "{{ fonts_extract_dir['path'] }}/{{ item.key }}"
+        remote_src: true
+      loop: "{{ fonts_missing_sources }}"
+
+    - name: Find extracted font files
+      ansible.builtin.find:
+        paths: "{{ fonts_extract_dir['path'] }}/{{ item.key }}"
+        patterns: "{{ item.file_patterns }}"
+        recurse: true
+        file_type: file
+      loop: "{{ fonts_missing_sources }}"
+      register: fonts_extracted_files
+
+    - name: Copy extracted font files to user font directory
+      ansible.builtin.copy:
+        src: "{{ item.1.path }}"
+        dest: "{{ fonts_target_dir }}/{{ item.1.path | basename }}"
+        remote_src: true
+        mode: "0644"
+      loop: "{{ fonts_extracted_files.results | subelements('files') }}"
+      register: fonts_copied_files
+
+  always:
+    - name: Remove font download temp directory
+      ansible.builtin.file:
+        path: "{{ fonts_download_dir['path'] }}"
+        state: absent
+      when:
+        - fonts_download_dir is defined
+        - "'path' in fonts_download_dir"
+
+    - name: Remove font extract temp directory
+      ansible.builtin.file:
+        path: "{{ fonts_extract_dir['path'] }}"
+        state: absent
+      when:
+        - fonts_extract_dir is defined
+        - "'path' in fonts_extract_dir"

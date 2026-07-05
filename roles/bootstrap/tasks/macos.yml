@@ -1,0 +1,87 @@
+---
+- name: Detect macOS architecture
+  ansible.builtin.raw: /usr/bin/uname -m
+  register: bootstrap_macos_architecture
+  changed_when: false
+
+- name: Verify supported macOS architecture
+  ansible.builtin.assert:
+    that:
+      - bootstrap_macos_architecture.stdout | trim == "arm64"
+    fail_msg: "Only Apple Silicon macOS arm64 is supported by this deployment."
+
+- name: Check macOS Command Line Tools
+  ansible.builtin.raw: /usr/bin/xcode-select -p
+  register: bootstrap_macos_clt
+  changed_when: false
+  failed_when: false
+
+- name: Require macOS Command Line Tools
+  ansible.builtin.assert:
+    that:
+      - bootstrap_macos_clt.rc == 0
+    fail_msg: >-
+      macOS Command Line Tools are missing. Install or approve them on the
+      target Mac, then rerun bootstrap.yml.
+
+- name: Check expected macOS Homebrew binary
+  ansible.builtin.raw: "test -x {{ macos_homebrew_bin }}"
+  register: bootstrap_macos_homebrew_check
+  changed_when: false
+  failed_when: false
+
+- name: Detect macOS bootstrap user
+  ansible.builtin.raw: /usr/bin/id -un
+  register: bootstrap_macos_user
+  changed_when: false
+  when: bootstrap_macos_homebrew_check.rc != 0
+
+- name: Set Homebrew pkg install user
+  ansible.builtin.raw: >-
+    /usr/bin/defaults write {{ bootstrap_macos_homebrew_pkg_user_plist }}
+    HOMEBREW_PKG_USER {{ bootstrap_macos_user.stdout | trim }}
+  changed_when: true
+  when: bootstrap_macos_homebrew_check.rc != 0
+
+- name: Download Homebrew pkg
+  ansible.builtin.raw: >-
+    /usr/bin/curl -fL {{ bootstrap_macos_homebrew_pkg_url }}
+    -o {{ bootstrap_macos_homebrew_pkg_path }}
+  changed_when: true
+  when: bootstrap_macos_homebrew_check.rc != 0
+
+- name: Install Homebrew pkg
+  ansible.builtin.raw: >-
+    /usr/sbin/installer -pkg {{ bootstrap_macos_homebrew_pkg_path }} -target /
+  become: true
+  register: bootstrap_macos_homebrew_install
+  changed_when: bootstrap_macos_homebrew_install.rc == 0
+  when: bootstrap_macos_homebrew_check.rc != 0
+
+- name: Remove Homebrew pkg bootstrap files
+  ansible.builtin.raw: >-
+    /bin/rm -f {{ bootstrap_macos_homebrew_pkg_path }}
+    {{ bootstrap_macos_homebrew_pkg_user_plist }}.plist
+  changed_when: false
+  when: bootstrap_macos_homebrew_check.rc != 0
+
+- name: Recheck expected macOS Homebrew binary
+  ansible.builtin.raw: "test -x {{ macos_homebrew_bin }}"
+  register: bootstrap_macos_homebrew_recheck
+  changed_when: false
+  failed_when: false
+
+- name: Require expected macOS Homebrew binary
+  ansible.builtin.assert:
+    that:
+      - bootstrap_macos_homebrew_recheck.rc == 0
+    fail_msg: >-
+      Expected Homebrew at {{ macos_homebrew_bin }} after pkg bootstrap.
+
+- name: Verify macOS Homebrew command
+  ansible.builtin.raw: "{{ macos_homebrew_bin }} --version"
+  changed_when: false
+
+- name: Verify macOS Python for later Ansible modules
+  ansible.builtin.raw: /usr/bin/python3 --version
+  changed_when: false

@@ -1,0 +1,32 @@
+---
+- name: Check installed macOS document formulae
+  ansible.builtin.command:
+    argv:
+      - "{{ macos_homebrew_bin }}"
+      - list
+      - --versions
+      - "{{ item }}"
+  loop: "{{ document_formulae }}"
+  register: document_formula_checks
+  changed_when: false
+  failed_when: false
+  when:
+    - ansible_facts['system'] == "Darwin"
+    - mode_home | bool
+
+- name: Install missing macOS document formulae
+  ansible.builtin.command:
+    argv:
+      - "{{ macos_homebrew_bin }}"
+      - install
+      - "{{ item.item }}"
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+    HOMEBREW_NO_INSTALL_CLEANUP: "1"
+  loop: "{{ document_formula_checks.results | default([]) }}"
+  register: document_formula_installs
+  changed_when: true
+  when:
+    - ansible_facts['system'] == "Darwin"
+    - mode_home | bool
+    - item.rc != 0

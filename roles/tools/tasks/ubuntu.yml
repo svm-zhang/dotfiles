@@ -1,0 +1,112 @@
+---
+- name: Include Ubuntu tools precheck
+  ansible.builtin.include_tasks: ubuntu_precheck.yml
+
+- name: Install Ubuntu apt-owned tool packages
+  ansible.builtin.apt:
+    name: "{{ tools_ubuntu_missing_apt_packages | default(ubuntu_apt_packages) }}"
+    state: present
+    update_cache: true
+  become: true
+  when: (tools_ubuntu_missing_apt_packages | default(ubuntu_apt_packages)) | length > 0
+
+- name: Check Linuxbrew default brew path
+  ansible.builtin.stat:
+    path: "{{ linuxbrew_default_bin }}"
+  register: linuxbrew_default_bin_stat
+
+- name: Prepare Linuxbrew install parent
+  ansible.builtin.file:
+    path: "{{ linuxbrew_default_base | dirname }}"
+    state: directory
+    owner: "{{ ansible_facts['user_id'] }}"
+    group: "{{ ansible_facts['user_gid'] | string }}"
+    mode: "0755"
+  become: true
+  when: not linuxbrew_default_bin_stat.stat.exists
+
+- name: Install Linuxbrew
+  ansible.builtin.shell:
+    cmd: |
+      set -eu
+      NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    executable: /bin/bash
+  when: not linuxbrew_default_bin_stat.stat.exists
+
+- name: Check Linuxbrew after install
+  ansible.builtin.stat:
+    path: "{{ linuxbrew_default_bin }}"
+  register: tools_linuxbrew_brew_after_install_stat
+
+- name: Validate Linuxbrew command path
+  ansible.builtin.assert:
+    that:
+      - tools_linuxbrew_brew_after_install_stat.stat.exists
+      - tools_linuxbrew_brew_after_install_stat.stat.executable
+    fail_msg: "Linuxbrew brew command was not found after installation."
+
+- name: Check Ubuntu Linuxbrew formulae before install
+  ansible.builtin.command:
+    cmd: "{{ linuxbrew_default_bin }} list --versions {{ item.key }}"
+  loop: "{{ ubuntu_brew_formulae_with_commands_all | dict2items }}"
+  register: ubuntu_brew_formula_precheck
+  changed_when: false
+  failed_when: false
+
+- name: Set missing Ubuntu Linuxbrew formulae
+  ansible.builtin.set_fact:
+    ubuntu_brew_missing_formulae: >-
+      {{
+        ubuntu_brew_formula_precheck.results
+        | selectattr('rc', 'ne', 0)
+        | map(attribute='item.key')
+        | list
+      }}
+
+- name: Install Ubuntu Linuxbrew formulae
+  ansible.builtin.command:
+    cmd: "{{ linuxbrew_default_bin }} install {{ item }}"
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+    HOMEBREW_NO_INSTALL_CLEANUP: "1"
+  loop: "{{ ubuntu_brew_missing_formulae | default(ubuntu_brew_formulae_with_commands_all.keys() | list) }}"
+  register: ubuntu_brew_install
+  changed_when: true
+  when: (ubuntu_brew_missing_formulae | default(ubuntu_brew_formulae_with_commands_all.keys() | list)) | length > 0
+
+- name: Verify Ubuntu Linuxbrew formulae are installed
+  ansible.builtin.command:
+    cmd: "{{ linuxbrew_default_bin }} list --versions {{ item.key }}"
+  loop: "{{ ubuntu_brew_formulae_with_commands_all | dict2items }}"
+  changed_when: false
+
+- name: Include user rustup tasks
+  ansible.builtin.include_tasks: rustup.yml
+
+- name: Get Ubuntu uv Linuxbrew prefix
+  ansible.builtin.command:
+    cmd: "{{ linuxbrew_default_bin }} --prefix uv"
+  register: tools_ubuntu_uv_prefix
+  changed_when: false
+
+- name: Install Ubuntu uv-managed Python
+  ansible.builtin.command:
+    argv:
+      - "{{ tools_ubuntu_uv_prefix.stdout }}/bin/uv"
+      - python
+      - install
+      - "{{ tools_uv_python_version }}"
+  register: tools_ubuntu_uv_python_install
+  changed_when: >-
+    'already installed' not in
+    ((tools_ubuntu_uv_python_install.stdout | default('')) ~
+    (tools_ubuntu_uv_python_install.stderr | default('')))
+
+- name: Verify Ubuntu uv-managed Python
+  ansible.builtin.command:
+    argv:
+      - "{{ tools_ubuntu_uv_prefix.stdout }}/bin/uv"
+      - python
+      - find
+      - "{{ tools_uv_python_version }}"
+  changed_when: false
