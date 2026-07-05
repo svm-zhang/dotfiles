@@ -5,11 +5,15 @@
 [ -d "{{ dot_opt_dir }}/bin" ] && export PATH="{{ dot_opt_dir }}/bin:$PATH"
 [ -d "{{ dot_user_home }}/.cargo/bin" ] && export PATH="{{ dot_user_home }}/.cargo/bin:$PATH"
 
+{% if ansible_facts["system"] == "Darwin" %}
 if [ -d "{{ macos_homebrew_base }}/opt/node@24/bin" ]; then
   export PATH="{{ macos_homebrew_base }}/opt/node@24/bin:$PATH"
-elif [ -d "{{ linuxbrew_default_base }}/opt/node@24/bin" ]; then
+fi
+{% elif ansible_facts["distribution"] == "Ubuntu" %}
+if [ -d "{{ linuxbrew_default_base }}/opt/node@24/bin" ]; then
   export PATH="{{ linuxbrew_default_base }}/opt/node@24/bin:$PATH"
 fi
+{% endif %}
 
 {% if ansible_facts["system"] == "Darwin" %}
 [ -d "{{ shell_texbin_dir }}" ] && export PATH="{{ shell_texbin_dir }}:$PATH"

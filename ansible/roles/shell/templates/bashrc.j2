@@ -4,11 +4,15 @@
 set -o vi
 
 # to make sure brew can be called
+{% if ansible_facts["system"] == "Darwin" %}
 if [ -x "{{ macos_homebrew_bin }}" ]; then
   eval "$("{{ macos_homebrew_bin }}" shellenv)"
-elif [ -x "{{ linuxbrew_default_bin }}" ]; then
+fi
+{% elif ansible_facts["distribution"] == "Ubuntu" %}
+if [ -x "{{ linuxbrew_default_bin }}" ]; then
   eval "$("{{ linuxbrew_default_bin }}" shellenv)"
 fi
+{% endif %}
 
 # load exports after brew shellenv so dotfile-managed PATH entries take precedence
 [ -f "$HOME/.bash_exports" ] && . "$HOME/.bash_exports"
@@ -28,11 +32,15 @@ fi
 # load Rust cargo env
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
+{% if ansible_facts["system"] == "Darwin" %}
 if [ -f "{{ macos_homebrew_base }}/etc/profile.d/bash_completion.sh" ]; then
   . "{{ macos_homebrew_base }}/etc/profile.d/bash_completion.sh"
-elif [ -f "{{ linuxbrew_default_base }}/etc/profile.d/bash_completion.sh" ]; then
+fi
+{% elif ansible_facts["distribution"] == "Ubuntu" %}
+if [ -f "{{ linuxbrew_default_base }}/etc/profile.d/bash_completion.sh" ]; then
   . "{{ linuxbrew_default_base }}/etc/profile.d/bash_completion.sh"
 fi
+{% endif %}
 
 command -v fzf >/dev/null 2>&1 && eval "$(fzf --bash)"
 
