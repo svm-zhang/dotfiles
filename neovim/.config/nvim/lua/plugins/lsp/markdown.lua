@@ -10,7 +10,7 @@ return {
 			require("render-markdown").setup({
 				-- Disable hl color for code block background globally
 				vim.api.nvim_set_hl(0, "RenderMarkdownCode", { bg = "" }),
-				file_types = { "markdown", "rmd", "Rmd" },
+				file_types = { "markdown" },
 				bullet = {
 					left_pad = 2,
 				},
