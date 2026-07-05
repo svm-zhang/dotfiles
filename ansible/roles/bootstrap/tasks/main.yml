@@ -1,0 +1,18 @@
+---
+- name: Detect bootstrap target system
+  ansible.builtin.raw: /usr/bin/uname -s
+  register: bootstrap_target_system
+  changed_when: false
+
+- name: Include macOS bootstrap tasks
+  ansible.builtin.include_tasks: macos.yml
+  when: bootstrap_target_system.stdout | trim == "Darwin"
+
+- name: Include Ubuntu bootstrap tasks
+  ansible.builtin.include_tasks: ubuntu.yml
+  when: bootstrap_target_system.stdout | trim == "Linux"
+
+- name: Reject unsupported bootstrap target
+  ansible.builtin.fail:
+    msg: "Unsupported bootstrap target system: {{ bootstrap_target_system.stdout | trim }}"
+  when: (bootstrap_target_system.stdout | trim) not in ["Darwin", "Linux"]
