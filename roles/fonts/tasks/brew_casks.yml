@@ -1,0 +1,60 @@
+---
+- name: Check Homebrew binary for font management
+  ansible.builtin.stat:
+    path: "{{ fonts_brew_bin }}"
+  register: fonts_brew_bin_status
+
+- name: Require Homebrew before font management
+  ansible.builtin.assert:
+    that:
+      - fonts_brew_bin_status.stat.exists
+      - fonts_brew_bin_status.stat.executable
+    fail_msg: "Expected Homebrew at {{ fonts_brew_bin }}. Run bootstrap and tools deployment first."
+
+- name: Check Homebrew for managed font casks
+  ansible.builtin.command:
+    argv:
+      - "{{ fonts_brew_bin }}"
+      - list
+      - --cask
+      - --versions
+      - "{{ item.key }}"
+  loop: "{{ fonts_brew_casks | dict2items }}"
+  register: fonts_brew_cask_precheck
+  changed_when: false
+  failed_when: false
+
+- name: Set font casks to install
+  ansible.builtin.set_fact:
+    fonts_brew_casks_to_install: >-
+      {{
+        fonts_brew_cask_precheck.results
+        | selectattr('rc', 'ne', 0)
+        | map(attribute='item')
+        | list
+      }}
+
+- name: Install missing font casks
+  ansible.builtin.command:
+    argv:
+      - "{{ fonts_brew_bin }}"
+      - install
+      - --cask
+      - --adopt
+      - "{{ item.value }}"
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+    HOMEBREW_NO_INSTALL_CLEANUP: "1"
+  loop: "{{ fonts_brew_casks_to_install }}"
+  changed_when: true
+
+- name: Verify installed font casks
+  ansible.builtin.command:
+    argv:
+      - "{{ fonts_brew_bin }}"
+      - list
+      - --cask
+      - --versions
+      - "{{ item.key }}"
+  loop: "{{ fonts_brew_casks_to_install }}"
+  changed_when: false
