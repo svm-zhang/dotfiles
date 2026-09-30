@@ -30,7 +30,13 @@ local function trouble_symbol_filter(items)
 end
 
 local trouble_lsp_location_keys = {
+	["<cr>"] = "jump_close",
 	o = "jump_vsplit_close",
+}
+
+local trouble_symbol_keys = {
+	["<cr>"] = "jump_close",
+	o = "jump_close",
 }
 
 local trouble_lsp_preview = {
@@ -131,9 +137,11 @@ return {
 			modes = {
 				symbols = {
 					mode = "lsp_document_symbols",
+					focus = true,
 					pinned = true,
 					filter = trouble_symbol_filter,
 					format = "{kind_icon} {symbol.name} {pos}",
+					keys = trouble_symbol_keys,
 					win = {
 						relative = "win",
 						position = "right",

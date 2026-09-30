@@ -7,7 +7,6 @@ return {
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
 			"hrsh7th/cmp-cmdline",
-			"f3fora/cmp-spell",
 			"L3MON4D3/LuaSnip",
 			"saadparwaiz1/cmp_luasnip",
 		},
@@ -50,7 +49,6 @@ return {
 				luasnip = "[LuaSnip]",
 				buffer = "[Buffer]",
 				path = "[Path]",
-				crates = "[Crates]",
 				spell = "[Spell]",
 			}
 
@@ -129,20 +127,27 @@ return {
 				}
 			end
 
-			local function spell_source(keyword_length)
+			local function in_spell_context()
+				return require("cmp.config.context").in_treesitter_capture(
+					"spell"
+				)
+			end
+
+			local function code_source(name)
 				return {
-					name = "spell",
-					keyword_length = keyword_length,
-					option = {
-						keep_all_entries = false,
-						preselect_correct_word = false,
-						enable_in_context = function()
-							return require("cmp.config.context").in_treesitter_capture(
-								"spell"
-							)
-						end,
-					},
+					name = name,
+					entry_filter = function()
+						return not in_spell_context()
+					end,
 				}
+			end
+
+			local function prose_buffer_source(keyword_length)
+				local source = current_buffer_source(keyword_length)
+				source.entry_filter = function()
+					return in_spell_context()
+				end
+				return source
 			end
 
 			local function source_label(entry)
@@ -196,8 +201,20 @@ return {
 					["<C-k>"] = cmp.mapping.select_prev_item(), -- previous suggestion
 					["<C-j>"] = cmp.mapping.select_next_item(), -- next suggestion
 					["<C-e>"] = cmp.mapping.abort(), -- close completion window
-					["<CR>"] = cmp.mapping.confirm({ select = true }),
+					["<CR>"] = cmp.mapping(function(fallback)
+						if cmp.visible() and cmp.get_selected_entry() then
+							cmp.confirm({ select = false })
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
 				}),
+
+				preselect = cmp.PreselectMode.None,
+
+				completion = {
+					completeopt = "menu,menuone,noinsert,noselect",
+				},
 
 				snippet = {
 					expand = function(args)
@@ -233,16 +250,13 @@ return {
 					-- { name = 'ultisnips' }, -- For ultisnips users.
 					-- { name = 'snippy' }, -- For snippy users.
 					{ name = "path" },
-					{ name = "crates" },
 				}),
 			})
 
 			cmp.setup.filetype({ "markdown", "text", "gitcommit" }, {
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
-					{ name = "luasnip" },
 					{ name = "path" },
-					spell_source(4),
 				}, {
 					current_buffer_source(4),
 				}),
@@ -252,11 +266,11 @@ return {
 				{ "python", "rust", "sh", "bash", "cpp", "c", "lua" },
 				{
 					sources = cmp.config.sources({
-						{ name = "nvim_lsp" },
-						{ name = "luasnip" },
-						{ name = "path" },
-						{ name = "crates" },
-						spell_source(4),
+						code_source("nvim_lsp"),
+						code_source("luasnip"),
+						code_source("path"),
+					}, {
+						prose_buffer_source(4),
 					}),
 				}
 			)
@@ -370,25 +384,6 @@ return {
 			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 			local cmp = require("cmp")
 			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
-		end,
-	},
-
-	{
-		"mistricky/codesnap.nvim",
-		build = "make build_generator",
-		config = function()
-			local codesnap = require("codesnap")
-
-			codesnap.setup({
-				mac_window_bar = false,
-				code_font_family = "IosevkaTerm Nerd Font",
-				watermark = "",
-				bg_theme = "grape",
-				has_breadcrumbs = false,
-				has_line_number = false,
-				show_workspace = false,
-				save_path = os.getenv("HOME") .. "/Pictures",
-			})
 		end,
 	},
 }

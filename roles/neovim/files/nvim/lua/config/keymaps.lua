@@ -72,24 +72,6 @@ vim.keymap.set(
 	"<cmd>LspRestart<CR>",
 	{ silent = true, desc = "Restart LSP" }
 )
-vim.keymap.set(
-	"x",
-	"<leader>csc",
-	"<cmd>CodeSnap<CR>",
-	{ desc = "Save selected code snapshot into clipboard" }
-)
-vim.keymap.set(
-	"x",
-	"<leader>css",
-	"<cmd>CodeSnapSave<CR>",
-	{ desc = "Save selected code snapshot into clipboard" }
-)
-vim.keymap.set(
-	"x",
-	"<leader>csa",
-	"<cmd>CodeSnapASCII<CR>",
-	{ desc = "Save selected code snapshot into clipboard" }
-)
 
 -- find/files
 vim.keymap.set(
@@ -381,23 +363,6 @@ end, {
 	desc = "Open docs.rs documentation for symbol under the cursor",
 	silent = true,
 })
-vim.keymap.set("n", "<leader>rcf", function()
-	require("crates").show_features_popup()
-end, { desc = "Show crate feature popup menu", silent = true })
-vim.keymap.set("n", "<leader>rcd", function()
-	require("crates").show_dependencies_popup()
-end, { desc = "Show crate dependencies popup menu", silent = true })
-vim.keymap.set("n", "<leader>rcu", function()
-	require("crates").upgrade_crate()
-end, { desc = "Upgrade crate version to the latest", silent = true })
-vim.keymap.set(
-	"n",
-	"<leader>rcp",
-	function()
-		require("crates").show_crate_popup()
-	end,
-	{ desc = "Show popup menu for the crate under the cursor", silent = true }
-)
 
 vim.keymap.set(
 	"t",

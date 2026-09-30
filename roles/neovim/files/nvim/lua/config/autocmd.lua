@@ -63,3 +63,17 @@ vim.api.nvim_create_autocmd({
 		end)
 	end,
 })
+
+local sync_folds = augroup("SyncWindowFolds", { clear = true })
+
+-- Origami stores the selected fold provider on the buffer, but foldmethod and
+-- foldexpr are window-local. Re-apply them when a buffer enters a new window.
+vim.api.nvim_create_autocmd({ "BufWinEnter", "WinEnter" }, {
+	desc = "Sync window-local fold options with Origami provider",
+	group = sync_folds,
+	callback = function(args)
+		vim.schedule(function()
+			require("custom.fold_sync").sync(args.buf)
+		end)
+	end,
+})
