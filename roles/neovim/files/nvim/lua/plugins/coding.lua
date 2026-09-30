@@ -7,7 +7,6 @@ return {
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
 			"hrsh7th/cmp-cmdline",
-			"f3fora/cmp-spell",
 			"L3MON4D3/LuaSnip",
 			"saadparwaiz1/cmp_luasnip",
 		},
@@ -129,20 +128,27 @@ return {
 				}
 			end
 
-			local function spell_source(keyword_length)
+			local function in_spell_context()
+				return require("cmp.config.context").in_treesitter_capture(
+					"spell"
+				)
+			end
+
+			local function code_source(name)
 				return {
-					name = "spell",
-					keyword_length = keyword_length,
-					option = {
-						keep_all_entries = false,
-						preselect_correct_word = false,
-						enable_in_context = function()
-							return require("cmp.config.context").in_treesitter_capture(
-								"spell"
-							)
-						end,
-					},
+					name = name,
+					entry_filter = function()
+						return not in_spell_context()
+					end,
 				}
+			end
+
+			local function prose_buffer_source(keyword_length)
+				local source = current_buffer_source(keyword_length)
+				source.entry_filter = function()
+					return in_spell_context()
+				end
+				return source
 			end
 
 			local function source_label(entry)
@@ -196,8 +202,20 @@ return {
 					["<C-k>"] = cmp.mapping.select_prev_item(), -- previous suggestion
 					["<C-j>"] = cmp.mapping.select_next_item(), -- next suggestion
 					["<C-e>"] = cmp.mapping.abort(), -- close completion window
-					["<CR>"] = cmp.mapping.confirm({ select = true }),
+					["<CR>"] = cmp.mapping(function(fallback)
+						if cmp.visible() and cmp.get_selected_entry() then
+							cmp.confirm({ select = false })
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
 				}),
+
+				preselect = cmp.PreselectMode.None,
+
+				completion = {
+					completeopt = "menu,menuone,noinsert,noselect",
+				},
 
 				snippet = {
 					expand = function(args)
@@ -240,9 +258,7 @@ return {
 			cmp.setup.filetype({ "markdown", "text", "gitcommit" }, {
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
-					{ name = "luasnip" },
 					{ name = "path" },
-					spell_source(4),
 				}, {
 					current_buffer_source(4),
 				}),
@@ -252,11 +268,12 @@ return {
 				{ "python", "rust", "sh", "bash", "cpp", "c", "lua" },
 				{
 					sources = cmp.config.sources({
-						{ name = "nvim_lsp" },
-						{ name = "luasnip" },
-						{ name = "path" },
-						{ name = "crates" },
-						spell_source(4),
+						code_source("nvim_lsp"),
+						code_source("luasnip"),
+						code_source("path"),
+						code_source("crates"),
+					}, {
+						prose_buffer_source(4),
 					}),
 				}
 			)
