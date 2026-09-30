@@ -49,7 +49,6 @@ return {
 				luasnip = "[LuaSnip]",
 				buffer = "[Buffer]",
 				path = "[Path]",
-				crates = "[Crates]",
 				spell = "[Spell]",
 			}
 
@@ -251,7 +250,6 @@ return {
 					-- { name = 'ultisnips' }, -- For ultisnips users.
 					-- { name = 'snippy' }, -- For snippy users.
 					{ name = "path" },
-					{ name = "crates" },
 				}),
 			})
 
@@ -271,7 +269,6 @@ return {
 						code_source("nvim_lsp"),
 						code_source("luasnip"),
 						code_source("path"),
-						code_source("crates"),
 					}, {
 						prose_buffer_source(4),
 					}),

@@ -17,28 +17,4 @@ return {
 			}
 		end,
 	},
-
-	{
-		"saecki/crates.nvim",
-		tag = "stable",
-		dependencies = {
-			"nvim-cmp",
-		},
-		config = function()
-			require("crates").setup({
-				popup = {
-					autofocus = true,
-					border = "rounded",
-				},
-				completion = {
-					cmp = {
-						enabled = true,
-					},
-					crates = {
-						enabled = true,
-					},
-				},
-			})
-		end,
-	},
 }
