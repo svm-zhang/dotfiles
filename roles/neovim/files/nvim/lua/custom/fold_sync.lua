@@ -17,6 +17,29 @@ local function set_window_folds(win, method, expr)
 	vim.wo[win][0].foldenable = true
 end
 
+local function sync_key(buf, provider, method, expr)
+	return table.concat({
+		tostring(buf),
+		provider,
+		method,
+		expr or "",
+	}, "\31")
+end
+
+local function already_synced(buf, win, key, method, expr)
+	local state = vim.w[win].fold_sync_state or {}
+
+	return state[tostring(buf)] == key
+		and vim.wo[win][0].foldmethod == method
+		and vim.wo[win][0].foldexpr == (expr or "")
+end
+
+local function mark_synced(buf, win, key)
+	local state = vim.w[win].fold_sync_state or {}
+	state[tostring(buf)] = key
+	vim.w[win].fold_sync_state = state
+end
+
 local function recompute_folds(buf, win)
 	vim.schedule(function()
 		if not window_shows_buffer(win, buf) then
@@ -28,6 +51,18 @@ local function recompute_folds(buf, win)
 			pcall(vim.cmd.normal, { "zX", bang = true })
 		end)
 	end)
+end
+
+local function sync_window(buf, win, provider, method, expr)
+	local key = sync_key(buf, provider, method, expr)
+
+	if already_synced(buf, win, key, method, expr) then
+		return
+	end
+
+	set_window_folds(win, method, expr)
+	mark_synced(buf, win, key)
+	recompute_folds(buf, win)
 end
 
 function M.sync(buf, win)
@@ -49,8 +84,7 @@ function M.sync(buf, win)
 			return
 		end
 
-		set_window_folds(win, "expr", "v:lua.vim.lsp.foldexpr()")
-		recompute_folds(buf, win)
+		sync_window(buf, win, provider, "expr", "v:lua.vim.lsp.foldexpr()")
 	elseif provider == "treesitter" then
 		local ok, parser = pcall(vim.treesitter.get_parser, buf)
 		local lang = ok and parser and parser:lang()
@@ -59,11 +93,15 @@ function M.sync(buf, win)
 			return
 		end
 
-		set_window_folds(win, "expr", "v:lua.vim.treesitter.foldexpr()")
-		recompute_folds(buf, win)
+		sync_window(
+			buf,
+			win,
+			provider,
+			"expr",
+			"v:lua.vim.treesitter.foldexpr()"
+		)
 	elseif type(provider) == "string" and provider ~= "" then
-		set_window_folds(win, provider, "")
-		recompute_folds(buf, win)
+		sync_window(buf, win, provider, provider, "")
 	end
 end
 
